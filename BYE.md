@@ -1,5 +1,3 @@
-wo xiang qu jia~
 
-name kuai zou ba
+name shenme shigou qu jiaya~
 
-mamahuhu
