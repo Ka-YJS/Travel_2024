@@ -1,7 +1,8 @@
 package com.example.project.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,15 +13,15 @@ import com.example.project.dto.UserDTO;
 import com.example.project.service.UserService;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @RequestMapping("/travel")
 @RequiredArgsConstructor
 public class UserController {
 
 	private final UserService service;
+	
+	private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 	
 	//회원가입
 	@PostMapping("/signup")
@@ -31,14 +32,14 @@ public class UserController {
 			UserDTO user = service.create(dto);
 						
 			//등록된 UserEntity 정보를 UserDTO로 변환하여 응답에 사용한다.
-			UserDTO responseUserDTO = UserDTO.builder()
+			UserDTO userDTO = UserDTO.builder()
 					.userId(user.getUserId())
 					.userName(user.getUserName())
 					.userNickName(user.getUserNickName())
 					.userPassword(user.getUserPassword())
 					.build();
 			// 성공적으로 저장된 유저 정보를 포함한 HTTP 200 응답을 반환한다.
-            return ResponseEntity.ok().body(responseUserDTO);
+            return ResponseEntity.ok().body(userDTO);
 		} catch (Exception e) {
 			//예외가 발생한 경우, 에러 메시지를 포함한 ResponseDTO 객체를 만들어 응답한다.
 			ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
@@ -53,7 +54,7 @@ public class UserController {
 	public boolean authenticate(@RequestBody UserDTO dto){
 		// 요청 본문으로 전달된 UserDTO의 username과 password를 기반으로 유저를 조회한다.
 		//getByCredentials : Service에 있는 id와 password를 전달받아 조회하는 메서드
-		UserDTO userDTO = service.getByCredentials(dto.getUserName(), dto.getUserPassword());
+		UserDTO userDTO = service.getByCredentials(dto.getUserName(), dto.getUserPassword(),passwordEncoder);
 				
 		//사용자가 존재한다면
 		if(userDTO != null) {

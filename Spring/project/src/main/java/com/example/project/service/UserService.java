@@ -1,5 +1,6 @@
 package com.example.project.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.project.dto.UserDTO;
@@ -29,7 +30,7 @@ public class UserService {
 		}
 		final String userId = user.getUserId();
 		//존재하는 ID인지 검사
-		if(repository.existsByUserName(userId)) {
+		if(repository.existsByUserId(userId)) {
 			log.warn("userId이 이미 존재 합니다.1 {}", userId);
 			throw new RuntimeException("이미 존재하는 ID 입니다.");
 		}
@@ -38,20 +39,6 @@ public class UserService {
 	}
 		
 	//주어진 userName과 userPassword로 UserEntity 조회하기
-//	public UserDTO getByCredentials(String userName,String userPassword) {
-//		UserEntity original = repository.findByUserName(userName);
-//		//DB에 저장된 암호화된 비밀번호와 사용자에게 입력받아 전달된 암호화된 비밀번호를 비교
-//		if(original != null && userPassword.equals(original.getUserPassword())) {
-//			return UserDTO.builder()
-//				.userId(original.getUserId())
-//				.userName(original.getUserName())
-//				.userNickName(original.getUserNickName())
-//				.userPassword(original.getUserPassword())
-//				.build();
-//		}else {
-//			return null;
-//		}
-//	}
 	public UserDTO getByCredentials(String userName,String userPassword,PasswordEncoder encoder) {
 		UserEntity original = repository.findByUserName(userName);
 	    if(original != null && encoder.matches(userPassword, original.getUserPassword())) {
