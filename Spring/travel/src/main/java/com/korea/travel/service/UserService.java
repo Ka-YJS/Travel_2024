@@ -18,7 +18,7 @@ public class UserService {
 	private final UserRepository repository;
 	
 	//회원가입
-	public UserEntity signup(UserDTO dto) {
+	public UserDTO signup(UserDTO dto) {
 		UserEntity user = UserEntity.builder()
 				.userId(dto.getUserId())
 				.userName(dto.getUserName())
@@ -34,7 +34,13 @@ public class UserService {
 			log.warn("userId이 이미 존재 합니다.1 {}", userId);
 			throw new RuntimeException("이미 존재하는 ID 입니다.");
 		}else {
-			return repository.save(user);
+			repository.save(user);
+			return UserDTO.builder()
+					.userId(user.getUserId())
+					.userName(user.getUserName())
+					.userNickName(user.getUserNickName())
+					.userPassword(user.getUserPassword())
+					.build();
 		}
 	}
 		

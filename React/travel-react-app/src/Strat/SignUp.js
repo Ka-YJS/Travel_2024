@@ -38,10 +38,10 @@ function Signup() {
 
     // 새로운 사용자 객체 생성
     const newUser = {
-      userId,
-      userName,
-      userNickName,
-      userPassword,
+      userId:userId,
+      userName:userName,
+      userNickName:userNickName,
+      userPassword:userPassword,
     };
 
     // 아이디 중복 체크 여부 확인

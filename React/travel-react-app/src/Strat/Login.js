@@ -18,8 +18,8 @@ const Login = () => {
 
     try {
       const response = await axios.post("http://localhost:9090/travel/signin", {
-        loginId,
-        loginPassword,
+        userId:loginId,
+        userPassword:loginPassword,
       }, {
         headers: { "Content-Type": "application/json" },
       });

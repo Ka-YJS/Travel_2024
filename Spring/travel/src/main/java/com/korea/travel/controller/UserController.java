@@ -27,14 +27,8 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody UserDTO dto) {
         try {
-            UserEntity user = service.signup(dto);
-            UserDTO userDTO = UserDTO.builder()
-        			.userId(user.getUserId())
-        			.userName(user.getUserName())
-        			.userNickName(user.getUserNickName())
-        			.userPassword(user.getUserPassword())
-        			.build();
-            return ResponseEntity.ok().body(userDTO);
+        	UserDTO user = service.signup(dto);
+            return ResponseEntity.ok().body(user);
         } catch (Exception e) {
             ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
             return ResponseEntity.badRequest().body(responseDTO);
