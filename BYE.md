@@ -1,3 +1,1 @@
-wo xiang qu jia~
-
-kuai zou ba!
+name shenme shigou qu jiaya~
