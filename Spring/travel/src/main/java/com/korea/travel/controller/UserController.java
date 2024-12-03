@@ -37,9 +37,17 @@ public class UserController {
 
     // 로그인
     @PostMapping("/signin")
-    public boolean authenticate(@RequestBody UserDTO dto) {
+    public ResponseEntity<?> authenticate(@RequestBody UserDTO dto) {
         UserDTO userDTO = service.getByCredentials(dto.getUserId(), dto.getUserPassword());
-        return userDTO != null;
+        
+        if(userDTO != null) {
+        	return ResponseEntity.ok().body(userDTO);
+        }else {
+        	ResponseDTO responseDTO = ResponseDTO.builder()
+        			.error("로그인 실패")
+        			.build();
+        	return ResponseEntity.badRequest().body(responseDTO);
+        }
     }
-				
+
 }

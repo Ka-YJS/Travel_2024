@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class UserDTO {
 
 	private Long id;			//고유 id
+	private String token;
 	private String userId;		//유저Id
 	private String userName; 	//유저이름
 	private String userNickName;	//닉네임
