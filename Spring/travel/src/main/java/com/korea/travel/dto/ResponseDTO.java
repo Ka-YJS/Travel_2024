@@ -1,4 +1,4 @@
-package com.example.project.dto;
+package com.korea.travel.dto;
 
 import java.util.List;
 

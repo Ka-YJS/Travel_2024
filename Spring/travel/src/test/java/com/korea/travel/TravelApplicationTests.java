@@ -1,10 +1,10 @@
-package com.example.project;
+package com.korea.travel;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ProjectApplicationTests {
+class TravelApplicationTests {
 
 	@Test
 	void contextLoads() {
