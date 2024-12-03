@@ -41,9 +41,9 @@ public class UserService {
 }
 		
 	//주어진 userId과 userPassword로 UserEntity 조회하기
-	public UserEntity signin(String userId,String userPassword,PasswordEncoder encoder) {
+	public UserEntity signin(String userId,String userPassword) {
 		UserEntity user = repository.findByUserId(userId);
-	    if(user != null && encoder.matches(userPassword, user.getUserPassword())) {
+	    if(user != null && userPassword.equals(user.getUserPassword())) {
 			return user;
 		}
 		return null;

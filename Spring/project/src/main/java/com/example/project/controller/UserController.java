@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.project.dto.ResponseDTO;
 import com.example.project.dto.UserDTO;
 import com.example.project.model.UserEntity;
-import com.example.project.security.TokenProvider;
 import com.example.project.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,7 @@ public class UserController {
 
 	private final UserService service;
 	
-	private final TokenProvider tokenProvider;
+//	private final TokenProvider tokenProvider;
 	
 	private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 	
@@ -40,14 +39,13 @@ public class UserController {
 					.userName(dto.getUserName())
 					.userNickName(dto.getUserNickName())
 					//사용자에게 입력받은 비밀번호 암호화
-					.userPassword(passwordEncoder.encode(dto.getUserPassword()))
+					.userPassword(dto.getUserPassword())
 					.build();
 			//UserService를 이용해 새로 만든 UserEntity를 데이터베이스에 저장한다.
 			UserEntity user = service.signup(userEntity);
 						
 			//등록된 UserEntity 정보를 UserDTO로 변환하여 응답에 사용한다.
 			UserDTO response = UserDTO.builder()
-					.id(user.getId())
 					.userId(user.getUserId())
 					.userName(user.getUserName())
 					.userNickName(user.getUserNickName())
@@ -70,19 +68,15 @@ public class UserController {
 		//getByCredentials : Service에 있는 id와 password를 전달받아 조회하는 메서드
 		UserEntity user = service.signin(
 				dto.getUserId(), 
-				dto.getUserPassword(),
-				passwordEncoder);
+				dto.getUserPassword());
 				
 		//사용자가 존재한다면
 		if(user != null) {
 			//성공적으로 인증된 유저 정보를 포함한 HTTP 200 응답을 반환한다.
-			final String token = tokenProvider.create(user);
 			final UserDTO response = UserDTO.builder()
-					.id(user.getId())
 					.userId(user.getUserId())
 					.userName(user.getUserName())
 					.userNickName(user.getUserNickName())
-					.token(token)
 					.build();
 			return ResponseEntity.ok().body(response);
 		}else {
