@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class UserDTO {
 
 	private Long id;			//고유 id
+	private String token;
 	private String userId;		//유저Id
 	private String userName; 	//유저이름
 	private String userNickName;	//닉네임
@@ -21,7 +22,6 @@ public class UserDTO {
 	
 	//Entity -> DTO
 	public UserDTO (UserEntity entity) {
-		this.id = entity.getId();
 		this.userId = entity.getUserId();
 		this.userName = entity.getUserName();
 		this.userNickName = entity.getUserNickName();
@@ -30,7 +30,6 @@ public class UserDTO {
 	
 	public static UserEntity toEntity (UserDTO dto) {
 		return UserEntity.builder()
-					.id(dto.getId())
 					.userId(dto.getUserId())
 					.userName(dto.getUserName())
 					.userNickName(dto.getUserNickName())
