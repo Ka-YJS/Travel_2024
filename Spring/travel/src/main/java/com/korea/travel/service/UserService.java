@@ -1,6 +1,7 @@
 package com.korea.travel.service;
 
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.korea.travel.dto.UserDTO;
@@ -17,13 +18,15 @@ public class UserService {
 	
 	private final UserRepository repository;
 	
+	private final PasswordEncoder passwordEncoder;
+	
 	//회원가입
 	public UserDTO signup(UserDTO dto) {
 		UserEntity user = UserEntity.builder()
 				.userId(dto.getUserId())
 				.userName(dto.getUserName())
 				.userNickName(dto.getUserNickName())
-				.userPassword(dto.getUserPassword())
+				.userPassword(passwordEncoder.encode(dto.getUserPassword()))
 				.build();
 		if(user == null || user.getUserId() == null) {
 			throw new RuntimeException("Invalid Arguments 유효하지 않은 인자");
@@ -46,15 +49,15 @@ public class UserService {
 		
 	//주어진 userName과 userPassword로 UserEntity 조회하기
 	public UserDTO getByCredentials(String userId,String userPassword) {
-		UserEntity original = repository.findByUserId(userId);
+		UserEntity user = repository.findByUserId(userId);
 		//DB에 저장된 암호화된 비밀번호와 사용자에게 입력받아 전달된 암호화된 비밀번호를 비교
-		if(original != null && userPassword.equals(original.getUserPassword())) {
+		if(user != null && passwordEncoder.matches(userPassword,user.getUserPassword())) {
 			return UserDTO.builder()
-				.id(original.getId())
-				.userId(original.getUserId())
-				.userName(original.getUserName())
-				.userNickName(original.getUserNickName())
-				.userPassword(original.getUserPassword())
+				.id(user.getId())
+				.userId(user.getUserId())
+				.userName(user.getUserName())
+				.userNickName(user.getUserNickName())
+				.userPassword(user.getUserPassword())
 				.build();
 		}else {
 			return null;
