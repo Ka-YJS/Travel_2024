@@ -85,8 +85,9 @@ public class UserService {
 			try {
 				
 				//토큰 만료되었는지 검증 토큰 유저id랑 받은 id랑 일치하는지 확인
-				if(!tokenProvider.isTokenExpired(token) && (Long.parseLong(tokenProvider.validateAndGetUserId(token)) == user.get().getId())) {
-
+				if(!tokenProvider.isTokenExpired(token)) {
+					System.out.println("a:"+tokenProvider.validateAndGetUserId(token));
+					System.out.println("a:"+user.get().getUserId());
 					//비밀번호 확인후 변경
 					if(!passwordEncoder.matches(dto.getUserPassword(),user.get().getUserPassword())) {
 						UserEntity entity = user.get();

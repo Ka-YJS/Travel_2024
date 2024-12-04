@@ -25,11 +25,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		
+		String requestURI = request.getRequestURI();
+	    if (requestURI.equals("/travel/login") || requestURI.equals("/travel/signup")) {
+	        filterChain.doFilter(request, response);
+	        return; // 로그인 및 회원가입은 필터를 넘기고 종료
+	    }
+		
 		String token = request.getHeader("Authorization");
 		
 		if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);  // "Bearer " 제거
-
             if (!tokenProvider.isTokenExpired(token)) {
                 try {
                     String userId = tokenProvider.validateAndGetUserId(token);

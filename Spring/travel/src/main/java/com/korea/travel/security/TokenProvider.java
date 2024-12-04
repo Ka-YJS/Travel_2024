@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.korea.travel.model.UserEntity;
@@ -16,8 +15,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @Service
 public class TokenProvider {
 	
-	@Value("${jwt.secret}")
-	private String secretKey; 
+	private static final String secretKey = "eyJhbGciOiJIUzUxMiJ9eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTcyNzk3NzQ2OSwiaWF0IjoxNzI3OTc3NDY5fQ3WUk1X983GsejnQZJSNQKjZBfBeSzOK4cAxpndz0G3pSItFPDiDVnSfD0ZsQzVCSkSMKQozyMVDjt9VYTcJw"; 
 	
 	//JWT생성
 	public String create(UserEntity entity) {
