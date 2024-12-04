@@ -21,7 +21,6 @@ public class UserEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;			//고유 id
-	
 	private String userId;		//유저Id
 	private String userName; 	//유저이름
 	private String userNickName;	//닉네임

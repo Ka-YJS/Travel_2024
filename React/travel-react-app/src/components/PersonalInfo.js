@@ -4,6 +4,7 @@ import Modal from 'react-modal';
 import { Input } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from "../context/UserContext";
+import { FaPen } from 'react-icons/fa';
 
 Modal.setAppElement('#root');
 
@@ -128,6 +129,23 @@ const PersonalInfo = () => {
             accept="image/*" // 이미지 파일만 선택 가능
             onChange={handleProfileImageChange}
           />
+          <div>
+            <div style={ {
+              position: 'absolute',
+              bottom: '10px',
+              right: '10px',
+              backgroundColor: '#fff',
+              borderRadius: '50%',
+              padding: '5px',
+              cursor: 'pointer',
+              boxShadow: '0 0 5px rgba(0,0,0,0.3)',
+            }}>
+              <FaPen style={{
+                fontSize: '20px',
+                color: '#ccc',
+              }} />
+            </div>
+          </div>
         </div>
         <PersonalContainer>
           <div>이름 : {user.userName}</div>
