@@ -56,7 +56,7 @@ public class UserService {
 	
 	//userName과 userPassword으로하기 로그인하기
 	public UserDTO getByCredentials(String userId,String userPassword) {
-		UserEntity user = repository.findByUserId(userId);
+		UserEntity user = repository.findByUserId(userId);		
 		//DB에 저장된 암호화된 비밀번호와 사용자에게 입력받아 전달된 암호화된 비밀번호를 비교
 		if(user != null && passwordEncoder.matches(userPassword,user.getUserPassword())) {
 			final String token = tokenProvider.create(user);
@@ -76,15 +76,41 @@ public class UserService {
 	
 	//id로 조회후 userPassword 수정하기
 	public UserDTO userPasswordEdit (Long id,UserDTO dto) {
+		
 		Optional <UserEntity> user = repository.findById(id);
-		if(user != null && !passwordEncoder.matches(dto.getUserPassword(),user.get().getUserPassword())) {
-			UserEntity entity = user.get();
-			entity.setUserPassword(passwordEncoder.encode(dto.getUserPassword()));
-			repository.save(entity);
-			return UserDTO.builder()
-					.userPassword(entity.getUserPassword())
-					.build();
+		
+		if(user.isPresent()) {
+			String token = dto.getToken();
+			
+			try {
+				
+				//토큰 만료되었는지 검증 토큰 유저id랑 받은 id랑 일치하는지 확인
+				if(!tokenProvider.isTokenExpired(token) && (Long.parseLong(tokenProvider.validateAndGetUserId(token)) == user.get().getId())) {
+
+					//비밀번호 확인후 변경
+					if(!passwordEncoder.matches(dto.getUserPassword(),user.get().getUserPassword())) {
+						UserEntity entity = user.get();
+						entity.setUserPassword(passwordEncoder.encode(dto.getUserPassword()));
+						repository.save(entity);
+						return UserDTO.builder()
+								.userPassword(entity.getUserPassword())
+								.build();
+					}else {
+						System.out.println("New password is the same as the old one.");
+						return null;
+					}
+				} else {
+					System.out.println("Token is expired or invalid.");
+					return null;
+				}
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+			
 		}else {
+			System.out.println("User not found.");
 			return null;
 		}
 	}

@@ -53,6 +53,7 @@ public class UserController {
         }
     }
     
+    
     //id로 userPassword 수정하기
     @PutMapping("/userPasswordEdit/{id}")
     public ResponseEntity<?> userPasswordEdit(@PathVariable Long id,@RequestBody UserDTO dto){
@@ -81,6 +82,7 @@ public class UserController {
     		return ResponseEntity.badRequest().body(responseDTO);
     	}
     }
+    
 
     //id로 회원탈퇴
     @DeleteMapping("/ /{id}")
