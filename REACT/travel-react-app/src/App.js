@@ -5,7 +5,7 @@ import MainScreen from "./screen/MainScreen";
 import Login from "./Strat/Login";
 import Signup from "./Strat/SignUp";
 import PostDetail from "./pages/PostDetail";
-import PostEdit from "./pages/PostEdit";
+import MapEdit from "./pages/MapEdit";
 import Post from "./pages/Post";
 import Map from "./pages/Map";
 import MyPage from "./components/MyPage"; // Mypage 추가
@@ -28,7 +28,7 @@ const AppWrapper = styled.div`
 
 function App() {
   const [placeList, setPlaceList] = useState([]);
-
+  // const [list,setList] = useState([])
   const [postList, setPostList] = useState([
     {
       title: "",
@@ -53,6 +53,7 @@ function App() {
       <UserContext.Provider value={{user,setUser ,profileImage, setProfileImage }}>
         <PlaceContext.Provider value={{placeList, setPlaceList}}>
           <isWriteContext.Provider value={{isWrite, setIsWrite}}>
+          {/* <ListContext.Provider value={{list, setList}}> */}
             <AppWrapper>
               <Router>
                 <Routes>
@@ -62,12 +63,13 @@ function App() {
                   <Route path="/signup" element={<Signup />} />
                   <Route path="postdetail/:id" element={<PostDetail />} />
                   <Route path="post" element={<Post />} />
-                  <Route path="postedit/:id" element={<PostEdit />} />
+                  <Route path="postedit/:id" element={<MapEdit />} />
                   <Route path="map" element={<Map />} />
                   <Route path="/mypage/*" element={<MyPage />} /> {/* Mypage 경로 추가 */}
                 </Routes>
               </Router>
             </AppWrapper>
+          {/* </ListContext.Provider> */}
         </isWriteContext.Provider>
       </PlaceContext.Provider>
       </UserContext.Provider>

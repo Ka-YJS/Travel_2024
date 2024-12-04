@@ -3,12 +3,14 @@ import { TextField, Button } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { PostContext } from "../context/PostContext";
 import { UserContext } from "../context/UserContext";
-import { isWriteContext } from "../context/isWriteContext";
+import { PlaceContext } from "../context/PlaceContext";
+import { ListContext } from "../context/ListContext";
 
 const PostDetail = () => {
-    const { postList } = useContext(PostContext); // 게시글 데이터
+    const { postList, setPostList } = useContext(PostContext); // 게시글 데이터
+    const {placeList, setPlaceList} = useContext(PlaceContext);
     const { user } = useContext(UserContext); // 사용자 데이터
-    const {isWrite, setIsWrite} = useContext(isWriteContext)
+    const {list} = useContext(ListContext);
 
     const { id } = useParams(); // URL에서 게시글 ID 추출
     const postId = Number(id) - 1; // 배열 인덱스 계산
@@ -39,7 +41,6 @@ const PostDetail = () => {
 
     // 수정 버튼 클릭
     const toPostEdit = () => {
-        setIsWrite(false)
         navigate(`/postedit/${id}`);
     };
 
@@ -76,7 +77,7 @@ const PostDetail = () => {
                         label="작성자"
                         fullWidth
                         variant="outlined"
-                        value={user[0]?.userNickname || "알 수 없는 사용자"}
+                        value={user[0]?.nickname || "알 수 없는 사용자"}
                     />
                 </div>
 
@@ -109,7 +110,6 @@ const PostDetail = () => {
                     />
                 </div>
             </div>
-
 
             {/* 버튼 영역 */}
             <div style={{ display: "flex", justifyContent: "space-between" }}>

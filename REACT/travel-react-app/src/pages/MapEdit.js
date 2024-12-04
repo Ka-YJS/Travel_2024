@@ -4,14 +4,15 @@ import Write from "./Write";
 import TopIcon from "../TopIcon/TopIcon";
 import config from "../Apikey";
 import { PlaceContext } from "../context/PlaceContext";
-import { ListContext } from "../context/ListContext";
 import { Button } from "@mui/material";
 import PostEdit from "./PostEdit";
+import { ListContext } from "../context/ListContext";
 
+const libraries = ["places"]; // 외부 상수로 선언
 
-const Map = () => {
+const MapEdit = () => {
     const { placeList, setPlaceList } = useContext(PlaceContext);
-    const {list, setList} = useContext(ListContext);
+    const { list, setList } = useContext(ListContext);
 
     const [map, setMap] = useState(null);
     const [center, setCenter] = useState({ lat: 37.5665, lng: 126.9780 }); // 서울 중심 좌표
@@ -24,7 +25,7 @@ const Map = () => {
     // Google Maps API 로드
     const { isLoaded, loadError } = useJsApiLoader({
         googleMapsApiKey: config.MAP_API_KEY,
-        libraries: ["places"], // 사용하려는 라이브러리 추가
+        libraries: libraries, // 사용하려는 라이브러리 추가
     });
 
     if (!isLoaded) {
@@ -80,6 +81,7 @@ const Map = () => {
     const handleAddToPlaceList = () => {
         if (placeName) {
             setPlaceList((prevList) => [...prevList, placeName]);
+            console.log(placeName, +"placeList: "+placeList)
             setPlaceName(""); // 입력 필드 초기화
         }
     };
@@ -103,7 +105,7 @@ const Map = () => {
                     flexDirection: "column",
                 }}
             >
-                <div style={{ flex: 1, padding: "10px", backgroundColor: "#fff", zIndex: 1000 }}>
+                <div style={{flex: 1, padding: "10px", backgroundColor: "#fff", zIndex: 1000 }}>
                     <Autocomplete onLoad={handleSearchBoxLoad} onPlaceChanged={handlePlaceChanged}>
                         <input
                             type="text"
@@ -233,13 +235,13 @@ const Map = () => {
                 </div>
             </div>
 
-            {/* 글쓰기 + To-Do List 영역 */}
+            {/* 수정 + To-Do List 영역 */}
             <div style={{ flex: 1, padding: "20px", backgroundColor: "#f9f9f9" }}>
-                <Write List={list} />
+                <PostEdit/>
                 
             </div>
         </div>
     );
 };
 
-export default Map;
+export default MapEdit;

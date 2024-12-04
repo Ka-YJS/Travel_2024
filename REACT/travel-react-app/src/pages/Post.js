@@ -1,9 +1,9 @@
 import React, { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { PostContext } from "../context/PostContext";
 import { Button } from "@mui/material";
 import { PlaceContext } from "../context/PlaceContext";
-import { isWriteContext } from "../context/isWriteContext";
+import { ListContext } from "../context/ListContext";
 
 
 const Post = () => {
@@ -11,10 +11,14 @@ const Post = () => {
 
 
     // 게시물 데이터 (더미 데이터)
-    const { setIsWrite} = useContext(isWriteContext)
     const {postList, setPostList} = useContext(PostContext);
-    const {placeList,setPlaceList} = useContext(PlaceContext)
+    const {setPlaceList} = useContext(PlaceContext)
+    const {setList} = useContext(ListContext);
+
     const [posts, setPosts] = useState(postList); // 전체 게시물
+
+    const [likedPosts, setLikedPosts] = useState({});
+    
 
     console.log(postList)
     const [searchQuery, setSearchQuery] = useState(""); // 검색어
@@ -36,18 +40,27 @@ const Post = () => {
     const totalPages = Math.ceil(filteredPosts.length / postsPerPage); // 전체 페이지 수
 
     // 좋아요 버튼 근데 페이지 바뀌면 초기화됨 prev 활용하면 될듯?
-    const likeButtonClick = (id) =>{
-        const updatedPosts = posts.map((post) =>
-            post.id === id ? { ...post, like: post.like + 1 } : post
-        
+    const likeButtonClick = (id) => {
+        setPosts((prevPosts) =>
+            prevPosts.map((post) =>
+                post.id === id
+                    ? {
+                          ...post,
+                          like: likedPosts[id] ? post.like - 1 : post.like + 1,
+                      }
+                    : post
+            )
         );
-        setPosts(updatedPosts);
-        
-    }
+
+        setLikedPosts((prevLikedPosts) => ({
+            ...prevLikedPosts,
+            [id]: !prevLikedPosts[id], // 좋아요 상태 반전
+        }));
+    };
 
     const handleWriteButton = () =>{
         setPlaceList([]);
-        setIsWrite(true)
+        setList([])
         navigate("/map")
     }
     // 페이지 이동
