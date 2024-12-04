@@ -85,7 +85,7 @@ public class UserController {
     
 
     //id로 회원탈퇴
-    @DeleteMapping("/ /{id}")
+    @DeleteMapping("/withdraw/{id}")
     public boolean userWithdrawal(@PathVariable Long id,@RequestBody UserDTO dto){
     	if(service.userWithdrawal(id,dto)) {
     		return true;

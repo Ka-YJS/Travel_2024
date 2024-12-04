@@ -1,9 +1,15 @@
 package com.korea.travel.persistence;
 
-import org.hibernate.type.descriptor.converter.spi.JpaAttributeConverter;
+import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.korea.travel.model.UserEntity;
 import com.korea.travel.model.WriteEntity;
 
-public interface WriteRepository extends JpaAttributeConverter<WriteEntity, Long> {
-
+@Repository
+public interface WriteRepository extends JpaRepository<WriteEntity, Long> {
+	
+	List<WriteEntity> findByUser(UserEntity user);
 }

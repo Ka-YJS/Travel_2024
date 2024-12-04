@@ -1,5 +1,7 @@
 package com.korea.travel.model;
 
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,4 +27,7 @@ public class UserEntity {
 	private String userName; 	//유저이름
 	private String userNickName;	//닉네임
 	private String userPassword;	//비밀번호
+	
+	//관계 설정
+	private List<WriteEntity> write;
 }

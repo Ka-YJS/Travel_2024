@@ -28,12 +28,14 @@ public class UserService {
 	
 	//회원가입
 	public UserDTO signup(UserDTO dto) {
+		
 		UserEntity user = UserEntity.builder()
 				.userId(dto.getUserId())
 				.userName(dto.getUserName())
 				.userNickName(dto.getUserNickName())
 				.userPassword(passwordEncoder.encode(dto.getUserPassword()))
 				.build();
+		
 		if(user == null || user.getUserId() == null) {
 			throw new RuntimeException("Invalid Arguments 유효하지 않은 인자");
 		}
@@ -51,12 +53,15 @@ public class UserService {
 					.userPassword(user.getUserPassword())
 					.build();
 		}
+		
 	}
 		
 	
 	//userName과 userPassword으로하기 로그인하기
 	public UserDTO getByCredentials(String userId,String userPassword) {
+		
 		UserEntity user = repository.findByUserId(userId);		
+		
 		//DB에 저장된 암호화된 비밀번호와 사용자에게 입력받아 전달된 암호화된 비밀번호를 비교
 		if(user != null && passwordEncoder.matches(userPassword,user.getUserPassword())) {
 			final String token = tokenProvider.create(user);
@@ -71,6 +76,7 @@ public class UserService {
 		}else {
 			return null;
 		}
+		
 	}
 	
 	
@@ -81,68 +87,78 @@ public class UserService {
 		
 		if(user.isPresent()) {
 			String token = dto.getToken();
-			
-			try {
-				
-				//토큰 만료되었는지 검증 토큰 유저id랑 받은 id랑 일치하는지 확인
-				if(!tokenProvider.isTokenExpired(token)) {
-					System.out.println("a:"+tokenProvider.validateAndGetUserId(token));
-					System.out.println("a:"+user.get().getUserId());
-					//비밀번호 확인후 변경
-					if(!passwordEncoder.matches(dto.getUserPassword(),user.get().getUserPassword())) {
-						UserEntity entity = user.get();
-						entity.setUserPassword(passwordEncoder.encode(dto.getUserPassword()));
-						repository.save(entity);
-						return UserDTO.builder()
-								.userPassword(entity.getUserPassword())
-								.build();
-					}else {
-						System.out.println("New password is the same as the old one.");
-						return null;
-					}
-				} else {
-					System.out.println("Token is expired or invalid.");
+						
+			//토큰 만료되었는지 검증 토큰 유저id랑 받은 id랑 일치하는지 확인
+			if(!tokenProvider.isTokenExpired(token)&&tokenProvider.validateAndGetUserId(token).equals(user.get().getUserId())) {
+				//비밀번호 확인후 변경
+				if(!passwordEncoder.matches(dto.getUserPassword(),user.get().getUserPassword())) {
+					UserEntity entity = user.get();
+					entity.setUserPassword(passwordEncoder.encode(dto.getUserPassword()));
+					repository.save(entity);
+					return UserDTO.builder()
+							.userPassword(entity.getUserPassword())
+							.build();
+				}else {
+					System.out.println("변경하려는 비밀번호가 기존 비밀번호랑 똑같다");
 					return null;
 				}
-				
-			} catch (Exception e) {
-				e.printStackTrace();
+			} else {
 				return null;
 			}
-			
 		}else {
 			System.out.println("User not found.");
 			return null;
 		}
+		
 	}
 		
 		
 	//id로 조회후 userNickName 수정하기
     public UserDTO userNickNameEdit(Long id,UserDTO dto) {
+    	
     	Optional <UserEntity> user = repository.findById(id);
+    	
     	if(user.isPresent()) {
+    		
+    		String token = dto.getToken();
     		UserEntity entity = user.get();
-    		entity.setUserNickName(dto.getUserNickName());
-    		repository.save(entity);
-    		return UserDTO.builder()
-    				.userNickName(entity.getUserNickName())
-    				.build();
+    		
+    		if(!tokenProvider.isTokenExpired(token)&&tokenProvider.validateAndGetUserId(token).equals(user.get().getUserId())) {
+				//변경된 userNickName 저장
+    			entity.setUserNickName(dto.getUserNickName());
+        		repository.save(entity);
+        		return UserDTO.builder()
+        				.userNickName(entity.getUserNickName())
+        				.build();
+			} else {
+				return null;
+			}
     	}else {
     		return null;
-    	}
+    	}  	
+    	
     }
     
     
     //id로 회원탈퇴
     public boolean userWithdrawal (Long id, UserDTO dto) {
+    	
     	Optional<UserEntity> user = repository.findById(id);
     	if(user.isPresent() && passwordEncoder.matches(dto.getUserPassword(),user.get().getUserPassword())) {
-    		UserEntity entity = user.get();
-    		repository.delete(entity);
-    		return true;
+    		String token = dto.getToken();
+    		
+    		if(!tokenProvider.isTokenExpired(token)) {
+    			UserEntity entity = user.get();
+        		repository.delete(entity);
+        		return true;
+    		}else {
+    			return false;
+    		}
     	}else {
 			return false;
 		}
+    	
     }
+    
     
 }
