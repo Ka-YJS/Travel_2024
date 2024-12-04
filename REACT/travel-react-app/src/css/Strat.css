@@ -1,0 +1,143 @@
+/* Shared Component Styles */
+
+/* General Container */
+.container {
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+main {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  gap: 20px;
+}
+
+/* Form Styles */
+form {
+  width: 35%;
+  max-width: 400px;
+  min-width: 300px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 0 10px;
+}
+
+form h3 {
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 10px;
+  margin-right: 18px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+/* Button Groups */
+.buttons-container {
+  margin-top: 5px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.buttons-container input {
+  padding: 8px 15px;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  flex: 1;
+}
+
+.buttons-container .button-check {
+  background-color: #4caf50;
+}
+
+.buttons-container .button-verify {
+  background-color: #008cba;
+}
+
+.buttons-container .button-verify:disabled {
+  background-color: #ddd;
+  cursor: not-allowed;
+}
+
+.auth-code-button {
+  margin-top: 10px;
+  text-align: center;
+  margin-left: 18px;
+}
+
+.auth-code-button input {
+  padding: 8px 15px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+}
+
+/* Submit and Cancel Buttons */
+.submit-container {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.submit-container input {
+  padding: 10px 20px;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.submit-container .submit {
+  background-color: #4caf50;
+}
+
+.submit-container .cancel {
+  background-color: #008cba;
+  margin-top: 10px;
+}
+
+/* Logo Box */
+.logo-box {
+  width: 25%;
+  height: auto;
+  max-width: 400px;
+  aspect-ratio: 1 / 1;
+  border: 1px solid #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
