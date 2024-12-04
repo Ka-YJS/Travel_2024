@@ -1,6 +1,8 @@
 package com.korea.travel.service;
 
 
+import java.util.Optional;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,7 @@ public class UserService {
 	private final PasswordEncoder passwordEncoder;
 	
 	private final TokenProvider tokenProvider;
+	
 	
 	//회원가입
 	public UserDTO signup(UserDTO dto) {
@@ -50,7 +53,8 @@ public class UserService {
 		}
 	}
 		
-	//주어진 userName과 userPassword로 UserEntity 조회하기
+	
+	//userName과 userPassword으로하기 로그인하기
 	public UserDTO getByCredentials(String userId,String userPassword) {
 		UserEntity user = repository.findByUserId(userId);
 		//DB에 저장된 암호화된 비밀번호와 사용자에게 입력받아 전달된 암호화된 비밀번호를 비교
@@ -68,4 +72,34 @@ public class UserService {
 			return null;
 		}
 	}
+	
+	
+	//id로 조회후 userPassword 수정하기
+	public UserDTO userPasswordEdit (Long id,UserDTO dto) {
+		Optional <UserEntity> user = repository.findById(id);
+		if(user != null && !passwordEncoder.matches(dto.getUserPassword(),user.get().getUserPassword())) {
+			UserEntity entity = user.get();
+			entity.setUserPassword(passwordEncoder.encode(dto.getUserPassword()));
+			return UserDTO.builder()
+					.userPassword(entity.getUserPassword())
+					.build();
+		}else {
+			return null;
+		}
+	}
+		
+		
+	//id로 조회후 userNickName 수정하기
+    public UserDTO userNickNameEdit(Long id,UserDTO dto) {
+    	Optional <UserEntity> user = repository.findById(id);
+    	if(user.isPresent()) {
+    		UserEntity entity = user.get();
+    		entity.setUserNickName(dto.getUserNickName());
+    		return UserDTO.builder()
+    				.userNickName(entity.getUserNickName())
+    				.build();
+    	}else {
+    		return null;
+    	}
+    }
 }
