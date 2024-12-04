@@ -1,6 +1,5 @@
 package com.korea.travel.dto;
 
-import com.korea.travel.model.UserEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +15,6 @@ public class WriteDTO {
 	private Long id;
 	private String writeTitle;
 	private String writeContent;
-	private UserEntity user;
+	private UserDTO user;
 	
 }

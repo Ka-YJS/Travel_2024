@@ -80,6 +80,7 @@ public class UserService {
 		if(user != null && !passwordEncoder.matches(dto.getUserPassword(),user.get().getUserPassword())) {
 			UserEntity entity = user.get();
 			entity.setUserPassword(passwordEncoder.encode(dto.getUserPassword()));
+			repository.save(entity);
 			return UserDTO.builder()
 					.userPassword(entity.getUserPassword())
 					.build();
@@ -95,6 +96,7 @@ public class UserService {
     	if(user.isPresent()) {
     		UserEntity entity = user.get();
     		entity.setUserNickName(dto.getUserNickName());
+    		repository.save(entity);
     		return UserDTO.builder()
     				.userNickName(entity.getUserNickName())
     				.build();
@@ -102,4 +104,18 @@ public class UserService {
     		return null;
     	}
     }
+    
+    
+    //id로 회원탈퇴
+    public boolean userWithdrawal (Long id, UserDTO dto) {
+    	Optional<UserEntity> user = repository.findById(id);
+    	if(user.isPresent() && passwordEncoder.matches(dto.getUserPassword(),user.get().getUserPassword())) {
+    		UserEntity entity = user.get();
+    		repository.delete(entity);
+    		return true;
+    	}else {
+			return false;
+		}
+    }
+    
 }

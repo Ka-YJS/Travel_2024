@@ -1,7 +1,7 @@
 package com.korea.travel.controller;
 
-
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -82,5 +82,15 @@ public class UserController {
     	}
     }
 
+    //id로 회원탈퇴
+    @DeleteMapping("/ /{id}")
+    public boolean userWithdrawal(@PathVariable Long id,@RequestBody UserDTO dto){
+    	if(service.userWithdrawal(id,dto)) {
+    		return true;
+    	}else {
+    		return false;
+    	}
+    }
+    
 
 }
