@@ -1,18 +1,20 @@
 package com.korea.travel.service;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.korea.travel.dto.UserDTO;
 import com.korea.travel.model.UserEntity;
 import com.korea.travel.persistence.UserRepository;
 import com.korea.travel.security.TokenProvider;
 
+import io.jsonwebtoken.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -145,6 +147,40 @@ public class UserService {
     	
     }
     
+    
+    //프로필사진 수정
+    public UserDTO userProfileImageEdit(Long id, MultipartFile file) {
+    	
+        try {
+            // 1. ID로 사용자 정보 확인 (UserEntity 찾기)
+            UserEntity userEntity = repository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+            // 2. 파일 경로 설정 및 저장 처리
+            String uploadDir = "uploads/profile-pictures/";
+            String filePath = uploadDir + "user_" + id + "_" + file.getOriginalFilename();
+            File dest = new File(filePath);
+            dest.getParentFile().mkdirs();  // 디렉토리가 없으면 생성
+            file.transferTo(dest);  // 파일 저장
+
+            // 3. UserEntity에 프로필 사진 경로 업데이트
+            userEntity.setUserProfileImage(filePath);
+            repository.save(userEntity);  // UserEntity 업데이트 저장
+
+            // 4. 업데이트된 UserEntity를 UserDTO로 변환하여 반환
+            return UserDTO.builder().
+            		userProfileImage(userEntity.getUserProfileImage())
+            		.build();
+
+        } catch (IOException e) {
+            // 파일 저장 오류 처리
+            throw new RuntimeException("프로필 사진 업로드 중 오류가 발생했습니다.", e);
+        } catch (Exception e) {
+            // 다른 예외 처리
+            throw new RuntimeException("프로필 사진 수정 중 오류가 발생했습니다.", e);
+        }
+    }
+
     
     //로그아웃
     public boolean logout (Long id) {

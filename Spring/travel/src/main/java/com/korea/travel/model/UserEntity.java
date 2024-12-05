@@ -31,6 +31,7 @@ public class UserEntity {
 	private String userName; 	//유저이름
 	private String userNickName;	//닉네임
 	private String userPassword;	//비밀번호
+	private String userProfileImage;//프로필이미지
 	private String userCreatedAt;
 	
 	//관계 설정
