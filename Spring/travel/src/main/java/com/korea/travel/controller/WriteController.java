@@ -22,8 +22,8 @@ public class WriteController {
 	private WriteService writeService;
 	
 	//게시글 등록
-	@PostMapping("/create")
-	public boolean writeCreate(@RequestParam Long userId,@RequestParam WriteDTO writeDTO) {
+	@PostMapping("/create/{userId}")
+	public boolean writeCreate(@PathVariable Long userId,@RequestParam WriteDTO writeDTO) {
 		
 		if(writeService.writeCreate(userId, writeDTO)) {
 			return true;
@@ -35,10 +35,10 @@ public class WriteController {
 	
 	
 	//게시글 수정
-	@PutMapping("/writeEdit/{writeId}")
-	public ResponseEntity<?> writeEdit(@PathVariable Long writeId,@RequestParam WriteDTO writeDTO){
+	@PutMapping("{userId}/writeEdit/{writeId}")
+	public ResponseEntity<?> writeEdit(@PathVariable Long userId,@PathVariable Long writeId,@RequestParam WriteDTO writeDTO){
 		
-		WriteDTO write = writeService.writeEdit(writeId,writeDTO);
+		WriteDTO write = writeService.writeEdit(userId,writeId,writeDTO);
 		
 		if(write != null) {
 			return ResponseEntity.ok().body(write);

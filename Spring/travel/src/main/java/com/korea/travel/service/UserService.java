@@ -1,8 +1,10 @@
 package com.korea.travel.service;
 
-
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +36,7 @@ public class UserService {
 				.userName(dto.getUserName())
 				.userNickName(dto.getUserNickName())
 				.userPassword(passwordEncoder.encode(dto.getUserPassword()))
+				.userCreatedAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
 				.build();
 		
 		if(user == null || user.getUserId() == null) {
@@ -55,16 +58,18 @@ public class UserService {
 		}
 		
 	}
-		
 	
-	//userName과 userPassword으로하기 로그인하기
+	
+	//로그인(로그인할때 토큰생성)
 	public UserDTO getByCredentials(String userId,String userPassword) {
 		
 		UserEntity user = repository.findByUserId(userId);		
 		
-		//DB에 저장된 암호화된 비밀번호와 사용자에게 입력받아 전달된 암호화된 비밀번호를 비교
+		//user가 존재하면 /DB에 저장된 암호화된 비밀번호와 사용자에게 입력받아 전달된 암호화된 비밀번호를 비교
 		if(user != null && passwordEncoder.matches(userPassword,user.getUserPassword())) {
+			//토큰생성(180분설정해둠)
 			final String token = tokenProvider.create(user);
+			
 			return UserDTO.builder()
 				.id(user.getId())
 				.userId(user.getUserId())
@@ -80,7 +85,7 @@ public class UserService {
 	}
 	
 	
-	//id로 조회후 userPassword 수정하기
+	//userPassword 수정하기
 	public UserDTO userPasswordEdit (Long id,UserDTO dto) {
 		
 		Optional <UserEntity> user = repository.findById(id);
@@ -113,11 +118,12 @@ public class UserService {
 	}
 		
 		
-	//id로 조회후 userNickName 수정하기
+	//userNickName 수정하기
     public UserDTO userNickNameEdit(Long id,UserDTO dto) {
     	
     	Optional <UserEntity> user = repository.findById(id);
     	
+    	//유저 확인
     	if(user.isPresent()) {
     		
     		String token = dto.getToken();
@@ -140,7 +146,28 @@ public class UserService {
     }
     
     
-    //id로 회원탈퇴
+    //로그아웃
+    public boolean logout (Long id) {
+    	Optional<UserEntity> user = repository.findById(id);
+    	
+    	if(user.isPresent()) {
+    		UserDTO.builder()
+	    		.id(null)
+				.userId(null)
+				.userName(null)
+				.userNickName(null)
+				.userPassword(null)
+				.token(null)
+				.build();
+    		return true;
+    	}else {
+    		return false;
+    	}
+    	
+    }
+    
+    
+    //회원탈퇴
     public boolean userWithdrawal (Long id, UserDTO dto) {
     	
     	Optional<UserEntity> user = repository.findById(id);

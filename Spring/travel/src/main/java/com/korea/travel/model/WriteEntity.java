@@ -23,13 +23,14 @@ public class WriteEntity {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;					//고유 id
-	private String writeTitle;			//게시글 제목
-	private String writeContent;		//게시글 내용
+	private Long id;				//고유 id
+	private String writeTitle;		//게시글제목
+	private String writeContent;	//게시글내용
+	private String writeCreatedAt;	//게시글등록시간
 	
 	// UserEntity와의 연관 관계 설정 (ManyToOne)
     @ManyToOne(fetch = FetchType.LAZY)  // 다대일 관계 user가 여러 게시글을 쓸수있게해준다.
     @JoinColumn(name = "user_id")       // 외래 키 컬럼명
-    private UserEntity user;            // 해당 게시글을 작성한 UserEntity
+    private UserEntity userEntity;            // 해당 게시글을 작성한 UserEntity
     
 }

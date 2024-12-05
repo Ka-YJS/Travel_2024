@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class WriteDTO {
 	
-	private Long id;
-	private String writeTitle;
-	private String writeContent;
-	private UserDTO user;
+	private Long id;				//고유 id
+	private String writeTitle;		//게시글제목
+	private String writeContent;	//게시글내용
+	private String writeCreatedAt;	//게시글등록시간
 	
 }

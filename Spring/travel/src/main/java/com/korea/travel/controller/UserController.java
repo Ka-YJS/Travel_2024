@@ -25,7 +25,7 @@ public class UserController {
 	private final UserService service;
 	
 	
-    // 회원가입
+    //회원가입
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody UserDTO dto) {
         try {
@@ -38,7 +38,7 @@ public class UserController {
     }
 
     
-    // 로그인
+    //로그인
     @PostMapping("/login")
     public ResponseEntity<?> authenticate(@RequestBody UserDTO dto) {
         UserDTO userDTO = service.getByCredentials(dto.getUserId(), dto.getUserPassword());
@@ -54,7 +54,7 @@ public class UserController {
     }
     
     
-    //id로 userPassword 수정하기
+    //userPassword 수정하기
     @PutMapping("/userPasswordEdit/{id}")
     public ResponseEntity<?> userPasswordEdit(@PathVariable Long id,@RequestBody UserDTO dto){
     	UserDTO userDTO = service.userPasswordEdit(id,dto);
@@ -69,7 +69,7 @@ public class UserController {
     }
     
     
-    //id로 userNickName 수정하기
+    //userNickName 수정하기
     @PutMapping("/userNickNameEdit/{id}")
     public ResponseEntity<?> userNickNameEdit(@PathVariable Long id,@RequestBody UserDTO dto){
     	UserDTO userDTO = service.userNickNameEdit(id,dto);
@@ -83,8 +83,21 @@ public class UserController {
     	}
     }
     
+    
+    //로그아웃
+    @PostMapping("/logout/{id}")
+    public boolean logout(@PathVariable Long id) {
+    	
+    	if(service.logout(id)) {
+    		return true;
+    	}else {
+    		return false;
+    	}
+    	
+    }
+    
 
-    //id로 회원탈퇴
+    //회원탈퇴
     @DeleteMapping("/withdraw/{id}")
     public boolean userWithdrawal(@PathVariable Long id,@RequestBody UserDTO dto){
     	if(service.userWithdrawal(id,dto)) {

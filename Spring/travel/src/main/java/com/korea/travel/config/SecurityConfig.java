@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 	
 	private final TokenProvider tokenProvider;
-
+	
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()  // CSRF 보호 비활성화 (필요시 활성화)
