@@ -22,7 +22,7 @@ body {
 }
 
 button {
-  background-color: #FFE400;
+  /* background-color: #008cba; */
   padding: 10px 20px;
   font-size: 18px;
   margin: 10px;
@@ -49,7 +49,7 @@ button:hover {
 .home-header {
   position: absolute;
   top: 10px;
-  width: 95%;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   padding: 0 20px;
@@ -71,15 +71,13 @@ button:hover {
 }
 
 .icon {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   background-color: #ddd;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 5px;
-  margin-top: 10px;
 }
 
 /* 메인 화면 */

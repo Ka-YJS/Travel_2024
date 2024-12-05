@@ -2,6 +2,8 @@ import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { PostContext } from "../context/PostContext";
 import { Button } from "@mui/material";
+import { PlaceContext } from "../context/PlaceContext";
+import { isWriteContext } from "../context/isWriteContext";
 
 
 const Post = () => {
@@ -9,8 +11,9 @@ const Post = () => {
 
 
     // 게시물 데이터 (더미 데이터)
+    const { setIsWrite} = useContext(isWriteContext)
     const {postList, setPostList} = useContext(PostContext);
-
+    const {placeList,setPlaceList} = useContext(PlaceContext)
     const [posts, setPosts] = useState(postList); // 전체 게시물
 
     console.log(postList)
@@ -40,6 +43,12 @@ const Post = () => {
         );
         setPosts(updatedPosts);
         
+    }
+
+    const handleWriteButton = () =>{
+        setPlaceList([]);
+        setIsWrite(true)
+        navigate("/map")
     }
     // 페이지 이동
     const handlePageChange = (pageNumber) => {
@@ -161,7 +170,7 @@ const Post = () => {
                 <Button
                     variant="contained"
                     color="primary"
-                    onClick={() => navigate("/map")}
+                    onClick={handleWriteButton}
                     sx={{ width: "48%" }}
                 >
                     글쓰기

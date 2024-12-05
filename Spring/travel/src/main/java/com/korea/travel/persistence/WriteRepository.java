@@ -11,5 +11,5 @@ import com.korea.travel.model.WriteEntity;
 @Repository
 public interface WriteRepository extends JpaRepository<WriteEntity, Long> {
 	
-	List<WriteEntity> findByUser(UserEntity user);
+	List<WriteEntity> findByUserEntity(UserEntity user);
 }

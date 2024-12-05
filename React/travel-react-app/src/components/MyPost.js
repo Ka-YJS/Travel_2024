@@ -1,18 +1,21 @@
 import React, { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { PostContext } from "../context/PostContext";
+import { UserContext } from "../context/UserContext";
 
 const MyPost = () => {
     const navigate = useNavigate();
-    const [posts, setPosts] = useState([]); // 전체 게시물
+    const { postList } = useContext(PostContext); // 전체 게시물 데이터
+    const { user } = useContext(UserContext); // 현재 로그인한 사용자 데이터
     const [searchQuery, setSearchQuery] = useState(""); // 검색어
     const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
     const postsPerPage = 9; // 페이지당 표시할 게시물 수
 
-    const loggedInUserId = "user123"; // 현재 로그인한 사용자의 ID (예시)
+    const loggedInUserId = user.userId; // 현재 로그인한 사용자 ID
 
     // 내가 작성한 게시글 필터링
-    const myPosts = posts.filter((post) => post.authorId === loggedInUserId);
+    const myPosts = postList.filter((post) => post.title.toLowerCase().includes(searchQuery.toLowerCase()));
 
     // 검색 필터링
     const filteredPosts = myPosts.filter((post) =>
@@ -127,7 +130,7 @@ const MyPost = () => {
                 <Button
                     variant="contained"
                     color="primary"
-                    onClick={() => navigate("/map")}
+                    onClick={() => navigate("/map")} // 글쓰기 페이지로 이동
                     sx={{ width: "48%" }}
                 >
                     글쓰기

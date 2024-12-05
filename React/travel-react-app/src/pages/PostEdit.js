@@ -1,41 +1,35 @@
 import React, { useContext, useState } from "react";
-import { TextField, Button, IconButton } from "@mui/material";
+import { TextField, Button } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { PostContext } from "../context/PostContext";
+import { PlaceContext } from "../context/PlaceContext";
+import Map from "./Map";
 
 const PostEdit = () => {
-    const {id} = useParams();
-
-    const {postList, setPostList} = useContext(PostContext);
-    console.log(postList[0])
-    const postId = id - 1
-    const navigate = useNavigate()
-
-    const [photo, setPhoto] = useState("")
-    const [titleEdit, setTitleEdit] = useState("");
-    const [contentEdit, setContentEdit] = useState("");
-    
-    
-
-    
+    const { id } = useParams();
+    const { postList, setPostList } = useContext(PostContext);
+    const { placeList } = useContext(PlaceContext);
+  
+    const postId = id - 1; // 배열 인덱스 계산
+   
+    const navigate = useNavigate();
 
     const handleTitleChange = (e) => {
         const copyPostList = [...postList];
-        copyPostList[postId].title = e.target.value;
-        setPostList(copyPostList);
-    };
-    const handleContentChange = (e) => {
-        const copyPostList = [...postList];
-        copyPostList[postId].content = e.target.value;
-        setContentEdit(copyPostList);
+        copyPostList[postId].title = e.target.value; // 제목 변경
+        setPostList(copyPostList); // 상태 업데이트
     };
 
+    const handleContentChange = (e) => {
+        const copyPostList = [...postList];
+        copyPostList[postId].content = e.target.value; // 내용 변경
+        setPostList(copyPostList); // 상태 업데이트
+    };
+    
     const handleSave = () => {
-        
         if (postList[postId].title && postList[postId].content) {
-            console.log("저장 완료:");
             alert("글이 저장되었습니다!");
-            navigate(`/PostDetail/${id}`)
+            navigate(`/PostDetail/${id}`);
         } else {
             alert("제목과 내용을 모두 입력해주세요.");
         }
@@ -43,31 +37,32 @@ const PostEdit = () => {
 
     const handleCancel = () => {
         const confirmText = window.confirm("글 작성을 취소하시겠습니까?");
-        if (confirmText == true) {
-            alert("글 작성이 취소되었습니다.")
-            navigate("/post")
-        }else{
-            alert("글 작성을 계속하세요")
+        if (confirmText) {
+            alert("글 작성이 취소되었습니다.");
+            navigate("/post");
         }
     };
 
     return (
-        <div 
-            sx={{
+        <div
+            style={{
                 maxWidth: "600px",
                 margin: "50px auto",
                 padding: "20px",
                 border: "1px solid #ddd",
                 borderRadius: "10px",
                 backgroundColor: "#f9f9f9",
-                boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)"
+                boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
             }}
         >
-            <h1 
-                variant="h5" 
-                style={{ marginBottom: "20px", fontWeight: "bold", textAlign: "center" }}
+            <h1
+                style={{
+                    marginBottom: "20px",
+                    fontWeight: "bold",
+                    textAlign: "center",
+                }}
             >
-                글쓰기
+                글 수정
             </h1>
 
             <div style={{ marginBottom: "20px" }}>
@@ -81,8 +76,23 @@ const PostEdit = () => {
                 />
             </div>
             <div>
-                <p>사진, 동영상, 글씨포인트 등 api 추가예정</p>
+                <p>사진, 동영상, 글씨포인트 등 추가 예정</p>
             </div>
+
+            <div style={{ marginBottom: "20px" }}>
+                <TextField
+                    inputProps={{
+                        readOnly: true,
+                    }}
+                    fullWidth
+                    variant="outlined"
+                    label="여행지"
+                    value={placeList.join(", ") || "등록된 여행지가 없습니다."}
+                    multiline
+                    rows={2}
+                />
+            </div>
+
             <div style={{ marginBottom: "20px" }}>
                 <TextField
                     fullWidth
@@ -101,7 +111,7 @@ const PostEdit = () => {
                     variant="contained"
                     color="primary"
                     onClick={handleSave}
-                    sx={{ width: "48%" }}
+                    style={{ width: "48%" }}
                 >
                     저장
                 </Button>
@@ -109,7 +119,7 @@ const PostEdit = () => {
                     variant="outlined"
                     color="error"
                     onClick={handleCancel}
-                    sx={{ width: "48%" }}
+                    style={{ width: "48%" }}
                 >
                     취소
                 </Button>

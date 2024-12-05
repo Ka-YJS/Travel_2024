@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext,useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // useNavigate import
 import "../App.css";
 import TopIcon from "../TopIcon/TopIcon";
+import { UserContext } from "../context/UserContext";
 
 function MainScreen() {
   const [nickname, setNickname] = useState("");
   const navigate = useNavigate(); // useNavigate 훅 사용
-
+  const {user} = useContext(UserContext)
+  console.log(user)
   useEffect(() => {
     const randomNumber = Math.floor(Math.random() * 100) + 1;
     setNickname(`여행${randomNumber}`);

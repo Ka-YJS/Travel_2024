@@ -14,7 +14,7 @@ function AppRouter(){
                     <Route path="/signup" element={<Signup />} />
                 </Routes>
             </BrowserRouter>
-        </div>
+        </div>  
     )
 }
 

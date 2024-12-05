@@ -36,6 +36,6 @@ public class UserEntity {
 	private String token;			//토큰
 	
 	//관계 설정
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<WriteEntity> write = new ArrayList<WriteEntity>();
+	@OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<WriteEntity> write = new ArrayList<>();
 }

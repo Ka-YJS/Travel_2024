@@ -80,6 +80,7 @@ public class UserService {
 				.userName(user.getUserName())
 				.userNickName(user.getUserNickName())
 				.userPassword(user.getUserPassword())
+				.userProfileImage(user.getUserProfileImage())
 				.token(user.getToken())
 				.build();
 		}else {
@@ -197,6 +198,7 @@ public class UserService {
 				.userName(null)
 				.userNickName(null)
 				.userPassword(null)
+				.userProfileImage(null)
 				.token(null)
 				.build();
     		return true;

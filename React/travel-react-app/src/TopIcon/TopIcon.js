@@ -1,4 +1,4 @@
-import React, {useState, useContext} from "react";
+import React, {useState, useContext } from "react";
 import { SlHome } from "react-icons/sl";
 import { IoMapOutline } from "react-icons/io5";
 import { BsFillPostageHeartFill } from "react-icons/bs";
@@ -11,7 +11,10 @@ const TopIcon = () => {
 
   const [logo, setLogo] = useState(null);
   const [isbutton,setIsbutton] = useState(false);
-  const {profileImage} = useContext(UserContext);
+
+  const {user} = useContext(UserContext);
+
+  
 
   const handleLogoChange = (e) => {
     const file = e.target.files[0];
@@ -33,6 +36,7 @@ const TopIcon = () => {
     { id: "map", component: <IoMapOutline />, route: "/map" },
     { id: "post", component: <BsFillPostageHeartFill />, route: "/post" },
   ];
+
   return(    
     <header className="home-header">
       <div className="logo-container">
@@ -57,7 +61,7 @@ const TopIcon = () => {
         ))}
         <div style={{width:"130px",height:"100px",justifyItems:"center",alignItems:"center",margin:"5px"}}>
           <ProfileImage 
-              src={profileImage} // 기본 이미지나 프로필 이미지 표시
+              src={user.userProfileImage} // 기본 이미지나 프로필 이미지 표시
               alt="profile"
               onClick={()=>setIsbutton(!isbutton)}
           />
@@ -83,7 +87,7 @@ const TopIcon = () => {
                   border: "none", 
                   borderRadius: "5px" 
                 }} 
-                onClick={()=>(navigate("/"))}
+                onClick={()=>(navigate("/mypage/personalInfo"))}
               >
                 내 정보
               </button>
@@ -96,7 +100,7 @@ const TopIcon = () => {
                   border: "none", 
                   borderRadius: "5px" 
                 }}
-                onClick={()=>(navigate("/"))}
+                onClick={()=>(navigate("/mypage/mypost"))}
               >
                 My게시글
               </button>
