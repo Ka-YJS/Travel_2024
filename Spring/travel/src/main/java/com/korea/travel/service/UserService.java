@@ -72,13 +72,15 @@ public class UserService {
 			//토큰생성(180분설정해둠)
 			final String token = tokenProvider.create(user);
 			
+			user.setToken(token);
+			
 			return UserDTO.builder()
 				.id(user.getId())
 				.userId(user.getUserId())
 				.userName(user.getUserName())
 				.userNickName(user.getUserNickName())
 				.userPassword(user.getUserPassword())
-				.token(token)
+				.token(user.getToken())
 				.build();
 		}else {
 			return null;
@@ -187,6 +189,8 @@ public class UserService {
     	Optional<UserEntity> user = repository.findById(id);
     	
     	if(user.isPresent()) {
+    		UserEntity.builder()
+    			.token(null);
     		UserDTO.builder()
 	    		.id(null)
 				.userId(null)

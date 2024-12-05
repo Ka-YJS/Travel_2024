@@ -14,11 +14,11 @@ import lombok.NoArgsConstructor;
 public class UserDTO {
 
 	private Long id;
-	private String token;
-	private String userId;		//유저Id
-	private String userName; 	//유저이름
+	private String userId;			//유저Id
+	private String userName; 		//유저이름
 	private String userNickName;	//닉네임
 	private String userPassword;	//비밀번호
 	private String userProfileImage;//프로필이미지
+	private String token;			//토큰
 	
 }

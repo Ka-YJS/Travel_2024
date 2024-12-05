@@ -3,6 +3,7 @@ package com.korea.travel.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -58,7 +59,7 @@ public class UserController {
     
     
     //userPassword 수정하기
-    @PutMapping("/userPasswordEdit/{id}")
+    @PatchMapping("/userPasswordEdit/{id}")
     public ResponseEntity<?> userPasswordEdit(@PathVariable Long id,@RequestBody UserDTO dto){
     	UserDTO userDTO = service.userPasswordEdit(id,dto);
     	if(userDTO != null) {
@@ -73,7 +74,7 @@ public class UserController {
     
     
     //userNickName 수정하기
-    @PutMapping("/userNickNameEdit/{id}")
+    @PatchMapping("/userNickNameEdit/{id}")
     public ResponseEntity<?> userNickNameEdit(@PathVariable Long id,@RequestBody UserDTO dto){
     	UserDTO userDTO = service.userNickNameEdit(id,dto);
     	if(userDTO != null) {
@@ -88,7 +89,7 @@ public class UserController {
     
     
     //프로필사진 수정
-    @PostMapping("/userProfileImageEdit/{id}")
+    @PatchMapping("/userProfileImageEdit/{id}")
     public ResponseEntity<?> userProfileImageEdit(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
 
         try {
