@@ -35,18 +35,16 @@ const PersonalInfo = () => {
       try {
 
         const userProfile = {
-          userPassword: newPassword,
-          token : user.token
+          userPassword: newPassword
         };
-  
-        console.log(user.token);
-        console.log(user.id);
+        console.log(`Bearer ${user.token}` )
 
         const response = await axios.patch(`http://localhost:9090/travel/userPasswordEdit/${user.id}`, userProfile, {
           headers: {
             "Content-Type": "application/json",
             'Authorization': `Bearer ${user.token}` 
           },
+          withCredentials: true
         });
         
         if(response.data){
@@ -77,6 +75,10 @@ const PersonalInfo = () => {
       const formData = new FormData();
       formData.append('file', file);
       formData.append('token', user.token);
+      
+      formData.forEach((value, key) => {
+        console.log(key, value);  // key는 'file' 또는 'token' 값이 출력됩니다.
+      });
 
       try {
         // 백엔드에 프로필 사진을 업로드

@@ -26,7 +26,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 		
 		String requestURI = request.getRequestURI();
-	    if (requestURI.equals("/travel/login") || requestURI.equals("/travel/signup")) {
+		
+	    if (requestURI.equals("/travel/login") || requestURI.equals("/travel/signup")|| requestURI.startsWith("/travel/signup/api/email")) {
 	        filterChain.doFilter(request, response);
 	        return; // 로그인 및 회원가입은 필터를 넘기고 종료
 	    }
@@ -35,24 +36,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		
 		if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);  // "Bearer " 제거
-            if (!tokenProvider.isTokenExpired(token)) {
-                try {
-                    String userId = tokenProvider.validateAndGetUserId(token);
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userId, null, new ArrayList<>());
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                } catch (Exception e) {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);  // 403 Forbidden
-                    response.getWriter().write("Invalid or expired token");
-                    return; // 토큰이 유효하지 않거나 만료되었으면, 필터에서 더 이상 진행되지 않도록
-                }
-            } else {
+            try {
+                String userId = tokenProvider.validateAndGetUserId(token);
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userId, null, new ArrayList<>());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);  // 403 Forbidden
-                response.getWriter().write("Token is expired");
-                return;
+                response.getWriter().write("Invalid or expired token");
+                return; // 토큰이 유효하지 않거나 만료되었으면, 필터에서 더 이상 진행되지 않도록
             }
-        } else {
+        }else {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);  // 401 Unauthorized
             response.getWriter().write("Authorization header is missing or invalid");
+            System.out.println("Authorization header is missing or invalid");
             return;
         }
 

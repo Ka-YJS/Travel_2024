@@ -96,25 +96,18 @@ public class UserService {
 		Optional <UserEntity> user = repository.findById(id);
 		
 		if(user.isPresent()) {
-			String token = dto.getToken();
 						
-			//토큰 만료되었는지 검증 토큰 유저id랑 받은 id랑 일치하는지 확인
-			if(!tokenProvider.isTokenExpired(token)&&tokenProvider.validateAndGetUserId(token).equals(user.get().getUserId())) {
-				//비밀번호 확인후 변경
-				if(!passwordEncoder.matches(dto.getUserPassword(),user.get().getUserPassword())) {
-					UserEntity entity = user.get();
-					entity.setUserPassword(passwordEncoder.encode(dto.getUserPassword()));
-					repository.save(entity);
-					return true;
-				}else {
-					System.out.println("변경하려는 비밀번호가 기존 비밀번호랑 똑같다");
-					return false;
-				}
-			} else {
+			//비밀번호 확인후 변경
+			if(!passwordEncoder.matches(dto.getUserPassword(),user.get().getUserPassword())) {
+				UserEntity entity = user.get();
+				entity.setUserPassword(passwordEncoder.encode(dto.getUserPassword()));
+				repository.save(entity);
+				return true;
+			}else {
+				System.out.println("변경하려는 비밀번호가 기존 비밀번호랑 똑같다");
 				return false;
 			}
-		}else {
-			System.out.println("User not found.");
+		} else {
 			return false;
 		}
 		
@@ -133,7 +126,7 @@ public class UserService {
     		String token = dto.getToken();
     		UserEntity entity = user.get();
     		
-    		if(!tokenProvider.isTokenExpired(token)&&tokenProvider.validateAndGetUserId(token).equals(user.get().getUserId())) {
+    		if(tokenProvider.validateAndGetUserId(token).equals(user.get().getUserId())) {
 				//변경된 userNickName 저장
     			entity.setUserNickName(dto.getUserNickName());
         		repository.save(entity);

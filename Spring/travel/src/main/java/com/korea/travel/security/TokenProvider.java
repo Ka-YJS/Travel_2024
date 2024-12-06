@@ -54,16 +54,20 @@ public class TokenProvider {
 	
 	//JWT 토큰 검증 및 유저 id 반환
 	public String validateAndGetUserId(String token) {
-		try {
-			Claims claims = Jwts.parser()
-					.setSigningKey(secretKey)
-					.parseClaimsJws(token)
-					.getBody();
-			return claims.getSubject();
-		} catch (Exception e) {
-			throw new RuntimeException("Token validation failed",e);
-		}
 		
+		if(!isTokenExpired(token)) {
+			try {
+				Claims claims = Jwts.parser()
+						.setSigningKey(secretKey)
+						.parseClaimsJws(token)
+						.getBody();
+				return claims.getSubject();
+			} catch (Exception e) {
+				throw new RuntimeException("Token validation failed",e);
+			}
+		}else {
+			return null;
+		}
 	}
 		
 	
