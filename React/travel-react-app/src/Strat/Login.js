@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import TopIcon from "../TopIcon/TopIcon";
 import "../css/Strat.css";
 import axios from "axios";
+import {login} from "../api/ApiService"
 
 const Login = () => {
   const { user,setUser } = useContext(UserContext); // `user` 배열로부터 사용자 정보를 가져옴
@@ -24,29 +25,30 @@ const Login = () => {
     //   (u) => u.id === loginId && u.password === loginPassword
     // );
 
-    const user = {
+    const userProfile = {
       userId: loginId,
       userPassword: loginPassword
     };
 
     try {
-      const response = await axios.post("http://localhost:9090/travel/login", user, {
+      const response = await axios.post("http://localhost:9090/travel/login", userProfile, {
         headers: { "Content-Type": "application/json" },
       });
-      setUser(response.data);
-    } catch (error) {
-      
-    }    
 
-    if (user) {
-      alert(`로그인 성공! 환영합니다, ${user.userNickName}님!`);
-      navigate("/main");
-    } else {
-      alert("아이디 또는 비밀번호가 올바르지 않습니다.");
+      if (response.data) {
+        setUser(response.data);
+        alert(`로그인 성공! 환영합니다, ${response.data.userNickName}님!`);
+        navigate("/main"); // 메인 페이지로 이동
+      } else {
+        alert("아이디 또는 비밀번호가 올바르지 않습니다.");
+      }
+
+    } catch (error) {
+      alert("로그인에 실패했습니다. 다시 시도해 주세요.");
     }
+
   };
 
-  useEffect(()=>{},[user])
 
 
   return (

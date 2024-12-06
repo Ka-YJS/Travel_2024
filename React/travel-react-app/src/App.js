@@ -39,22 +39,18 @@ function App() {
     },
   ]);
 
-  const [user, setUser] = useState({
-      id:"",
-	    userId:"",
-	    userName:"",
-	    userNickName:"",
-	    userPassword:"",
-	    userProfileImage:""
+  const [user, setUser] = useState(() => {
+    // 새로고침 시 로컬 스토리지에서 사용자 정보 복원
+    const savedUser = localStorage.getItem("user");
+    return savedUser ? JSON.parse(savedUser) : {};
   });
-  const [profileImage, setProfileImage] = useState();
+  const [profileImage, setProfileImage] = useState(defaultImage);
   const [isWrite, setIsWrite] = useState(true)
 
-  
-
-  useEffect(()=>{
-    setUser(user?user.userProfileImage:{defaultImage})
-  },[user]);
+  useEffect(() => {
+    // user 상태가 변경될 때 로컬 스토리지에 저장
+    localStorage.setItem("user", JSON.stringify(user));
+  }, [user]);
 
   return (
     <UserContext.Provider value={{user,setUser ,profileImage, setProfileImage }}>

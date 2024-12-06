@@ -91,7 +91,7 @@ public class UserService {
 	
 	
 	//userPassword 수정하기
-	public UserDTO userPasswordEdit (Long id,UserDTO dto) {
+	public boolean userPasswordEdit (Long id,UserDTO dto) {
 		
 		Optional <UserEntity> user = repository.findById(id);
 		
@@ -105,23 +105,22 @@ public class UserService {
 					UserEntity entity = user.get();
 					entity.setUserPassword(passwordEncoder.encode(dto.getUserPassword()));
 					repository.save(entity);
-					return UserDTO.builder()
-							.userPassword(entity.getUserPassword())
-							.build();
+					return true;
 				}else {
 					System.out.println("변경하려는 비밀번호가 기존 비밀번호랑 똑같다");
-					return null;
+					return false;
 				}
 			} else {
-				return null;
+				return false;
 			}
 		}else {
 			System.out.println("User not found.");
-			return null;
+			return false;
 		}
 		
 	}
 		
+	
 		
 	//userNickName 수정하기
     public UserDTO userNickNameEdit(Long id,UserDTO dto) {
@@ -152,7 +151,7 @@ public class UserService {
     
     
     //프로필사진 수정
-    public UserDTO userProfileImageEdit(Long id, MultipartFile file) {
+    public UserDTO userProfileImageEdit(Long id, MultipartFile file,UserDTO dot) {
     	
         try {
             // 1. ID로 사용자 정보 확인 (UserEntity 찾기)

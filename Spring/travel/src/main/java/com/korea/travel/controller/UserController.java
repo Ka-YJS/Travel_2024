@@ -60,15 +60,17 @@ public class UserController {
     
     //userPassword 수정하기
     @PatchMapping("/userPasswordEdit/{id}")
-    public ResponseEntity<?> userPasswordEdit(@PathVariable Long id,@RequestBody UserDTO dto){
-    	UserDTO userDTO = service.userPasswordEdit(id,dto);
-    	if(userDTO != null) {
-    		return ResponseEntity.ok().body(userDTO);
+    public boolean userPasswordEdit(@PathVariable Long id,@RequestBody UserDTO dto){
+    	
+    	// userId와 userProfile을 사용하여 비밀번호 업데이트 로직 구현
+        System.out.println("User ID: " + id);
+        System.out.println("dto : " + dto);
+
+    	
+    	if(service.userPasswordEdit(id,dto)) {
+    		return true;
     	}else {
-    		ResponseDTO responseDTO = ResponseDTO.builder()
-                 .error("비밀번호 수정 실패")
-                 .build();
-    		return ResponseEntity.badRequest().body(responseDTO);
+    		return false;
     	}
     }
     
@@ -90,11 +92,12 @@ public class UserController {
     
     //프로필사진 수정
     @PatchMapping("/userProfileImageEdit/{id}")
-    public ResponseEntity<?> userProfileImageEdit(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> userProfileImageEdit(@PathVariable Long id, 
+    		@RequestParam("file") MultipartFile file,@RequestBody UserDTO dto) {
 
         try {
             // 서비스 호출하여 프로필 사진을 수정하고 결과를 반환
-            UserDTO updatedUserDTO = service.userProfileImageEdit(id, file);
+            UserDTO updatedUserDTO = service.userProfileImageEdit(id, file, dto);
 
             return ResponseEntity.ok().body(updatedUserDTO);  // 성공적으로 수정된 UserDTO 반환
 
