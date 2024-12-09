@@ -23,10 +23,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()  // CSRF 보호 비활성화 (필요시 활성화)
             .authorizeRequests()
-//            .authorizeHttpRequests()
-//            .anyRequest().permitAll();  // 모든 요청 허용
-          	.requestMatchers("/travel/login","/travel/signup","/api/email/*").permitAll()  // /public/** 경로는 인증 없이 허용
+          	.requestMatchers("/travel/login","/travel/signup","/api/email/*", "/uploads/**").permitAll()  //경로는 인증 없이 허용
           	.anyRequest().authenticated()  // 그 외 요청은 인증 필요
+        	.and()
+        	.cors()
         	.and()
         	.addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
             

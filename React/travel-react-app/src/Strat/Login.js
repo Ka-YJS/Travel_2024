@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import TopIcon from "../TopIcon/TopIcon";
 import "../css/Strat.css";
 import axios from "axios";
-import {login} from "../api/ApiService"
+import { call } from "../api/ApiService";
 
 const Login = () => {
   const { user,setUser } = useContext(UserContext); // `user` 배열로부터 사용자 정보를 가져옴
@@ -30,22 +30,33 @@ const Login = () => {
       userPassword: loginPassword
     };
 
-    try {
-      const response = await axios.post("http://localhost:9090/travel/login", userProfile, {
-        headers: { "Content-Type": "application/json" },
-      });
 
-      if (response.data) {
-        setUser(response.data);
-        alert(`로그인 성공! 환영합니다, ${response.data.userNickName}님!`);
-        navigate("/main"); // 메인 페이지로 이동
-      } else {
-        alert("아이디 또는 비밀번호가 올바르지 않습니다.");
-      }
+    call("/travel/login","POST",userProfile,user)
+      .then(response=>{
+        setUser(response);
+        console.log(response);
+        alert(`로그인 성공! 환영합니다, ${response.userNickName}님!`);
+        navigate("/main")
+    })
 
-    } catch (error) {
-      alert("로그인에 실패했습니다. 다시 시도해 주세요.");
-    }
+    // try {
+    //   const response = await axios.post("http://localhost:9090/travel/login", userProfile, {
+    //     headers: { "Content-Type": "application/json" },
+    //   });
+
+    //   if (response.data) {
+    //     localStorage.setItem("ACCESS_TOKEN",response.data.token);
+    //     setUser(response.data);
+    //     console.log(response.data.token)
+    //     alert(`로그인 성공! 환영합니다, ${response.data.userNickName}님!`);
+    //     navigate("/main"); // 메인 페이지로 이동
+    //   } else {
+    //     alert("아이디 또는 비밀번호가 올바르지 않습니다.");
+    //   }
+
+    // } catch (error) {
+    //   alert("로그인에 실패했습니다. 다시 시도해 주세요.");
+    // }
 
   };
 

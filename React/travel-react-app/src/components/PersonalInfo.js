@@ -8,6 +8,7 @@ import '../css/MyPage_per.css'; // CSS 파일 import
 import { IoPencil } from "react-icons/io5";
 import { FaRegTrashAlt } from "react-icons/fa";
 import axios from "axios";
+import { call } from "../api/ApiService";
 
 Modal.setAppElement('#root');
 
@@ -19,7 +20,10 @@ const PersonalInfo = () => {
   const [newPassword, setNewPassword] = useState("");
   const [newPasswordConfirm, setNewPasswordConfirm] = useState("");
   const [userNickname, setUserNickname] = useState('길동');
-  const { user, setUser,profileImage, setProfileImage  } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
+
+
+  const profileImage = user.userProfileImage ? user.userProfileImage : defaultImage;
 
   const openPopup = (type) => {
     setCurrentPopup(type);
@@ -29,43 +33,46 @@ const PersonalInfo = () => {
   const closePopup = () => setIsOpen(false);
 
   //비밀번호변경
-  const handleChangePassword = async () => {
+  const handleChangePassword = () => {
 
     if (newPassword === newPasswordConfirm) {
-      try {
 
-        const userProfile = {
-          userPassword: newPassword
-        };
-        console.log(`Bearer ${user.token}` )
+      const userProfile = {
+        userPassword: newPassword
+      };
+      
+      console.log(user.token)
 
-        const response = await axios.patch(`http://localhost:9090/travel/userPasswordEdit/${user.id}`, userProfile, {
-          headers: {
-            "Content-Type": "application/json",
-            'Authorization': `Bearer ${user.token}` 
-          },
-          withCredentials: true
-        });
-        
-        if(response.data){
+      //call메서드 사용해서 백엔드 요청
+      call(`/travel/userPasswordEdit/${user.id}`,"PATCH",userProfile,user)
+      .then(response=>{
+        if(response){
           alert("비밀번호가 변경되었습니다.");
           closePopup();
+        }else{
+          alert("비밀번호변경 실패");
+          closePopup();
         }
-      } catch (err) {
-        console.error('비밀번호변경 실패:', err);
-      }
+      })
+      .catch(error=>{
+        console.error('비밀번호변경 실패:', error);
+      })
+        
     } else {
       alert("새로운 비밀번호와 확인이 일치하지 않습니다.");
     }
 
   };
 
+  //닉네임변경 버튼
   const handleChangeNickname = () => {
     alert("닉네임이 변경되었습니다.");
     closePopup();
   };
 
-  const handleProfileImageChange = async(e) => {
+
+
+  const handleProfileImageChange = async (e) => {
 
     const file = e.target.files[0];
 
@@ -74,12 +81,7 @@ const PersonalInfo = () => {
       // FormData 객체를 사용해 파일과 기타 데이터를 전송
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('token', user.token);
-      
-      formData.forEach((value, key) => {
-        console.log(key, value);  // key는 'file' 또는 'token' 값이 출력됩니다.
-      });
-
+      console.log(formData.get('file'))
       try {
         // 백엔드에 프로필 사진을 업로드
         const response = await axios.patch(`http://localhost:9090/travel/userProfileImageEdit/${user.id}`, formData, {
@@ -90,20 +92,26 @@ const PersonalInfo = () => {
         });
         
         if(response.data){
+          console.log(response.data)
           //성공적으로 업로드되면 사용자 정보 업데이트
-          setUser(response.data);
+          setUser(prevUser => ({
+            ...prevUser,  // 기존 데이터 유지
+            userProfileImage: response.data.userProfileImage // 새로 받은 userProfileImage로 업데이트
+          }));
+          console.log(user)
         }
 
       } catch (err) {
         console.error('파일 업로드 실패:', err);
       }
+    
     }//if문 종료
 
   };
 
 
   const handleLogout = () => {
-    localStorage.removeItem('authToken');
+    localStorage.clear();
     alert("로그아웃 되었습니다.");
     navigate('/login');
   };

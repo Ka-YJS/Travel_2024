@@ -15,8 +15,6 @@ const TopIcon = () => {
 
   const {user} = useContext(UserContext);
 
-  //로그인 여부
-  const isLoggedIn = !!user.userId;
 
   // 프로필 이미지 결정 로직
   const profileImage = user.userProfileImage ? user.userProfileImage : defaultImage;
@@ -66,19 +64,11 @@ const TopIcon = () => {
           </div>
         ))}
         <div style={{width:"130px",height:"100px",justifyItems:"center",alignItems:"center",margin:"5px"}}>
-          {isLoggedIn ? (
-            <ProfileImage
-              src={profileImage} // 업로드된 이미지가 없으면 기본 이미지
-              alt="profile"
-              onClick={()=>setIsbutton(!isbutton)}
-            />
-          ) : (
-            <ProfileImage
-              src={defaultImage} //로그인안되어있으면 기본 이미지
-              alt="profile"
-              onClick={()=>setIsbutton(!isbutton)}
-            />
-          )}
+          <ProfileImage
+            src={profileImage} // 업로드된 이미지가 없으면 기본 이미지
+            alt="profile"
+            onClick={()=>setIsbutton(!isbutton)}
+          />
           <p>username</p>
           {isbutton&&(
             <div

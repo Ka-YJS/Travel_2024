@@ -28,7 +28,7 @@ function MainScreen() {
     <div className="main-screen">
       <TopIcon />
       <div className="content">
-        <h1>{nickname}님 환영합니다.</h1>
+        <h1>{user.userNickName}님 환영합니다.</h1>
         <div className="button-row">
           <button className="main-button" onClick={handleStartRecord}>
             기록 시작하기

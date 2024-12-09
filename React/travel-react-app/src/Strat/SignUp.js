@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import TopIcon from "../TopIcon/TopIcon";
 import axios from "axios";
 import "../css/Strat.css";
-import defaultImage from "../image/defaultImage.png"
+import defaultImage from "../image/defaultImage.png";
+import {call} from "../api/ApiService";
 
 function Signup() {
   const { user, setUser } = useContext(UserContext);
@@ -76,19 +77,27 @@ function Signup() {
       userNickName: userNickName
     };
 
-    try {
 
-      const response = await axios.post("http://localhost:9090/travel/signup", newUser, {
-        headers: { "Content-Type": "application/json" },
-      });
-      console.log(response.data)
+    call("/travel/signup","POST",newUser,user)
+      .then((response)=>{
+        console.log(response)
+        alert("회원가입이 완료되었습니다.");
+        navigate("/Login");
+    })
 
-    } catch (error) {
+
+    // try {
+    //   const response = await axios.post("http://localhost:9090/travel/signup", newUser, {
+    //     headers: { "Content-Type": "application/json" },
+    //   });
+    //   console.log(response.data)
+
+    // } catch (error) {
       
-    }
+    // }
 
-    alert("회원가입이 완료되었습니다.");
-    navigate("/Login");
+    // alert("회원가입이 완료되었습니다.");
+    // navigate("/Login");
 
   };
 
