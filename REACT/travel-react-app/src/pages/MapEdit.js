@@ -1,18 +1,20 @@
 import React, { useContext, useState } from "react";
 import { GoogleMap, Marker, InfoWindow, Autocomplete, useJsApiLoader } from "@react-google-maps/api";
-import Write from "./Write";
 import TopIcon from "../TopIcon/TopIcon";
 import config from "../Apikey";
 import { PlaceContext } from "../context/PlaceContext";
 import { Button } from "@mui/material";
 import PostEdit from "./PostEdit";
 import { ListContext } from "../context/ListContext";
+import { CopyListContext } from "../context/CopyListContext";
+import '../css/Map.css';
 
 const libraries = ["places"]; // 외부 상수로 선언
 
 const MapEdit = () => {
     const { placeList, setPlaceList } = useContext(PlaceContext);
     const { list, setList } = useContext(ListContext);
+    const { copyList, setCopyList} = useContext(CopyListContext);
 
     const [map, setMap] = useState(null);
     const [center, setCenter] = useState({ lat: 37.5665, lng: 126.9780 }); // 서울 중심 좌표
@@ -80,23 +82,26 @@ const MapEdit = () => {
     // To-Do List에 장소 추가
     const handleAddToPlaceList = () => {
         if (placeName) {
-            setPlaceList((prevList) => [...prevList, placeName]);
-            console.log(placeName, +"placeList: "+placeList)
+            setCopyList((prevList) => [...prevList, placeName]);
+            console.log(placeName, +"placeList: "+list)
             setPlaceName(""); // 입력 필드 초기화
         }
     };
 
     // To-Do List에서 항목 삭제
     const handleDeleteFromTodoList = (index) => {
-        setPlaceList((prevList) => prevList.filter((_, i) => i !== index));
         setList((prevList) => prevList.filter((_, i) => i !== index));
+        setCopyList((prevList) => prevList.filter((_, i) => i !== index));
     };
 
     return (
         <div style={{ display: "flex", width: "100vw", minHeight: "100vh", flexDirection: "row" }}>
             {/* 지도 영역 */}
-            <TopIcon />
-            <div
+            <div style={{zIndex:"2000"}}>
+               <TopIcon /> 
+            </div>
+            
+            <div className="map-container"
                 style={{
                     flex: 1,
                     minHeight: "111vh",
@@ -200,10 +205,10 @@ const MapEdit = () => {
                         }}
                     >
                         여행지 List
-                        <Button onClick={() => setList([...placeList])}>추가하기</Button>
+                        <Button onClick={() => setList([...copyList])}>추가하기</Button>
                     </h3>
                     <ul>
-                        {placeList.map((item, index) => (
+                        {copyList.map((item, index) => (
                             <li
                                 title="-"
                                 key={index}

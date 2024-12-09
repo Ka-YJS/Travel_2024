@@ -5,12 +5,15 @@ import { PostContext } from "../context/PostContext";
 import { UserContext } from "../context/UserContext";
 import { PlaceContext } from "../context/PlaceContext";
 import { ListContext } from "../context/ListContext";
+import { ImageContext } from "../context/ImageContext";
+import TopIcon from "../TopIcon/TopIcon"
 
 const PostDetail = () => {
     const { postList, setPostList } = useContext(PostContext); // 게시글 데이터
     const {placeList, setPlaceList} = useContext(PlaceContext);
     const { user } = useContext(UserContext); // 사용자 데이터
     const {list} = useContext(ListContext);
+    const {copyImage} = useContext(ImageContext);
 
     const { id } = useParams(); // URL에서 게시글 ID 추출
     const postId = Number(id) - 1; // 배열 인덱스 계산
@@ -46,6 +49,9 @@ const PostDetail = () => {
 
     return (
         <div>
+            <div style={{zIndex:"4000"}}>
+               <TopIcon /> 
+            </div>
             <h1
                 style={{
                     marginBottom: "20px",
@@ -56,8 +62,8 @@ const PostDetail = () => {
                 게시글 보기
             </h1>
             <div>
-                <div style={{ marginBottom: "20px" }}>
-                    <TextField
+                <div >
+                    <TextField style={{ marginBottom: "20px" }}
                         InputProps={{
                             readOnly: true,
                         }}
@@ -108,6 +114,33 @@ const PostDetail = () => {
                         multiline
                         rows={8}
                     />
+                </div>
+                <div style={{
+                    display:"grid",
+                    gridTemplateColumns:"repeat(3, 1fr)",
+                    gap: "10px",
+                    marginTop: "20px"
+                    }}>
+                {copyImage.map((image, id) => (
+                    <div key={id} style={{
+                        display:"flex", 
+                        justifyContent:"center",
+                        alignItems:"center",
+                        border: "1px solid #ddd", // 테두리 추가 (선택 사항)
+                        borderRadius: "5px", // 모서리 둥글게
+                        overflow: "hidden", // 이미지가 영역을 벗어나지 않도록 처리
+                        backgroundColor: "#f9f9f9", // 배경색 추가 (선택 사항)
+                        }}>
+                        <img src={image} alt={`${image}-${id}`}
+                            style={{
+                                height:"20vh",
+                                width: "20vw",
+                                padding: 0,
+                                margin: 0,
+                            }}
+                        />
+                    </div>
+                ))}
                 </div>
             </div>
 
