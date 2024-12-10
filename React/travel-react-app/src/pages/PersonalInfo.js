@@ -4,11 +4,9 @@ import { Input } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from "../context/UserContext";
 import defaultImage from "../image/defaultImage.png";
-import '../css/MyPage_per.css'; // CSS 파일 import
+import '../css/MyPage.css';
 import { IoPencil } from "react-icons/io5";
 import { FaRegTrashAlt } from "react-icons/fa";
-import axios from "axios";
-import { call } from "../api/ApiService";
 
 Modal.setAppElement('#root');
 
@@ -20,10 +18,13 @@ const PersonalInfo = () => {
   const [newPassword, setNewPassword] = useState("");
   const [newPasswordConfirm, setNewPasswordConfirm] = useState("");
   const [userNickname, setUserNickname] = useState('길동');
-  const { user, setUser } = useContext(UserContext);
+  const { profileImage, setProfileImage } = useContext(UserContext);
 
-
-  const profileImage = user.userProfileImage ? user.userProfileImage : defaultImage;
+  const user = {
+    userName: '홍길동',
+    userNickname: userNickname,
+    userId: 'hong123'
+  };
 
   const openPopup = (type) => {
     setCurrentPopup(type);
@@ -32,93 +33,30 @@ const PersonalInfo = () => {
 
   const closePopup = () => setIsOpen(false);
 
-  //비밀번호변경
   const handleChangePassword = () => {
-
     if (newPassword === newPasswordConfirm) {
-
-      const userProfile = {
-        userPassword: newPassword
-      };
-      
-      console.log(user.token)
-
-      //call메서드 사용해서 백엔드 요청
-      call(`/travel/userPasswordEdit/${user.id}`,"PATCH",userProfile,user)
-      .then(response=>{
-        if(response){
-          alert("비밀번호가 변경되었습니다.");
-          closePopup();
-        }else{
-          alert("비밀번호변경 실패");
-          closePopup();
-        }
-      })
-      .catch(error=>{
-        console.error('비밀번호변경 실패:', error);
-      })
-        
+      alert("비밀번호가 변경되었습니다.");
+      closePopup();
     } else {
       alert("새로운 비밀번호와 확인이 일치하지 않습니다.");
     }
-
   };
 
-  //닉네임변경 버튼
   const handleChangeNickname = () => {
     alert("닉네임이 변경되었습니다.");
     closePopup();
   };
 
-
-
-  const handleProfileImageChange = async (e) => {
-
+  const handleProfileImageChange = (e) => {
     const file = e.target.files[0];
-
     if (file) {
-
-      // FormData 객체를 사용해 파일과 기타 데이터를 전송
-      const formData = new FormData();
-      formData.append('file', file);
-      console.log(formData.get('file'))
-      try {
-        // 백엔드에 프로필 사진을 업로드
-        const response = await axios.patch(`http://localhost:9090/travel/userProfileImageEdit/${user.id}`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer ${user.token}`
-          },
-        });
-        
-        if(response.data){
-          console.log(response.data)
-          //성공적으로 업로드되면 사용자 정보 업데이트
-          setUser(prevUser => ({
-            ...prevUser,  // 기존 데이터 유지
-            userProfileImage: response.data.userProfileImage // 새로 받은 userProfileImage로 업데이트
-          }));
-          console.log(user)
-        }
-
-      } catch (err) {
-        console.error('파일 업로드 실패:', err);
-      }
-    
-    }//if문 종료
-
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
-
-
-  const handleLogout = () => {
-    localStorage.clear();
-    alert("로그아웃 되었습니다.");
-    navigate('/login');
-  };
-
-  const handlemypost = () => {
-    navigate("/mypage/mypost")
-  }
 
   const handleButtonClick = () => {
     document.getElementById('fileInput').click();
@@ -133,12 +71,12 @@ const PersonalInfo = () => {
   };
 
   return (
-    <div className="PageWrapper">
-      <div className="Wrapper">
-        <div className="ProfileWrapper ">
+    <div className="page_wrapper">
+      <div className="wrapper">
+        <div className="profile_wrapper ">
           <img
-            className="ProfileImage"
-            src={profileImage}
+            className="profile_image"
+            src={profileImage || defaultImage}
             alt="profile"
           />
           <div style={{display:"flex" }}>
@@ -152,22 +90,27 @@ const PersonalInfo = () => {
               />
               <button style={{backgroundColor:"transparent"}} type="button" onClick={handleButtonClick}><IoPencil /></button>
             </div>
-            <button style={{backgroundColor:"transparent"}} type="button" onClick={() => setUser({userProfileImage:defaultImage})}>
+            <button style={{backgroundColor:"transparent"}} type="button" onClick={() => setProfileImage(defaultImage)}>
             <FaRegTrashAlt />
             </button>
           </div>
         </div>
 
-        <div className="PersonalContainer">
-          <div>이름 : {user.userName}</div>
-          <div>닉네임 : {user.userNickName}</div>
-          <div>아이디 : {user.userId}</div>
-          <button onClick={() => openPopup('password')}>비밀번호 변경</button>
-          <button onClick={() => openPopup('nickname')}>닉네임 변경</button>
-          <button onClick={handleLogout}>로그아웃</button>
-          <button onClick={handlemypost}>내게시글보기</button>
+        <div className="personal_container">
+          <div className="user-info">
+            <div className="user-info-item">이름 : {user.userName}</div>
+            <div className="user-info-item">닉네임 : {user.userNickname}</div>
+            <div className="user-info-item">아이디 : {user.userId}</div>
+          </div>
+
+          <div className="button-container">
+            <button className="custom-button" onClick={() => openPopup('nickname')}>닉네임 변경</button>
+          </div>
+          <div className="button-container">
+            <button className="custom-button" onClick={() => openPopup('password')}>비밀번호 변경</button>
+          </div>
           <div>
-            <button onClick={handleDeleteAccount} style={{ backgroundColor: "red" }}>
+            <button onClick={handleDeleteAccount} className="delete-button">
               계정삭제
             </button>
           </div>
@@ -179,11 +122,11 @@ const PersonalInfo = () => {
         isOpen={isOpen}
         onRequestClose={closePopup}
         contentLabel="Personal Information Popup"
-        className="CustomModal"
-        overlayClassName="Overlay"
+        className="custom_modal"
+        overlayClassName="overlay"
       >
         {currentPopup === 'nickname' && (
-          <div className="PopupWrapper">
+          <div className="popup_wrapper">
             <h2>닉네임 변경</h2>
             <div>
               <Input
@@ -192,13 +135,13 @@ const PersonalInfo = () => {
                 placeholder="새로운 닉네임"
               />
             </div>
-            <button onClick={handleChangeNickname}>변경</button>
+            <button onClick={handleChangeNickname} style={{marginRight:"5px"}}>변경</button>
             <button onClick={closePopup}>닫기</button>
           </div>
         )}
 
         {currentPopup === 'password' && (
-          <div className="PopupWrapper">
+          <div className="popup_wrapper">
             <h2>비밀번호 변경</h2>
             <div>
               <label>현재 비밀번호</label>
@@ -224,7 +167,7 @@ const PersonalInfo = () => {
                 onChange={(e) => setNewPasswordConfirm(e.target.value)}
               />
             </div>
-            <button onClick={handleChangePassword}>변경</button>
+            <button onClick={handleChangePassword} style={{marginRight:"5px"}}>변경</button>
             <button onClick={closePopup}>닫기</button>
           </div>
         )}

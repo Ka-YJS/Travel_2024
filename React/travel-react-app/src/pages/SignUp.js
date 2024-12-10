@@ -1,11 +1,9 @@
 import React, { useState, useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
-import TopIcon from "../TopIcon/TopIcon";
 import axios from "axios";
 import "../css/Strat.css";
-import defaultImage from "../image/defaultImage.png";
-import {call} from "../api/ApiService";
+import logo2 from '../image/logo2.JPG'
 
 function Signup() {
   const { user, setUser } = useContext(UserContext);
@@ -26,18 +24,16 @@ function Signup() {
   const navigate = useNavigate();
 
   const validatePassword = (password) => {
-    // const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
-    // return passwordRegex.test(password);
-    return password
+    const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
+    return passwordRegex.test(password);
   };
 
   const validateEmail = (email) => {
-    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    // return emailRegex.test(email);
-    return email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
 
     // 이메일 형식 검증
@@ -52,11 +48,11 @@ function Signup() {
       return;
     }
 
-    // // 이메일 인증 확인
-    // if (!isEmailVerified) {
-    //   alert("이메일 인증을 완료해주세요.");
-    //   return;
-    // }
+    // 이메일 인증 확인
+    if (!isEmailVerified) {
+      alert("이메일 인증을 완료해주세요.");
+      return;
+    }
 
     // 비밀번호 확인 일치 여부
     if (userPassword !== userPasswordConfirm) {
@@ -71,53 +67,34 @@ function Signup() {
     }
 
     const newUser = {
-      userId: userId,
-      userPassword: userPassword,
-      userName: userName,
-      userNickName: userNickName
+      id: userId,
+      password: userPassword,
+      name: userName,
+      nickname: userNickName,
     };
 
+    setUser((prev) => [...prev, newUser]);
 
-    call("/travel/signup","POST",newUser,user)
-      .then((response)=>{
-        console.log(response)
-        alert("회원가입이 완료되었습니다.");
-        navigate("/Login");
-    })
-
-
-    // try {
-    //   const response = await axios.post("http://localhost:9090/travel/signup", newUser, {
-    //     headers: { "Content-Type": "application/json" },
-    //   });
-    //   console.log(response.data)
-
-    // } catch (error) {
-      
-    // }
-
-    // alert("회원가입이 완료되었습니다.");
-    // navigate("/Login");
-
+    alert("회원가입이 완료되었습니다.");
+    console.log("등록된 사용자:", user);
+    navigate("/Login");
   };
-
 
   const handleIdCheck = () => {
     if (!userId) {
       alert("아이디를 입력하세요.");
       return;
     }
-    alert("사용 가능한 아이디입니다.");
-    setIsIdChecked(true);
-    
-    //나중에 백엔드에서 유전 전체조회 기능 가져오기
-    // if (response.data) {
-    //   alert("이미 사용 중인 아이디입니다.");
-    //   setIsIdChecked(false);
-    // } else {
-    //   alert("사용 가능한 아이디입니다.");
-    //   setIsIdChecked(true);
-    // }
+
+    const isDuplicate = user.some((existingUser) => existingUser.id === userId);
+
+    if (isDuplicate) {
+      alert("이미 사용 중인 아이디입니다.");
+      setIsIdChecked(false);
+    } else {
+      alert("사용 가능한 아이디입니다.");
+      setIsIdChecked(true);
+    }
   };
 
   const handleEmailValidation = (value) => {
@@ -126,32 +103,32 @@ function Signup() {
     setEmailError(!validateEmail(value)); // 이메일 형식 검증
   };
 
-  // const handleEmailVerification = () => {
-  //   if (emailError || !userId) {
-  //     alert("올바른 이메일 주소를 입력해주세요.");
-  //     return;
-  //   }
+  const handleEmailVerification = () => {
+    if (emailError || !userId) {
+      alert("올바른 이메일 주소를 입력해주세요.");
+      return;
+    }
 
-  //   // 이메일 인증 코드 발송 전에 로딩 상태로 설정
-  //   setIsLoading(true);
+    // 이메일 인증 코드 발송 전에 로딩 상태로 설정
+    setIsLoading(true);
 
-  //   // 이메일 인증 코드 발송
-  //   axios.get(`http://localhost:9090/api/email/auth?address=${userId}`)
-  //     .then((response) => {
-  //       setIsLoading(false); // 로딩 상태 해제
-  //       if (response.data.success) {
-  //         alert("이메일 인증 코드가 발송되었습니다. 인증 코드를 입력하세요.");
-  //         setIsAuthCodeSent(true); // 인증 코드 입력창 활성화
-  //       } else {
-  //         alert("이메일 인증 코드 발송에 실패했습니다.");
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       setIsLoading(false); // 로딩 상태 해제
-  //       console.error("이메일 인증 코드 발송 실패:", error);
-  //       alert("이메일 인증 코드 발송 중 오류가 발생했습니다.");
-  //     });
-  // };
+    // 이메일 인증 코드 발송
+    axios.get(`http://localhost:9090/api/email/auth?address=${userId}`)
+      .then((response) => {
+        setIsLoading(false); // 로딩 상태 해제
+        if (response.data.success) {
+          alert("이메일 인증 코드가 발송되었습니다. 인증 코드를 입력하세요.");
+          setIsAuthCodeSent(true); // 인증 코드 입력창 활성화
+        } else {
+          alert("이메일 인증 코드 발송에 실패했습니다.");
+        }
+      })
+      .catch((error) => {
+        setIsLoading(false); // 로딩 상태 해제
+        console.error("이메일 인증 코드 발송 실패:", error);
+        alert("이메일 인증 코드 발송 중 오류가 발생했습니다.");
+      });
+  };
 
   const handleAuthCodeChange = (e) => {
     setAuthCode(e.target.value);
@@ -194,7 +171,6 @@ function Signup() {
 
   return (
     <div className="container">
-      <TopIcon />
       <main>
         <form className="form" onSubmit={handleSubmit}>
           <h3>::: 회원가입 :::</h3>
@@ -220,13 +196,13 @@ function Signup() {
               className="button-check"
               onClick={handleIdCheck}
             />
-            {/* <input
+            <input
               type="button"
               value={isLoading ? "발송 중..." : "인증번호 발송"}
               className="button-verify"
               onClick={handleEmailVerification}
               disabled={isLoading || !userId || emailError || isEmailVerified}
-            /> */}
+            />
           </div>
 
           {/* 인증 코드 입력 필드 */}
@@ -305,13 +281,19 @@ function Signup() {
               type="button"
               value="취소"
               className="cancel"
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/login")}
             />
           </div>
         </form>
 
         {/* 큰 로고 */}
-        <div className="logo-box">큰 로고</div>
+        <div >
+          <img 
+                src={logo2} 
+                alt="Logo"
+                className="logo-box" 
+              />
+        </div>
       </main>
     </div>
   );

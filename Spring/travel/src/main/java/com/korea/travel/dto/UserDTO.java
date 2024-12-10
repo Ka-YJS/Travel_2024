@@ -21,4 +21,16 @@ public class UserDTO {
 	private String userProfileImage;//프로필이미지
 	private String token;			//토큰
 	
+	
+	public UserDTO(UserEntity entity) {
+		this.id = entity.getId();
+		this.userId = entity.getUserId();
+		this.userName = entity.getUserName();
+		this.userNickName = entity.getUserNickName();
+		this.userPassword = entity.getUserPassword();
+		this.userProfileImage = entity.getUserProfileImage();
+		this.token = entity.getToken();
+	}
+	
+	
 }

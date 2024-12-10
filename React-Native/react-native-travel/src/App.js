@@ -4,7 +4,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'react-native';
 import LoginScreen from './screens/LoginScreen'; // 로그인 화면
 import SignupScreen from './screens/SignupScreen'; // 회원가입 화면
-import MainTabs from './MainTabs'; // 하단 탭 네비게이션
+import MainTabs from './navigations/MainTabs'; // 하단 탭 네비게이션
+import ProfileScreen from './screens/ProfileScreen'; // 내 프로필 화면
 
 const Stack = createNativeStackNavigator();
 
@@ -33,6 +34,12 @@ const App = () => {
         <Stack.Screen
           name="Signup"
           component={SignupScreen}
+          options={{ headerShown: false }}
+        />
+        {/* 내 프로필 화면 */}
+        <Stack.Screen
+          name="Profile"
+          component={() => <ProfileScreen setIsLoggedIn={setIsLoggedIn} />}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

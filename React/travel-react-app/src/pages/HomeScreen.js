@@ -1,7 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "../image/back.jpg"
-import TopIcon from "../TopIcon/TopIcon";
 
 function HomeScreen() {
   const navigate = useNavigate(); // useNavigate 훅 사용
@@ -21,7 +20,6 @@ function HomeScreen() {
         height: "100vh",
       }}
     >
-      <TopIcon /> 
       <button className="start-button" onClick={handleStart}
       style={{position: "absolute",
         transform: "translate(-50%, -50%)",

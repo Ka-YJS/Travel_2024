@@ -3,7 +3,9 @@ package com.korea.travel.service;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,8 +33,18 @@ public class UserService {
 	private final TokenProvider tokenProvider;
 	
 	
-	//userId가 있는지 조회
-	public boolean getUsers(String userId) {
+	//모든유저 조회
+	public List<UserDTO> getAllUsersId() {
+		
+		List<UserEntity> allUsersId = repository.findAll();
+		
+		return allUsersId.stream().map(UserDTO::new).collect(Collectors.toList());
+		
+	}
+	
+	
+	//userId가 있는지 중복체크
+	public boolean getUserIds(String userId) {
 		
 		UserEntity entity = repository.findByUserId(userId);
 		//중복되는 userId가 없으면 true
@@ -58,7 +70,7 @@ public class UserService {
 		
 		if(user == null || user.getUserId() == null) {
 			throw new RuntimeException("Invalid Arguments 유효하지 않은 인자");
-		}
+		} 
 		final String userId = user.getUserId();
 		//존재하는 ID인지 검사
 		if(repository.existsByUserId(userId)) {

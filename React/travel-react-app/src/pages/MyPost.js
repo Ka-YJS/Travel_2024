@@ -3,6 +3,8 @@ import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { PostContext } from "../context/PostContext";
 import { UserContext } from "../context/UserContext";
+import TopIcon from "../TopIcon/TopIcon";
+import '../css/Post.css';
 
 const MyPost = () => {
     const navigate = useNavigate();
@@ -40,24 +42,17 @@ const MyPost = () => {
     };
 
     return (
-        <div
-            style={{
-                width: "800px",
-                height: "600px",
-                margin: "50px auto",
-                padding: "20px",
-                border: "1px solid #ddd",
-                borderRadius: "10px",
-                backgroundColor: "#f9f9f9",
-                boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
-            }}
-        >
-            <h1 style={{ textAlign: "center", fontWeight: "bold" }}>내 게시물 목록</h1>
-
+    <div>
+        <div style={{margin:"0"}}>
+            <TopIcon/>
+        </div>
+        <div className="post">
+            <h1 style={{ textAlign: "center" }} >My Post</h1>
+            
             {/* 게시물 목록 */}
-            <div style={{ marginTop: "50px", display: "flex", flexWrap: "wrap", gap: "20px" }}>
+            <div className="post_list" style={{marginTop: "50px"}}>
                 {currentPosts.map((post) => (
-                    <div
+                    <div className="my_post"
                         key={post.id}
                         style={{
                             width: "200px",
@@ -65,7 +60,7 @@ const MyPost = () => {
                             textAlign: "center",
                         }}
                     >
-                        <img
+                        <img 
                             onClick={() => handlePostClick(post.id)}
                             src={post.thumbnail}
                             alt="썸네일"
@@ -79,6 +74,18 @@ const MyPost = () => {
                         <p>{post.title}</p>
                     </div>
                 ))}
+            </div>
+
+        <div
+            style={{ display: "flex", justifyContent: "flex-end", marginTop: "20px" }}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => navigate("/map")} // 글쓰기 페이지로 이동
+                    sx={{ width: "15%" }}
+                >
+                    글쓰기
+                </Button>
             </div>
 
             {/* 페이지네이션 */}
@@ -110,33 +117,25 @@ const MyPost = () => {
             </div>
 
             {/* 검색 기능 */}
-            <div style={{ marginTop: "30px" }}>
+            <div style={{ marginTop: "30px", textAlign:"center"}}>
                 <input
                     type="text"
-                    placeholder="게시글 제목 검색"
+                    placeholder="게시글 제목 검색 후 엔터"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     style={{
-                        width: "100%",
+                        width: "60%",
                         padding: "10px",
                         fontSize: "16px",
                         border: "1px solid #ddd",
                         borderRadius: "5px",
+                        textAlign:"center"
                     }}
                 />
             </div>
 
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => navigate("/map")} // 글쓰기 페이지로 이동
-                    sx={{ width: "48%" }}
-                >
-                    글쓰기
-                </Button>
-            </div>
         </div>
+    </div>
     );
 };
 

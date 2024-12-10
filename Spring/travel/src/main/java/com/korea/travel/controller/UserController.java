@@ -52,7 +52,7 @@ public class UserController {
     public boolean userIdSelect (@RequestBody UserDTO dto) {
     	
     	//중복되는 userId가 없으면 true
-    	if(service.getUsers(dto.getUserId())) {
+    	if(service.getUserIds(dto.getUserId())) {
     		return true;
     	}else {
     		return false;

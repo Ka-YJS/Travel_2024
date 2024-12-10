@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
+import { View, TextInput, Button, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { colors, spacing, fontSize, buttonStyles } from '../theme/Theme';  // Theme.js에서 스타일 불러오기
 
 const LoginScreen = ({ setIsLoggedIn, navigation }) => {
   const [email, setEmail] = useState('');
@@ -7,10 +8,9 @@ const LoginScreen = ({ setIsLoggedIn, navigation }) => {
   const [error, setError] = useState('');
 
   const handleLogin = () => {
-    // 이메일과 비밀번호 검증 (간단한 예시)
-    if (email === 'test@test.com' && password === 'password') {
+    if (email === 'a' && password === 'a') {
       setError('');
-      setIsLoggedIn(true); // 로그인 성공 시 Main 화면으로 이동
+      setIsLoggedIn(true);
     } else {
       setError('잘못된 이메일 또는 비밀번호입니다');
     }
@@ -33,7 +33,9 @@ const LoginScreen = ({ setIsLoggedIn, navigation }) => {
       />
       {error ? <Text style={styles.error}>{error}</Text> : null}
       <Button title="로그인" onPress={handleLogin} />
-      <Button title="회원가입" onPress={() => navigation.navigate('Signup')} />
+      <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+        <Text style={styles.signupText}>회원가입</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -43,19 +45,26 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: spacing.medium,
+    backgroundColor: colors.secondary,
   },
   input: {
     width: '100%',
-    height: 40,
+    height: 50,
     borderColor: '#ccc',
     borderWidth: 1,
-    marginBottom: 10,
+    marginBottom: spacing.small,
     paddingLeft: 8,
+    borderRadius: 5,
   },
   error: {
-    color: 'red',
-    marginBottom: 10,
+    color: colors.error,
+    marginBottom: spacing.small,
+  },
+  signupText: {
+    marginTop: spacing.small,
+    color: colors.primary,
+    fontSize: fontSize.medium,
   },
 });
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
+import { colors, spacing, fontSize, buttonStyles } from '../theme/Theme';  // Theme.js에서 스타일 불러오기
 
 const SignupScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -7,10 +8,9 @@ const SignupScreen = ({ navigation }) => {
   const [error, setError] = useState('');
 
   const handleSignup = () => {
-    // 이메일과 비밀번호 검증 (간단한 예시)
     if (email && password) {
       setError('');
-      navigation.navigate('Login'); // 회원가입 완료 후 로그인 화면으로 이동
+      navigation.navigate('Login');
     } else {
       setError('모든 필드를 입력하세요.');
     }
@@ -42,19 +42,21 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: spacing.medium,
+    backgroundColor: colors.secondary,
   },
   input: {
     width: '100%',
-    height: 40,
+    height: 50,
     borderColor: '#ccc',
     borderWidth: 1,
-    marginBottom: 10,
+    marginBottom: spacing.small,
     paddingLeft: 8,
+    borderRadius: 5,
   },
   error: {
-    color: 'red',
-    marginBottom: 10,
+    color: colors.error,
+    marginBottom: spacing.small,
   },
 });
 

@@ -4,23 +4,49 @@ import { useNavigate } from "react-router-dom";
 import { PostContext } from "../context/PostContext";
 import { UserContext } from "../context/UserContext";
 import { PlaceContext } from "../context/PlaceContext";
+import { ListContext } from "../context/ListContext";
+import { Delete } from "@mui/icons-material";
+import { ImageContext } from "../context/ImageContext";
+import { CopyListContext } from "../context/CopyListContext";
+import '../css/Map.css';  // Map.css 파일을 import
 
-
-const Write = ({List}) => {
-    const {placeList, setPlaceList} = useContext(PlaceContext)
-    const { user } = useContext(UserContext)
+const Write = () => {
+    const { placeList, setPlaceList } = useContext(PlaceContext);
+    const { user } = useContext(UserContext);
     const { postList, setPostList } = useContext(PostContext);
-    
+    const {copyList,setCopyList} = useContext(CopyListContext);
+    const { list, setList } = useContext(ListContext);
+    const {copyImage, setCopyImage} = useContext(ImageContext);
     const navigate = useNavigate();
-    console.log("List: "+List)
 
-    
-   
-    // 새로운 게시글의 제목과 내용 상태
+    // 상태 변수
     const [postTitle, setPostTitle] = useState("");
     const [postContent, setPostContent] = useState("");
+    const [previewPhoto, setPreviewPhoto] = useState(""); // 미리보기 이미지 URL
+    const [showImages, setShowImages] = useState([]);
 
-    console.log(List)
+
+    // 이미지 업로드 핸들러
+    const handleAddImage = (e) => {
+        const imageList = e.target.files;
+        let imageUrlList = [...showImages];
+        
+        for(let i = 0; i < imageList.length ; i++){
+            const currentImageUrl = URL.createObjectURL(imageList[i]);
+            imageUrlList.push(currentImageUrl);
+        }
+        if (imageUrlList.length > 10) {
+            imageUrlList = imageUrlList.slice(0, 10);
+        }
+        setShowImages(imageUrlList);
+        setPreviewPhoto(imageUrlList[0])
+        setCopyImage(imageUrlList);
+        console.log(copyImage)
+    }
+    const handleDeleteImage = (id) => {
+        setShowImages(showImages.filter((_, index)=>index !== id));
+    }
+
     // 제목 변경 핸들러
     const handleTitleChange = (e) => {
         setPostTitle(e.target.value);
@@ -34,62 +60,43 @@ const Write = ({List}) => {
     // 저장 버튼 핸들러
     const handleSave = () => {
         if (postTitle && postContent) {
-            // 새 게시글 추가
             const newPost = {
-                id: postList.length + 1, // 고유 ID 생성
+                id: postList.length + 1,
                 title: postTitle,
-                placeList: List,
+                placeList: placeList,
                 content: postContent,
-                thumbnail: "https://via.placeholder.com/150", // 기본 썸네일
-                like: 0, // 초기 좋아요 수
+                thumbnail: previewPhoto || "https://via.placeholder.com/150", // 썸네일로 업로드된 첫 번째 이미지 사용
+                like: 0,
             };
-            setPostList([...postList, newPost]); // 상태 업데이트
-            setPlaceList([])
+            setPostList([...postList, newPost]);
             alert("글이 저장되었습니다!");
-            navigate("/PostDetail/" + newPost.id); // 상세 페이지로 이동
+            navigate("/PostDetail/" + newPost.id);
         } else {
             alert("제목과 내용을 모두 입력해주세요.");
         }
+        setCopyList(placeList);
+  
+        console.log(`copyList: ${copyList}\n placeList: ${placeList} \n list: ${list}`)
     };
 
     // 취소 버튼 핸들러
     const handleCancel = () => {
         setPostTitle("");
         setPostContent("");
-        const confirmText = window.confirm("글 작성을 취소하시겠습니까?");
-        if (confirmText == true) {
-            alert("글 작성이 취소되었습니다.")
-            navigate("/post")
-        }else{
-            alert("글 작성을 계속하세요")
+        if (window.confirm("글 작성을 취소하시겠습니까?")) {
+            alert("글 작성이 취소되었습니다.");
+            navigate("/post");
         }
-        navigate("/Post");
     };
 
     return (
-        <div
-            style={{
-                maxWidth: "600px",
-                margin: "50px auto",
-                padding: "20px",
-                border: "1px solid #ddd",
-                borderRadius: "10px",
-                backgroundColor: "#f9f9f9",
-                boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
-            }}
-        >
-            <h1
-                style={{
-                    marginBottom: "20px",
-                    fontWeight: "bold",
-                    textAlign: "center",
-                }}
-            >
-                글쓰기
-            </h1>
+        <div className="write">
+            <div className="write_h1">
+                <h1>글쓰기</h1>
+            </div>
 
             {/* 제목 입력 */}
-            <div style={{ marginBottom: "20px" }}>
+            <div>
                 <TextField
                     fullWidth
                     variant="outlined"
@@ -99,40 +106,37 @@ const Write = ({List}) => {
                     placeholder="제목을 입력하세요."
                 />
             </div>
-            <div style={{ marginBottom: "20px" }}>
+
+            {/* 작성자 표시 */}
+            <div>
                 <TextField
-                InputProps={{
-                    readOnly: true
-                }}
-                    lable= "작성자"
+                    InputProps={{
+                        readOnly: true,
+                    }}
+                    label="작성자"
                     fullWidth
                     variant="outlined"
-                    value={user[0]?.userNickname}
-/>
-
+                    value={user[0]?.nickname || "알 수 없는 사용자"}
+                />
             </div>
 
-            {/* 안내 메시지 */}
+            {/* 여행지 표시 */}
             <div>
-                <p>사진, 동영상, 글씨포인트 등 API 추가 예정</p>
-            </div>
-
-            <div style={{ marginBottom: "20px" }}>
                 <TextField
                     inputProps={{
-                        readOnly: true
+                        readOnly: true,
                     }}
                     fullWidth
                     variant="outlined"
                     label="여행지"
-                    value={List}
+                    value={list.join(", ")}
                     multiline
-                    rows={4}
+                    rows={2}
                 />
             </div>
 
             {/* 내용 입력 */}
-            <div style={{ marginBottom: "20px" }}>
+            <div>
                 <TextField
                     fullWidth
                     variant="outlined"
@@ -145,13 +149,30 @@ const Write = ({List}) => {
                 />
             </div>
 
+            {/* 이미지 업로드 */}
+            <div className="photo_style">
+                <label htmlFor="input-file" className="input-file-label">
+                    <input type="file" accept=".png, .jpg, .jpeg, .gif" id="input-file" multiple onChange={handleAddImage} />
+                    <span>사진추가</span>
+                </label>
+
+                {/* 저장해둔 이미지들을 순회하면서 화면에 이미지 출력 */}
+                <div className="image-grid">
+                    {showImages.map((image, id) => (
+                        <div key={id}>
+                            <img src={image} alt={`${image}-${id}`} />
+                            <Delete onClick={() => handleDeleteImage(id)} />
+                        </div>
+                    ))}
+                </div>
+            </div>
+
             {/* 버튼들 */}
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div className="write-buttons">
                 <Button
                     variant="contained"
                     color="primary"
                     onClick={handleSave}
-                    style={{ width: "48%" }}
                 >
                     저장
                 </Button>
@@ -159,7 +180,6 @@ const Write = ({List}) => {
                     variant="outlined"
                     color="error"
                     onClick={handleCancel}
-                    style={{ width: "48%" }}
                 >
                     취소
                 </Button>

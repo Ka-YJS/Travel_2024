@@ -1,8 +1,8 @@
 import React, { useContext,useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // useNavigate import
 import "../App.css";
-import TopIcon from "../TopIcon/TopIcon";
 import { UserContext } from "../context/UserContext";
+import TopIcon from "../TopIcon/TopIcon";
 
 function MainScreen() {
   const [nickname, setNickname] = useState("");
@@ -28,7 +28,7 @@ function MainScreen() {
     <div className="main-screen">
       <TopIcon />
       <div className="content">
-        <h1>{user.userNickName}님 환영합니다.</h1>
+        <h1>{nickname}님 환영합니다.</h1>
         <div className="button-row">
           <button className="main-button" onClick={handleStartRecord}>
             기록 시작하기

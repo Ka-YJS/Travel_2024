@@ -1,119 +1,143 @@
-import React, {useState, useContext } from "react";
+import React, { useState, useContext } from "react";
 import { SlHome } from "react-icons/sl";
 import { IoMapOutline } from "react-icons/io5";
-import { BsFillPostageHeartFill } from "react-icons/bs";
+import { MdNoteAlt } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "../context/UserContext";
-import styled from "styled-components";
-import "../App.css";
-import defaultImage from '../image/defaultImage.png'
+import { UserContext } from "../context/UserContext"; // UserContext import
+import { Collapse } from "react-bootstrap";
+import PersonalInfo from "../pages/PersonalInfo"; // PersonalInfo 컴포넌트 import
+import "../css/MyPage.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import defaultImage from '../image/defaultImage.png';
 
 const TopIcon = () => {
-
-  const [logo, setLogo] = useState(null);
-  const [isbutton,setIsbutton] = useState(false);
-
-  const {user} = useContext(UserContext);
-
-
-  // 프로필 이미지 결정 로직
-  const profileImage = user.userProfileImage ? user.userProfileImage : defaultImage;
-
-
-  const handleLogoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setLogo(URL.createObjectURL(file));
-    }
-  };
+  const [isProfileDropdownVisible, setIsProfileDropdownVisible] = useState(false);
+  const [isMyInfoVisible, setIsMyInfoVisible] = useState(false); // Collapse 상태 관리
+  const { profileImage, userNickName } = useContext(UserContext); // userNickName 가져오기
   const navigate = useNavigate();
 
-  const ProfileImage = styled.img`
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;        // 프로필 이미지를 원형으로 만들기
-  cursor: pointer;          // 클릭 가능한 영역으로 처리
-`;
-
   const iconComponents = [
-    { id: "home", component: <SlHome />, route: "/" },
+    { id: "home", component: <SlHome />, route: "/main" },
     { id: "map", component: <IoMapOutline />, route: "/map" },
-    { id: "post", component: <BsFillPostageHeartFill />, route: "/post" },
+    { id: "post", component: <MdNoteAlt />, route: "/post" },
   ];
 
-  return(    
-    <header className="home-header">
-      <div className="logo-container">
-        {logo ? (
-          <img src={logo} alt="Logo" className="logo" />
-        ) : (
-          <label className="file-input">
-            로고 선택
-            <input type="file" accept="image/*" onChange={handleLogoChange} />
-          </label>
-        )}
-      </div>
-      <div className="icon-container">
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    alert("로그아웃 되었습니다.");
+    navigate('/login');
+  };
+
+  return (
+    <header
+      className="home-header"
+      style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px" }}
+    >
+      {/* 아이콘 영역 */}
+      <div
+        className="icon-container"
+        style={{ display: "flex", alignItems: "center", gap: "15px" }}
+      >
         {iconComponents.map((icon) => (
-          <div 
+          <div
             key={icon.id}
             className="icon"
+            style={{ cursor: "pointer" }}
             onClick={() => navigate(icon.route)}
           >
             {icon.component}
           </div>
         ))}
-        <div style={{width:"130px",height:"100px",justifyItems:"center",alignItems:"center",margin:"5px"}}>
-          <ProfileImage
-            src={profileImage} // 업로드된 이미지가 없으면 기본 이미지
+      </div>
+
+      {/* 프로필 영역 */}
+      <div className="profile-container" style={{ position: "relative", marginLeft: "20px" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            marginTop: "20px",
+          }}
+        >
+          <img
+            style={{
+              width: "50px",
+              height: "50px",
+              borderRadius: "50%",
+              cursor: "pointer",
+              marginRight:"30px"
+            }}
+            src={profileImage || defaultImage}
             alt="profile"
-            onClick={()=>setIsbutton(!isbutton)}
+            onClick={() => setIsProfileDropdownVisible(!isProfileDropdownVisible)}
           />
-          <p>username</p>
-          {isbutton&&(
-            <div
-              style={{
-                border: "1px solid #ccc",
-                backgroundColor: "#f9f9f9",
-                padding: "10px",
-                borderRadius: "5px",
-                display: "flex", // Flexbox 사용
-                flexDirection: "column", // 세로 방향 정렬
-                gap: "10px", // 버튼 간격 추가
-              }}
-            >
-              <button 
-                style={{ 
-                  margin: "5px", 
-                  padding: "10px", 
-                  backgroundColor: "#007bff", 
-                  color: "white", 
-                  border: "none", 
-                  borderRadius: "5px" 
-                }} 
-                onClick={()=>(navigate("/mypage/personalInfo"))}
-              >
-                내 정보
-              </button>
-              <button
-                style={{ 
-                  margin: "5px", 
-                  padding: "10px", 
-                  backgroundColor: "#28a745", 
-                  color: "white", 
-                  border: "none", 
-                  borderRadius: "5px" 
-                }}
-                onClick={()=>(navigate("/mypage/mypost"))}
-              >
-                My게시글
-              </button>
-            </div>
-          )}
+          <p style={{ textAlign: "center", marginRight: "30px" }}>{userNickName || "username"}</p>
         </div>
-      </div>  
+        {isProfileDropdownVisible && (
+          <div
+            className="profile_button"
+            style={{
+              width:isMyInfoVisible?"400px":"200px",
+              position: "absolute",
+              top: "100px",
+              right: "0",
+              backgroundColor: "#fff",
+              padding: "10px",
+              border: "1px solid #ddd",
+              borderRadius: "5px",
+              zIndex: 10,
+            }}
+          >
+            <button
+              style={{
+                margin: "5px",
+                padding: "10px",
+                backgroundColor: "#008cba",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+              }}
+              onClick={() => setIsMyInfoVisible(!isMyInfoVisible)}
+            >
+              My Info
+            </button>
+            <Collapse in={isMyInfoVisible}>
+            <div style={{ height: 'auto' }}>
+                <PersonalInfo /> {/* PersonalInfo 컴포넌트를 보이도록 렌더링 */}
+              </div>
+            </Collapse>
+            <button
+              style={{
+                margin: "5px",
+                padding: "10px",
+                backgroundColor: "#28a745",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+              }}
+              onClick={() => navigate("/mypage/mypost")}
+            >
+              My post
+            </button>
+            <button
+              style={{
+                margin: "5px",
+                padding: "10px",
+                backgroundColor: "rgb(212, 35, 35)",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+              }}
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          </div>
+        )}
+      </div>
     </header>
-  )
-}
+  );
+};
 
 export default TopIcon;

@@ -1,7 +1,8 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import WriteScreen from './screens/WriteScreen'; // 게시판 작성 화면
-import PostScreen from './screens/PostScreen'; // 게시판 보기 화면
+import WriteScreen from '../screens/WriteScreen'; // 게시판 작성 화면
+import PostScreen from '../screens/PostScreen'; // 게시판 보기 화면
+import ProfileScreen from '../screens/ProfileScreen'; // 내 프로필 화면
 import { Ionicons } from 'react-native-vector-icons';
 
 const Tab = createBottomTabNavigator();
@@ -17,6 +18,8 @@ const MainTabs = () => {
             iconName = 'create'; // 게시판 작성 아이콘
           } else if (route.name === 'PostScreen') {
             iconName = 'eye'; // 게시판 보기 아이콘
+          } else if (route.name === 'Profile') {
+            iconName = 'person'; // 내 프로필 아이콘
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
@@ -24,6 +27,7 @@ const MainTabs = () => {
     >
       <Tab.Screen name="WriteScreen" component={WriteScreen} options={{ tabBarLabel: '게시판 작성' }} />
       <Tab.Screen name="PostScreen" component={PostScreen} options={{ tabBarLabel: '게시판 보기' }} />
+      <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarLabel: '내 프로필' }} />
     </Tab.Navigator>
   );
 };

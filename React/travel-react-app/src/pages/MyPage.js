@@ -1,6 +1,6 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import PersonalInfo from "./PersonalInfo";
+import PersonalInfo from "../pages/PersonalInfo";
 import MyPost from "./MyPost";
 import styled from "styled-components";
 

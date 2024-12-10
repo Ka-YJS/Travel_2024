@@ -33,7 +33,7 @@ form h3 {
   text-align: center;
 }
 
-.form-group {
+.form-group-group {
   margin-bottom: 10px;
   margin-right: 18px;
 }
@@ -124,13 +124,13 @@ form h3 {
 }
 
 .submit-container .cancel {
-  background-color: #008cba;
+  background-color: #089fd1;
   margin-top: 10px;
 }
 
 /* Logo Box */
 .logo-box {
-  width: 25%;
+  width: 100%;
   height: auto;
   max-width: 400px;
   aspect-ratio: 1 / 1;
@@ -140,4 +140,30 @@ form h3 {
   align-items: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
+}
+
+/* Google and Kakao Buttons */
+.google_button, .kakao_button {
+  width: 100%; /* 버튼 너비를 100%로 설정하여 동일하게 맞추기 */
+  height: 45px; /* 버튼 높이를 동일하게 설정 */
+  margin-top: 10px;
+}
+
+.google_button button, .kakao_button button {
+  width: 100%; /* 버튼 내용도 100%로 맞추기 */
+  height: 100%; /* 버튼 높이를 동일하게 맞추기 */
+  padding: 0; /* 내부 여백을 없애기 */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  color: white;
+}
+
+.google_button button {
+  background-color: #db4437; /* 구글 색상 */
+}
+
+.kakao_button button {
+  background-color: #ffeb00; /* 카카오 색상 */
 }
