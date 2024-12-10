@@ -6,12 +6,16 @@ import "../css/Strat.css";
 import logo2 from '../image/logo2.JPG'
 
 function Signup() {
-  const { user, setUser } = useContext(UserContext);
+  //user정보 useContext
+  const { user } = useContext(UserContext);
   const [userId, setUserId] = useState("");
+  //비밀번호 저장 useState
   const [userPassword, setUserPassword] = useState("");
+  //비밀번호 확인 저장 useState
   const [userPasswordConfirm, setUserPasswordConfirm] = useState("");
   const [userName, setUserName] = useState("");
   const [userNickName, setUserNickName] = useState("");
+  //id중복체크 useState
   const [isIdChecked, setIsIdChecked] = useState(false);
   const [emailError, setEmailError] = useState(false); // 이메일 형식 에러 상태
   const [isEmailVerified, setIsEmailVerified] = useState(false); // 이메일 인증 상태
@@ -33,6 +37,7 @@ function Signup() {
     return emailRegex.test(email);
   };
 
+  //회원가입 버튼
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -73,11 +78,13 @@ function Signup() {
       nickname: userNickName,
     };
 
-    setUser((prev) => [...prev, newUser]);
+    call("/travel/signup","POST",newUser,user)
+      .then((response)=>{
+        console.log(response)
+        alert("회원가입이 완료되었습니다.");
+        navigate("/Login");
+    })
 
-    alert("회원가입이 완료되었습니다.");
-    console.log("등록된 사용자:", user);
-    navigate("/Login");
   };
 
   const handleIdCheck = () => {

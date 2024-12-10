@@ -81,12 +81,27 @@ button {
 
 /* 메인 화면 */
 .main-screen {
-  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  background-color: #f9f9f9;
+}
+
+.main-screen .content {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 
 .main-header {
   position: absolute;
@@ -97,10 +112,53 @@ button {
   padding: 0 20px;
 }
 
+.image-slider {
+  width: 600px; /* 슬라이드 영역의 크기 */
+  height: 50vh; /* 이미지 영역의 높이 */
+  position: relative; /* 이미지들을 겹치게 만들기 위해 position을 설정 */
+  overflow: hidden; /* 넘치는 이미지를 숨김 */
+}
+
+.image-slider-inner {
+  display: flex; /* 이미지들이 가로로 배치되도록 */
+  transition: transform 1s ease-out; /* 슬라이드 애니메이션 */
+}
+
+.slider-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 이미지 비율 유지하며 채우기 */
+}
+
+.slider-image:hover {
+  transform: scale(1.1); /* 마우스 호버 시 이미지 확대 */
+}
+
+.main-button {
+  padding: 15px 30px; /* 버튼 크기 증가 */
+  font-size: 18px; /* 텍스트 크기 조정 */
+  background-color: #007bff; /* 버튼 배경색 */
+  color: white; /* 텍스트 색상 */
+  border: none; /* 기본 테두리 제거 */
+  border-radius: 8px; /* 둥근 모서리 */
+  cursor: pointer; /* 클릭 가능한 커서 표시 */
+  transition: background-color 0.3s, transform 0.3s; /* 배경색과 크기 변환에 애니메이션 효과 */
+}
+
+.main-button:hover {
+  background-color: #0056b3; /* 호버 시 배경색 변경 */
+  transform: translateY(-5px); /* 마우스 오버 시 버튼이 살짝 위로 올라가는 효과 */
+}
+
+.main-button:active {
+  background-color: #004085; /* 클릭 시 버튼 색상 변경 */
+  transform: translateY(2px); /* 클릭 시 버튼이 눌리는 효과 */
+}
+
 .button-row {
   display: flex;
-  gap: 20px;
-  margin-top: 20px;
+  gap: 20px; /* 버튼 간격 설정 */
+  margin-top: 20px; /* 버튼과 이미지 사이의 여백 */
 }
 
 /* Header.css */

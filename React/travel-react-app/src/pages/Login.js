@@ -6,9 +6,10 @@ import { GoogleLogin } from 'react-google-login'; // 구글 로그인 라이브�
 import  KakaoLogin  from 'react-kakao-login'; // 카카오 로그인 라이브러리 import
 import "../css/Strat.css";
 import logo2 from '../image/logo2.JPG';
+import {call} from "../api/ApiService"
 
 const Login = () => {
-  const { user } = useContext(UserContext); // `user` 배열로부터 사용자 정보를 가져옴
+  const { user,setUser } = useContext(UserContext); // `user` 배열로부터 사용자 정보를 가져옴
   const [loginId, setLoginId] = useState(""); // 로그인 ID 상태
   const [loginPassword, setLoginPassword] = useState(""); // 로그인 비밀번호 상태
   const navigate = useNavigate();
@@ -17,20 +18,27 @@ const Login = () => {
     navigate('/Signup')
   };
 
+  //로그인 버튼
   const handleLogin = (event) => {
+
     event.preventDefault();
 
-    // 입력한 ID와 비밀번호를 기준으로 사용자 검색
-    const matchedUser = user.find(
-      (u) => u.id === loginId && u.password === loginPassword
-    );
+    const userProfile = {
+      userId: loginId,
+      userPassword: loginPassword
+    };
 
-    if (matchedUser) {
-      alert(`로그인 성공! 환영합니다, ${matchedUser.nickname}님!`);
-      navigate("/main");
-    } else {
-      alert("아이디 또는 비밀번호가 올바르지 않습니다.");
-    }
+    call("/travel/login","POST",userProfile,user)
+      .then(response=>{
+        setUser(response);
+        console.log(response);
+        alert(`로그인 성공! 환영합니다, ${response.userNickName}님!`);
+        navigate("/main")
+      })
+      .catch(
+        alert("아이디 또는 비밀번호가 올바르지 않습니다.")
+      )
+
   };
 
   // Google login callback

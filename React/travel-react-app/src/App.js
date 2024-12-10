@@ -34,42 +34,49 @@ function App() {
       thumbnail: `${img1}`,
     },
   ]);
+  //user정보 저장useState
+  const [user, setUser] = useState(() => {
+    // 새로고침 시 로컬 스토리지에서 사용자 정보 복원
+    const savedUser = localStorage.getItem("user");
+    return savedUser ? JSON.parse(savedUser) : {};
+  });
 
-  const [user, setUser] = useState([
-   
-  
-  ]);
+
+  useEffect(() => {
+    // user 상태가 변경될 때 로컬 스토리지에 저장
+    localStorage.setItem("user", JSON.stringify(user));
+  }, [user]);
 
 
   return (
-    <PostContext.Provider value={{ postList, setPostList }}>
-      <UserContext.Provider value={{user,setUser }}>
+    <UserContext.Provider value={{user,setUser }}>
+      <PostContext.Provider value={{ postList, setPostList }}>
         <PlaceContext.Provider value={{placeList, setPlaceList}}>
           <ListContext.Provider value={{list, setList}}>
             <ImageContext.Provider value={{copyImage,setCopyImage}}>
               <CopyListContext.Provider value={{copyList,setCopyList}}>
                 <div className="AppWrapper">
-                <Router>
-                  <Logo/>
-                  <Routes>
-                    <Route path="/" element={<HomeScreen />} />
-                    <Route path="/main" element={<MainScreen />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/signup" element={<Signup />} />
-                    <Route path="postdetail/:id" element={<PostDetail />} />
-                    <Route path="post" element={<Post />} />
-                    <Route path="postEdit/:id" element={<MapEdit />} />
-                    <Route path="map" element={<Map />} />
-                    <Route path="/mypage/*" element={<MyPage />} /> {/* Mypage 경로 추가 */}
-                  </Routes>
-                </Router>
-              </div>
-            </CopyListContext.Provider>
-         </ImageContext.Provider>
-        </ListContext.Provider>
-      </PlaceContext.Provider>
-      </UserContext.Provider>
-    </PostContext.Provider>
+                  <Router>
+                    <Logo/>
+                    <Routes>
+                      <Route path="/" element={<HomeScreen />} />
+                      <Route path="/main" element={<MainScreen />} />
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/signup" element={<Signup />} />
+                      <Route path="postdetail/:id" element={<PostDetail />} />
+                      <Route path="post" element={<Post />} />
+                      <Route path="postEdit/:id" element={<MapEdit />} />
+                      <Route path="map" element={<Map />} />
+                      <Route path="/mypage/*" element={<MyPage />} /> {/* Mypage 경로 추가 */}
+                    </Routes>
+                  </Router>
+                </div>
+              </CopyListContext.Provider>
+          </ImageContext.Provider>
+          </ListContext.Provider>
+        </PlaceContext.Provider>      
+      </PostContext.Provider>
+    </UserContext.Provider>
   );
 }
 
