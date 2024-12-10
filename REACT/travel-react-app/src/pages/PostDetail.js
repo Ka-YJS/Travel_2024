@@ -49,7 +49,7 @@ const PostDetail = () => {
 
     return (
         <div>
-            <div style={{zIndex:"4000"}}>
+            <div style={{}}>
                <TopIcon /> 
             </div>
             <h1
@@ -61,8 +61,8 @@ const PostDetail = () => {
             >
                 게시글 보기
             </h1>
-            <div>
-                <div >
+            <div style={{position:"relative", zIndex:"-1"}}>
+                <div>
                     <TextField style={{ marginBottom: "20px" }}
                         InputProps={{
                             readOnly: true,
