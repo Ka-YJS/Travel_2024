@@ -25,4 +25,4 @@ yarn-error.log*
 config.js
 
 # googleAPI_key
-Apikey.js
+/src/Apikey.js
