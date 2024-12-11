@@ -44,11 +44,10 @@ public class UserService {
 	
 	
 	//userId가 있는지 중복체크
-	public boolean getUserIds(String userId) {
+	public boolean getUserIds(UserDTO dto) {
 		
-		UserEntity entity = repository.findByUserId(userId);
-		//중복되는 userId가 없으면 true
-		if(entity == null) {
+		//중복 userId가 없으면 true
+		if(!repository.existsByUserId(dto.getUserId())) {
 			return true;
 		}else{
 			return false;
@@ -58,7 +57,7 @@ public class UserService {
 	
 	
 	//회원가입
-	public UserDTO signup(UserDTO dto) {
+	public boolean signup(UserDTO dto) {
 		
 		UserEntity user = UserEntity.builder()
 				.userId(dto.getUserId())
@@ -67,35 +66,25 @@ public class UserService {
 				.userPassword(passwordEncoder.encode(dto.getUserPassword()))
 				.userCreatedAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
 				.build();
-		
-		if(user == null || user.getUserId() == null) {
-			throw new RuntimeException("Invalid Arguments 유효하지 않은 인자");
-		} 
-		final String userId = user.getUserId();
-		//존재하는 ID인지 검사
-		if(repository.existsByUserId(userId)) {
-			log.warn("userId이 이미 존재 합니다.1 {}", userId);
-			throw new RuntimeException("이미 존재하는 ID 입니다.");
-		}else {
+		//user저장완료시 true;
+		if(user != null) {
 			repository.save(user);
-			return UserDTO.builder()
-					.userId(user.getUserId())
-					.userName(user.getUserName())
-					.userNickName(user.getUserNickName())
-					.userPassword(user.getUserPassword())
-					.build();
+			return true;
+		}else {
+			return false;
 		}
+		
 		
 	}
 	
 	
 	//로그인(로그인할때 토큰생성)
-	public UserDTO getByCredentials(String userId,String userPassword) {
+	public UserDTO getByCredentials(UserDTO dto) {
 		
-		UserEntity user = repository.findByUserId(userId);		
+		UserEntity user = repository.findByUserId(dto.getUserId());		
 		
 		//user가 존재하면 /DB에 저장된 암호화된 비밀번호와 사용자에게 입력받아 전달된 암호화된 비밀번호를 비교
-		if(user != null && passwordEncoder.matches(userPassword,user.getUserPassword())) {
+		if(user != null && passwordEncoder.matches(dto.getUserPassword(),user.getUserPassword())) {
 			//토큰생성(180분설정해둠)
 			final String token = tokenProvider.create(user);
 			
@@ -122,28 +111,36 @@ public class UserService {
 		
 		Optional <UserEntity> user = repository.findById(id);
 		
-		if(user.isPresent()) {
-						
-			//비밀번호 확인후 변경
-			if(!passwordEncoder.matches(dto.getUserPassword(),user.get().getUserPassword())) {
-				
-				UserEntity entity = user.get();
-				entity.setUserPassword(passwordEncoder.encode(dto.getUserPassword()));
-				repository.save(entity);
-				return true;
+		if(user.isPresent()) {	
+			//기존 비밀번호맞으면 true
+			if(passwordEncoder.matches(dto.getUserPassword(),user.get().getUserPassword())) {				
+				//기존 비밀번호랑 변경하려는 비밀번호가 다르면 true
+				if(!passwordEncoder.matches(dto.getNewPassword(),user.get().getUserPassword())) {
+					UserEntity entity = user.get();
+					entity.setUserPassword(passwordEncoder.encode(dto.getNewPassword()));
+					repository.save(entity);
+					return true;
+					
+				}else {
+					//변경하려는 비밀번호가 기존 비밀번호랑 똑같으면 false
+					System.out.println("변경하려는 비밀번호가 기존 비밀번호랑 똑같다");
+					return false;
+				}
 				
 			}else {
-				System.out.println("변경하려는 비밀번호가 기존 비밀번호랑 똑같다");
+				//user 비밀번호랑 받아온 비밀번호랑 다르면 false
+				System.out.println("비밀번호 틀림");
 				return false;
 			}
+			
 		} else {
+			//user 존재하지않으면 false
 			return false;
 		}
 		
 	}
 		
 	
-		
 	//userNickName 수정하기
     public boolean userNickNameEdit(Long id,UserDTO dto) {
     	

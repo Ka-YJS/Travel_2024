@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Table
 @Entity
 @Builder
-@AllArgsConstructor
+@AllArgsConstructor 
 @NoArgsConstructor
 public class UserEntity {
 	
@@ -37,5 +37,5 @@ public class UserEntity {
 	
 	//관계 설정
 	@OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<WriteEntity> write = new ArrayList<>();
+	private List<PostEntity> write = new ArrayList<>();
 }

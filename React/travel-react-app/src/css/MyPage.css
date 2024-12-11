@@ -46,6 +46,23 @@
   border-radius: 50%;
 }
 
+@keyframes slide {
+  0% {
+    transform: translateX(100%); /* 텍스트가 컨테이너 오른쪽 바깥에서 시작 */
+  }
+  50% {
+    transform: translateX(0); /* 텍스트가 컨테이너 안에 완전히 표시됨 */
+  }
+  100% {
+    transform: translateX(-100%); /* 텍스트가 컨테이너 왼쪽 바깥으로 나감 */
+  }
+}
+
+.sliding-text {
+  display: inline-block;
+  animation: slide 5s linear infinite; /* 슬라이드 애니메이션 */
+}
+
 /* 팝업의 배경색; 여백; 그림자 등 */
 .popup_wrapper {
   height: auto;
@@ -176,6 +193,24 @@
   gap: 15px; /* 아이콘 간 간격 */
   margin-left: auto; /* 오른쪽으로 이동 */
   align-items: center;
-  margin-right: 20px;
+  margin-right: 10px;
+}
+
+.icon {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 15px;
+  border-radius: 20px; /* 모서리를 둥글게 */
+  background: linear-gradient(135deg, #42a5f5, #fff); /* 그라데이션 배경 */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06); /* 그림자 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* 호버 애니메이션 */
+}
+
+.icon:hover {
+  transform: scale(1.1); /* 호버 시 확대 효과 */
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1); /* 호버 시 그림자 강화 */
 }
 

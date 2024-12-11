@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
+import {call} from "../api/ApiService"
 import axios from "axios";
 import "../css/Strat.css";
 import logo2 from '../image/logo2.JPG'
@@ -8,101 +9,119 @@ import logo2 from '../image/logo2.JPG'
 function Signup() {
   //user정보 useContext
   const { user } = useContext(UserContext);
+  //userId 저장 useState
   const [userId, setUserId] = useState("");
-  //비밀번호 저장 useState
-  const [userPassword, setUserPassword] = useState("");
-  //비밀번호 확인 저장 useState
-  const [userPasswordConfirm, setUserPasswordConfirm] = useState("");
-  const [userName, setUserName] = useState("");
-  const [userNickName, setUserNickName] = useState("");
   //id중복체크 useState
   const [isIdChecked, setIsIdChecked] = useState(false);
-  const [emailError, setEmailError] = useState(false); // 이메일 형식 에러 상태
-  const [isEmailVerified, setIsEmailVerified] = useState(false); // 이메일 인증 상태
+  //userPassword 저장 useState
+  const [userPassword, setUserPassword] = useState("");
+  //userPassword 확인 저장 useState
+  const [userPasswordConfirm, setUserPasswordConfirm] = useState("");
+  //passwordError 저장 useState
   const [passwordError, setPasswordError] = useState("");
-  const [authCode, setAuthCode] = useState(""); // 인증 코드
-  const [authCodeError, setAuthCodeError] = useState(""); // 인증 코드 오류 메시지
-  const [isAuthCodeSent, setIsAuthCodeSent] = useState(false); // 인증 코드 발송 여부
-  const [isLoading, setIsLoading] = useState(false); // 로딩 상태
+  //userName 저장 useState
+  const [userName, setUserName] = useState("");
+  //userNickName 저장 useState
+  const [userNickName, setUserNickName] = useState("");
+  //emailError 상태 저장 useState
+  const [emailError, setEmailError] = useState(false);
+  //email 인증상태 저장 useState
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  //email 인증코드 저장 useState
+  const [authCode, setAuthCode] = useState("");
+  //email 인증코드error 저장 useState
+  const [authCodeError, setAuthCodeError] = useState("");
+  //email 인증코드 발송 상태 저장 useState
+  const [isAuthCodeSent, setIsAuthCodeSent] = useState(false);
+  //loading 상태 저장 useState
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
+  //비밀번호 정규식
   const validatePassword = (password) => {
-    const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
-    return passwordRegex.test(password);
+    // const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
+    // return passwordRegex.test(password);
+    return password
   };
 
+  //이메일 정규식
   const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // return emailRegex.test(email);
+    return email
   };
 
   //회원가입 버튼
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     // 이메일 형식 검증
-    if (!validateEmail(userId)) {
-      alert("이메일 형식이 올바르지 않습니다.");
-      return;
-    }
+    // if (!validateEmail(userId)) {
+    //   alert("이메일 형식이 올바르지 않습니다.");
+    //   return;
+    // }
+    // 이메일 인증 확인
+    // if (!isEmailVerified) {
+    //   alert("이메일 인증을 완료해주세요.");
+    //   return;
+    // }
 
     // 비밀번호 형식 검증
     if (!validatePassword(userPassword)) {
       alert("비밀번호는 8자 이상이며 특수문자를 포함해야 합니다.");
       return;
     }
-
-    // 이메일 인증 확인
-    if (!isEmailVerified) {
-      alert("이메일 인증을 완료해주세요.");
-      return;
-    }
-
     // 비밀번호 확인 일치 여부
     if (userPassword !== userPasswordConfirm) {
       alert("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
       return;
     }
-
     // 아이디 중복 체크 확인
     if (!isIdChecked) {
       alert("아이디 중복체크를 해주세요.");
       return;
     }
-
-    const newUser = {
-      id: userId,
-      password: userPassword,
-      name: userName,
-      nickname: userNickName,
+    const userInfo = {
+      userId: userId,
+      userPassword: userPassword,
+      userName: userName,
+      userNickName: userNickName,
     };
-
-    call("/travel/signup","POST",newUser,user)
+    //회원가입 call 메서드
+    await call("/travel/signup","POST",userInfo,user)
       .then((response)=>{
-        console.log(response)
-        alert("회원가입이 완료되었습니다.");
-        navigate("/Login");
-    })
+        if(response){
+          console.log(response)
+          alert("회원가입이 완료되었습니다.")
+          navigate("/Login");
+        }
+      })
+  };//회원가입 버튼
 
-  };
 
-  const handleIdCheck = () => {
+  //userId 중복체크
+  const handleUserIdCheck = async() => {
+    //userId 입력란이 비어있을때
     if (!userId) {
       alert("아이디를 입력하세요.");
       return;
     }
 
-    const isDuplicate = user.some((existingUser) => existingUser.id === userId);
+    const userIdCheck = {userId: userId};
 
-    if (isDuplicate) {
-      alert("이미 사용 중인 아이디입니다.");
-      setIsIdChecked(false);
-    } else {
-      alert("사용 가능한 아이디입니다.");
-      setIsIdChecked(true);
-    }
-  };
+    // userId 중복확인 call 메서드
+    await call("/travel/userIdCheck","POST",userIdCheck,user)
+      .then((response)=>{
+        if(response){
+          alert("사용 가능한 아이디입니다.")
+          setIsIdChecked(true);
+        }else{
+          alert("이미 사용 중인 아이디입니다.")
+          setIsIdChecked(false);
+        }
+      })
+  };//userId 중복체크
 
   const handleEmailValidation = (value) => {
     setUserId(value);
@@ -137,11 +156,13 @@ function Signup() {
       });
   };
 
+  //이메일 인증코드 체크
   const handleAuthCodeChange = (e) => {
     setAuthCode(e.target.value);
     setAuthCodeError(""); // 오류 초기화
   };
 
+  //이메일 인증코드 확인버튼
   const handleAuthCodeVerification = () => {
     if (!authCode) {
       setAuthCodeError("인증 코드를 입력해주세요.");
@@ -163,9 +184,12 @@ function Signup() {
         console.error("인증 코드 검증 실패:", error);
         setAuthCodeError("인증 코드 검증 중 오류가 발생했습니다.");
       });
-  };
 
-  const handlePasswordChange = (e) => {
+  };//이메일 인증코드 확인버튼
+  
+
+  //비밀번호 입력및 정규식확인
+  const handleUserPassword = (e) => {
     const password = e.target.value;
     setUserPassword(password);
 
@@ -201,19 +225,19 @@ function Signup() {
               type="button"
               value="중복체크"
               className="button-check"
-              onClick={handleIdCheck}
+              onClick={handleUserIdCheck}
             />
-            <input
+            {/* <input
               type="button"
               value={isLoading ? "발송 중..." : "인증번호 발송"}
               className="button-verify"
               onClick={handleEmailVerification}
               disabled={isLoading || !userId || emailError || isEmailVerified}
-            />
+            /> */}
           </div>
 
           {/* 인증 코드 입력 필드 */}
-          {isAuthCodeSent && (
+          {/* {isAuthCodeSent && (
             <div className="form-group">
               <label htmlFor="authCode">인증 코드</label>
               <input
@@ -232,7 +256,7 @@ function Signup() {
                 />
               </div>
             </div>
-          )}
+          )} */}
 
           {/* 이름 입력 필드 */}
           <div className="form-group">
@@ -264,7 +288,7 @@ function Signup() {
               name="userPassword"
               type="password"
               value={userPassword}
-              onChange={handlePasswordChange}
+              onChange={handleUserPassword}
             />
             {passwordError && <span className="error-message">{passwordError}</span>}
           </div>

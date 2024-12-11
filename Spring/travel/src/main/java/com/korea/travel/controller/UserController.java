@@ -34,25 +34,23 @@ public class UserController {
 	
     //회원가입
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody UserDTO dto) {
-    	
-        try {
-        	UserDTO user = service.signup(dto);
-            return ResponseEntity.ok().body(user);
-        } catch (Exception e) {
-            ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
-            return ResponseEntity.badRequest().body(responseDTO);
-        }
+    public boolean signup(@RequestBody UserDTO dto) {
+    	//저장 성공시 true
+    	if(service.signup(dto)) {
+    		return true;
+    	}else {
+    		return false;
+    	}
         
     }
     
     
     //userId가 있는지 중복체크
-    @GetMapping("/userIdSelect")
-    public boolean userIdSelect (@RequestBody UserDTO dto) {
-    	
-    	//중복되는 userId가 없으면 true
-    	if(service.getUserIds(dto.getUserId())) {
+    @PostMapping("/userIdCheck")
+    public boolean userIdCheck (@RequestBody UserDTO dto) {
+    	System.out.println(dto.getUserId());
+    	//중복 userId가 없으면 true
+    	if(service.getUserIds(dto)) {
     		return true;
     	}else {
     		return false;
@@ -66,7 +64,7 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> authenticate(@RequestBody UserDTO dto) {
     	
-        UserDTO userDTO = service.getByCredentials(dto.getUserId(), dto.getUserPassword());
+        UserDTO userDTO = service.getByCredentials(dto);
                 
         if(userDTO != null) {
         	return ResponseEntity.ok().body(userDTO);
@@ -85,11 +83,10 @@ public class UserController {
     
     public boolean userPasswordEdit(@PathVariable Long id,@RequestBody UserDTO dto){
     	
-    	// userId와 userProfile을 사용하여 비밀번호 업데이트 로직 구현
         System.out.println("User ID: " + id);
         System.out.println("dto : " + dto);
-
-    	
+        
+        //변경완료 true
     	if(service.userPasswordEdit(id,dto)) {
     		return true;
     	}else {

@@ -19,7 +19,7 @@ const Login = () => {
   };
 
   //로그인 버튼
-  const handleLogin = (event) => {
+  const handleLogin = async (event) => {
 
     event.preventDefault();
 
@@ -28,42 +28,49 @@ const Login = () => {
       userPassword: loginPassword
     };
 
-    call("/travel/login","POST",userProfile,user)
-      .then(response=>{
+    try {
+
+      //로그인 call 메서드
+      const response = await call("/travel/login","POST",userProfile,user)
+
+      if(response){
         setUser(response);
-        console.log(response);
+        console.log("response:"+response);
         alert(`로그인 성공! 환영합니다, ${response.userNickName}님!`);
         navigate("/main")
-      })
-      .catch(
-        alert("아이디 또는 비밀번호가 올바르지 않습니다.")
-      )
+      }   
+
+    } catch (error) {
+      console.error("로그인 실패:", error);
+      alert("아이디 또는 비밀번호가 올바르지 않습니다.");
+    }
+    
 
   };
+  //------------연동 주석처리------------------
+  // // Google login callback
+  // const handleGoogleSuccess = (response) => {
+  //   console.log('구글 로그인 성공', response);
+  //   // response.profileObj 또는 response.tokenId로 사용자 정보 처리
+  //   navigate("/main");
+  // };
 
-  // Google login callback
-  const handleGoogleSuccess = (response) => {
-    console.log('구글 로그인 성공', response);
-    // response.profileObj 또는 response.tokenId로 사용자 정보 처리
-    navigate("/main");
-  };
+  // const handleGoogleFailure = (error) => {
+  //   console.log('구글 로그인 실패', error);
+  //   alert('구글 로그인 실패');
+  // };
 
-  const handleGoogleFailure = (error) => {
-    console.log('구글 로그인 실패', error);
-    alert('구글 로그인 실패');
-  };
+  // // Kakao login callback
+  // const handleKakaoSuccess = (response) => {
+  //   console.log('카카오 로그인 성공', response);
+  //   // response.profile 또는 response.token으로 사용자 정보 처리
+  //   navigate("/main");
+  // };
 
-  // Kakao login callback
-  const handleKakaoSuccess = (response) => {
-    console.log('카카오 로그인 성공', response);
-    // response.profile 또는 response.token으로 사용자 정보 처리
-    navigate("/main");
-  };
-
-  const handleKakaoFailure = (error) => {
-    console.log('카카오 로그인 실패', error);
-    alert('카카오 로그인 실패');
-  };
+  // const handleKakaoFailure = (error) => {
+  //   console.log('카카오 로그인 실패', error);
+  //   alert('카카오 로그인 실패');
+  // };
 
   return (
     <div className="container">
@@ -100,7 +107,7 @@ const Login = () => {
 
           <div>
             {/* Google Login Button */}
-            <div className="google_button">
+            {/* <div className="google_button">
               <GoogleLogin
                 clientId="YOUR_GOOGLE_CLIENT_ID" // 구글 API 클라이언트 ID
                 buttonText="구글 로그인"
@@ -108,21 +115,21 @@ const Login = () => {
                 onFailure={handleGoogleFailure}
                 cookiePolicy={'single_host_origin'}
               />
-            </div>
+            </div> */}
 
             {/* Kakao Login Button */}
-            <div className="kakao_button">
+            {/* <div className="kakao_button">
               <KakaoLogin
                 token="YOUR_KAKAO_JS_KEY" // 카카오 개발자 사이트에서 발급받은 JavaScript 키
                 onSuccess={handleKakaoSuccess}
                 onFailure={handleKakaoFailure}
                 render={(props) => <button onClick={props.onClick}>카카오 로그인</button>}
               />
-            </div>
+            </div> */}
           </div>
         </form>
 
-        <div>
+        <div >
           <img src={logo2} alt="Logo" className="logo-box" />
         </div>
       </main>

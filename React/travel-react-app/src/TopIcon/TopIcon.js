@@ -13,7 +13,7 @@ import defaultImage from '../image/defaultImage.png';
 const TopIcon = () => {
   const [isProfileDropdownVisible, setIsProfileDropdownVisible] = useState(false);
   const [isMyInfoVisible, setIsMyInfoVisible] = useState(false); // Collapse 상태 관리
-  const { profileImage, userNickName } = useContext(UserContext); // userNickName 가져오기
+  const { user,profileImage, userNickName } = useContext(UserContext); // userNickName 가져오기
   const navigate = useNavigate();
 
   const iconComponents = [
@@ -22,8 +22,11 @@ const TopIcon = () => {
     { id: "post", component: <MdNoteAlt />, route: "/post" },
   ];
 
+  //로그아웃 버튼
   const handleLogout = () => {
-    localStorage.removeItem('authToken');
+    localStorage.clear();
+    console.log("로그아웃:"+user)
+    console.log("로그아웃:"+user.userid)
     alert("로그아웃 되었습니다.");
     navigate('/login');
   };
@@ -31,7 +34,7 @@ const TopIcon = () => {
   return (
     <header
       className="home-header"
-      style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px" }}
+      style={{ display: "flex", justifyContent: "space-between", alignItems: "center"}}
     >
       {/* 아이콘 영역 */}
       <div
@@ -58,21 +61,40 @@ const TopIcon = () => {
             flexDirection: "column",
             alignItems: "center",
             marginTop: "20px",
+            marginRight:"20px",
+            width: "100px", // 고정 너비 설정
           }}
         >
           <img
             style={{
-              width: "50px",
-              height: "50px",
+              width: "70px",
+              height: "70px",
               borderRadius: "50%",
-              cursor: "pointer",
-              marginRight:"30px"
+              cursor: "pointer"
             }}
             src={profileImage || defaultImage}
             alt="profile"
             onClick={() => setIsProfileDropdownVisible(!isProfileDropdownVisible)}
           />
-          <p style={{ textAlign: "center", marginRight: "30px" }}>{userNickName || "username"}</p>
+          <div
+            style={{
+              width: "100px", // 컨테이너 너비 고정
+              overflow: "hidden", // 넘치는 텍스트 숨기기
+              whiteSpace: "nowrap", // 텍스트를 한 줄로 유지
+              position: "relative", // 내부 요소에 대한 위치 기준
+            }}
+          >
+            <p
+              style={{
+                display: "inline-block", // 텍스트가 슬라이드될 수 있도록 인라인 블록 설정
+                animation: "slide 10s linear infinite", // 슬라이드 애니메이션
+                fontSize:"20px"
+              }}
+              className="sliding-text"
+            >
+              {user.userNickName || "홍길동"}
+            </p>
+          </div>
         </div>
         {isProfileDropdownVisible && (
           <div

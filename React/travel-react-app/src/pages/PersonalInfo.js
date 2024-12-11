@@ -7,24 +7,20 @@ import defaultImage from "../image/defaultImage.png";
 import '../css/MyPage.css';
 import { IoPencil } from "react-icons/io5";
 import { FaRegTrashAlt } from "react-icons/fa";
+import {call} from "../api/ApiService";
 
 Modal.setAppElement('#root');
 
 const PersonalInfo = () => {
+
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [currentPopup, setCurrentPopup] = useState("");
   const [userPassword, setUserPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newPasswordConfirm, setNewPasswordConfirm] = useState("");
-  const [userNickname, setUserNickname] = useState('길동');
-  const { profileImage, setProfileImage } = useContext(UserContext);
-
-  const user = {
-    userName: '홍길동',
-    userNickname: userNickname,
-    userId: 'hong123'
-  };
+  const [userNickName, setUserNickName] = useState('길동');
+  const { user,profileImage, setProfileImage } = useContext(UserContext);
 
   const openPopup = (type) => {
     setCurrentPopup(type);
@@ -33,19 +29,66 @@ const PersonalInfo = () => {
 
   const closePopup = () => setIsOpen(false);
 
-  const handleChangePassword = () => {
+  //비밀번호변경 버튼
+  const handleChangePassword = async () => {
+
+    //새로운 비밀번호확인
     if (newPassword === newPasswordConfirm) {
-      alert("비밀번호가 변경되었습니다.");
-      closePopup();
+
+      try {
+
+        console.log(user)
+        const userInfo = {
+          userPassword: userPassword,
+          newPassword: newPassword
+        }
+
+        //call메서드 사용해서 백엔드 요청
+        const response = await call(`/travel/userPasswordEdit/${user.id}`,"PATCH",userInfo,user)
+        
+        if(response){
+          alert("비밀번호가 변경되었습니다.");
+          closePopup();
+        }else{
+          alert("비밀번호가 틀렸습니다.");
+          closePopup();
+        }
+
+      } catch (error) {
+        console.error('비밀번호변경 실패:', error);
+      }      
+      
     } else {
       alert("새로운 비밀번호와 확인이 일치하지 않습니다.");
     }
-  };
+  };//비밀번호변경 버튼
 
-  const handleChangeNickname = () => {
+  //닉네임변경 버튼
+  const handleChangeNickname = async () => {
+
+    try {
+      console.log(user)
+      const userInfo = {
+        userNickName: userNickName
+      }
+      //call메서드 사용해서 백엔드 요청
+      const response = await call(`/travel/userNickNameEdit/${user.id}`,"PATCH",userInfo,user)
+      
+      if(response){
+        alert("닉네임이 변경되었습니다.");
+        closePopup();
+      }else{
+        alert("기존 닉네임이랑 똑같습니다.");
+        closePopup();
+      }
+
+    } catch (error) {
+      console.error('닉네임변경 실패:', error);
+    }
+
     alert("닉네임이 변경되었습니다.");
     closePopup();
-  };
+  };//닉네임변경 버튼
 
   const handleProfileImageChange = (e) => {
     const file = e.target.files[0];
@@ -98,9 +141,9 @@ const PersonalInfo = () => {
 
         <div className="personal_container">
           <div className="user-info">
-            <div className="user-info-item">이름 : {user.userName}</div>
-            <div className="user-info-item">닉네임 : {user.userNickname}</div>
             <div className="user-info-item">아이디 : {user.userId}</div>
+            <div className="user-info-item">이름 : {user.userName}</div>
+            <div className="user-info-item">닉네임 : {user.userNickName}</div>
           </div>
 
           <div className="button-container">
@@ -130,8 +173,8 @@ const PersonalInfo = () => {
             <h2>닉네임 변경</h2>
             <div>
               <Input
-                value={userNickname}
-                onChange={(e) => setUserNickname(e.target.value)}
+                value={userNickName}
+                onChange={(e) => setUserNickName(e.target.value)}
                 placeholder="새로운 닉네임"
               />
             </div>

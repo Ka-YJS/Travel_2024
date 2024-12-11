@@ -27,12 +27,6 @@ function MainScreen() {
 
   const imageCount = images.length; // 이미지 갯수
 
-  // 랜덤 닉네임 생성
-  useEffect(() => {
-    const randomNumber = Math.floor(Math.random() * 100) + 1;
-    setNickname(`여행${randomNumber}`);
-  }, []);
-
   // 이미지 슬라이드 효과
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -56,7 +50,7 @@ function MainScreen() {
     <div className="main-screen">
       <TopIcon />
       <div className="content">
-        <h1>{nickname}님 환영합니다.</h1>
+        <h1>{user.userNickName?user.userNickName:"홍길동"}님 환영합니다.</h1>
 
         {/* 이미지 슬라이드 */}
         <div className="image-slider">

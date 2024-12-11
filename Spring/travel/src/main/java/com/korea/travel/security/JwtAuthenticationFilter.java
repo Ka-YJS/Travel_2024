@@ -27,9 +27,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		
 		String requestURI = request.getRequestURI();
 		
-	    if (requestURI.equals("/travel/login") || requestURI.equals("/travel/signup")|| requestURI.startsWith("/api/email")|| requestURI.startsWith("/uploads")) {
+	    if (requestURI.equals("/travel/userIdCheck") ||requestURI.equals("/travel/login") || requestURI.equals("/travel/signup")|| requestURI.startsWith("/api/email")|| requestURI.startsWith("/uploads")) {
 	        filterChain.doFilter(request, response);
-	        return; // 로그인 및 회원가입은 필터를 넘기고 종료
+	        return; // 이 경로들은 필터를 넘기고 종료
 	    }
 		
 		String token = request.getHeader("Authorization");

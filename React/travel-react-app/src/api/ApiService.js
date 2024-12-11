@@ -8,7 +8,9 @@ export async function call(api,method,request,user){
     if(user.token && user.token !== null){
         headers["Authorization"] = `Bearer ${user.token}`;
     }
-
+    console.log(api)
+    console.log(method)
+    console.log(request)
     try {
         // 동적으로 메서드를 호출
         const response = await axios({
@@ -19,14 +21,14 @@ export async function call(api,method,request,user){
         });
         
         if (response) {
-            console.log(response.data);
+            console.log("API 성공 응답:", response.data);
             return response.data;
         }
         
     } catch (error) {
-        console.error('API 호출 중 오류 발생', error);
-        window.location.href="/main";
-        return false;
+        console.error('API 호출 중 오류 발생', error.response || error.message);
+        // window.location.href="/";
+        throw error.response ? error.response.data : error.message;
     }
     
 
