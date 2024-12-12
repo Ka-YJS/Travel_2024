@@ -64,7 +64,7 @@ const TopIcon = () => {
       </div>
 
       {/* 프로필 영역 */}
-      <div className="profile-container" style={{ position: "relative", marginLeft: "20px" }}>
+      <div className="profile-container" style={{ position: "relative"}}>
         <div
           style={{
             display: "flex",

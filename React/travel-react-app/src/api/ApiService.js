@@ -8,9 +8,7 @@ export async function call(api,method,request,user){
     if(user.token && user.token !== null){
         headers["Authorization"] = `Bearer ${user.token}`;
     }
-    console.log(api)
-    console.log(method)
-    console.log(request)
+    
     try {
         // 동적으로 메서드를 호출
         const response = await axios({

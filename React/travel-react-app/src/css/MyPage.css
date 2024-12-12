@@ -214,7 +214,7 @@
   visibility: hidden; /* 기본적으로 숨김 */
   opacity: 0; /* 기본적으로 투명 */
   position: absolute;
-  bottom: -40px; /* 아이콘 아래에 위치 */
+  bottom: -38px; /* 아이콘 아래에 위치 */
   left: 50%; /* 가운데 정렬 */
   transform: translateX(-50%); /* 가운데 정렬 보정 */
   background-color: #4a79de; /* 툴팁 배경색 */

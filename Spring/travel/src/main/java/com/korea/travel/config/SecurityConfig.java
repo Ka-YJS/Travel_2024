@@ -28,31 +28,25 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()  // CSRF 보호 비활성화 (필요시 활성화)
             .authorizeRequests()
-          	.requestMatchers("/travel/login","/travel/signup","/travel/userIdCheck","/api/email/**", "/uploads/**").permitAll()  //경로는 인증 없이 허용
+          	.requestMatchers(
+          			"/travel/login",
+          			"/travel/signup",
+          			"/travel/userIdCheck",
+          			"/api/email/**", 
+          			"/uploads/**").permitAll() //경로는 인증 없이 허용
           	.anyRequest().authenticated()  // 그 외 요청은 인증 필요
         	.and()
-//        	.cors().configurationSource(corsConfigurationSource()) 
-        	.cors()
+        	.cors()	//CORS 설정 활성화
         	.and()
-        	.addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
-                            
+        	//JWT 인증 필터 추가 요청이 들어올 때마다 JWT 토큰을 검증하고 인증처리하도록
+        	.addFilterBefore(
+        			new JwtAuthenticationFilter(tokenProvider), 
+        			UsernamePasswordAuthenticationFilter.class);
+        
         return http.build();
     }
     
-    // CORS 세부 설정
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));  // 허용할 도메인
-//        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE", "PUT", "OPTIONS"));  // 허용할 HTTP 메서드
-//        configuration.setAllowedHeaders(Arrays.asList("*"));  // 모든 헤더 허용
-//        configuration.setAllowCredentials(true);  // 쿠키와 인증 헤더 포함 가능
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);  // 모든 경로에 CORS 설정 적용
-//        return source;
-//    }
-    
-    
+    //비밀번호를 BCrypt 해시 알고리즘으로 암호화
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

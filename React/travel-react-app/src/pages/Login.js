@@ -128,7 +128,7 @@ const Login = () => {
             </div> */}
           </div>
         </form>
-
+        
         <div >
           <img src={logo2} alt="Logo" className="logo-box" />
         </div>

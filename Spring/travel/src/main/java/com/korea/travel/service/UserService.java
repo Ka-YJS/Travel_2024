@@ -175,6 +175,7 @@ public class UserService {
             // 2. 파일 경로 설정 및 저장 처리
             String uploadDir = System.getProperty("user.dir") + "/uploads/profilePictures/";
             String fileName = file.getOriginalFilename().replaceAll("[\\s\\(\\)]", "_");
+            //filePath - file 저장할 경로
             String filePath = uploadDir + id + "_" + fileName;
                         
             File dest = new File(filePath);            
@@ -192,7 +193,8 @@ public class UserService {
                 e.printStackTrace();  // 스택 트레이스 출력
                 throw new RuntimeException("파일 저장 중 오류가 발생했습니다.", e);
             }
-            
+            //filePath는 파일저장 경로지 불러올때는 fileUrl로 불러와야한다.
+            //fileUrl - file불러올 경로 db에 저장
             String fileUrl = "http://localhost:9090/uploads/profilePictures/" + id + "_" + fileName;
             
             // 3. UserEntity에 프로필 사진 경로 업데이트
