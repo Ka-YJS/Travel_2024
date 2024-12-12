@@ -8,6 +8,7 @@ import '../css/MyPage.css';
 import { IoPencil } from "react-icons/io5";
 import { FaRegTrashAlt } from "react-icons/fa";
 import {call} from "../api/ApiService";
+import axios from "axios";
 
 Modal.setAppElement('#root');
 
@@ -19,99 +20,155 @@ const PersonalInfo = () => {
   const [userPassword, setUserPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newPasswordConfirm, setNewPasswordConfirm] = useState("");
-  const [userNickName, setUserNickName] = useState('길동');
-  const { user,profileImage, setProfileImage } = useContext(UserContext);
+  const [userNickName, setUserNickName] = useState("");
+  const { user,setUser} = useContext(UserContext);
 
+  //팝업열기
   const openPopup = (type) => {
     setCurrentPopup(type);
     setIsOpen(true);
-  };
+  }
 
-  const closePopup = () => setIsOpen(false);
-
-  //비밀번호변경 버튼
-  const handleChangePassword = async () => {
-
-    //새로운 비밀번호확인
-    if (newPassword === newPasswordConfirm) {
-
-      try {
-
-        console.log(user)
-        const userInfo = {
-          userPassword: userPassword,
-          newPassword: newPassword
-        }
-
-        //call메서드 사용해서 백엔드 요청
-        const response = await call(`/travel/userPasswordEdit/${user.id}`,"PATCH",userInfo,user)
-        
-        if(response){
-          alert("비밀번호가 변경되었습니다.");
-          closePopup();
-        }else{
-          alert("비밀번호가 틀렸습니다.");
-          closePopup();
-        }
-
-      } catch (error) {
-        console.error('비밀번호변경 실패:', error);
-      }      
-      
-    } else {
-      alert("새로운 비밀번호와 확인이 일치하지 않습니다.");
-    }
-  };//비밀번호변경 버튼
+  //팝업닫기
+  const closePopup = () => {
+    setUserNickName("");
+    setUserPassword("");
+    setNewPassword("");
+    setNewPasswordConfirm("");
+    setIsOpen(false);
+  }
 
   //닉네임변경 버튼
   const handleChangeNickname = async () => {
 
     try {
-      console.log(user)
-      const userInfo = {
-        userNickName: userNickName
-      }
-      //call메서드 사용해서 백엔드 요청
-      const response = await call(`/travel/userNickNameEdit/${user.id}`,"PATCH",userInfo,user)
-      
-      if(response){
-        alert("닉네임이 변경되었습니다.");
-        closePopup();
-      }else{
+      //기존닉네임 새닉네임 같은지 비교하는 if문
+      if(user.userNickName != userNickName){
+        const userInfo = {
+          userNickName: userNickName
+        }
+        //call메서드 사용해서 백엔드 요청
+        const response = await call(`/travel/userNickNameEdit/${user.id}`,"PATCH",userInfo,user)        
+        //response가 존재하면 user 업데이트 if문
+        if(response){
+          console.log("닉네임 변경 call 메서드 : " + response)
+          setUser(pev =>(
+            {...pev,userNickName:response.userNickName}
+          ))
+          alert("닉네임이 변경되었습니다.");
+          setUserNickName("");
+          closePopup();
+        }else{
+          alert("닉네임변경 실패.");
+        }//response가 존재하면 user 업데이트 if문 종료
+      } else {
         alert("기존 닉네임이랑 똑같습니다.");
-        closePopup();
-      }
-
+      }//기존닉네임 새닉네임 같은지 비교하는 if문 종료
     } catch (error) {
       console.error('닉네임변경 실패:', error);
     }
+  };//닉네임변경 버튼 종료
 
-    alert("닉네임이 변경되었습니다.");
-    closePopup();
-  };//닉네임변경 버튼
 
-  const handleProfileImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result);
-      };
-      reader.readAsDataURL(file);
+  //비밀번호변경 버튼
+  const handleChangePassword = async () => {
+
+    try {
+      //새로운 비밀번호확인 if문
+      if (newPassword === newPasswordConfirm) {
+        console.log(user)
+        const userInfo = {
+          userPassword: userPassword,
+          newPassword: newPassword
+        }
+        //call메서드 사용해서 백엔드 요청
+        const response = await call(`/travel/userPasswordEdit/${user.id}`,"PATCH",userInfo,user)
+        //response가 존재하는지 확인 if문
+        if(response){
+          console.log("비밀번호 변경 call 메서드 : " + response)
+          alert("비밀번호가 변경되었습니다.");
+          setUserPassword("")
+          setNewPassword("")
+          setNewPasswordConfirm("")
+          closePopup();
+        }else{
+          console.log("비밀번호 변경 call 메서드 : " + response)
+          alert("비밀번호가 틀렸습니다.");
+        }//response가 존재하는지 확인 if문 종료
+      } else {
+        alert("새로운 비밀번호와 확인이 일치하지 않습니다.");
+      }//새로운 비밀번호확인 if문 종료
+
+    } catch (error) {
+      console.error('비밀번호변경 실패:', error);
     }
-  };
 
+  };//비밀번호변경 버튼 종료
+
+
+  //숨겨놓은 fileInput 클릭버튼
   const handleButtonClick = () => {
     document.getElementById('fileInput').click();
   }
 
-  const handleDeleteAccount = () => {
-    const confirmation = window.confirm("정말로 계정을 삭제하시겠습니까?");
-    if (confirmation) {
-      alert("계정이 삭제되었습니다.");
-      navigate('/login');
+  //프로필이미지번경 버튼
+  const handleProfileImageChange = async (e) => {
+
+    const file = e.target.files[0];
+
+    if (file) {
+      // FormData 객체를 사용해 파일과 기타 데이터를 전송
+      const formData = new FormData();
+      formData.append('file', file);
+      console.log(formData.get('file'))
+
+      try {
+        // 백엔드에 프로필 사진을 업로드
+        const response = await axios.patch(`http://localhost:9090/travel/userProfileImageEdit/${user.id}`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            'Authorization': `Bearer ${user.token}`
+          },
+        });
+
+        if(response.data){
+          console.log(response.data)
+          //성공적으로 업로드되면 사용자 정보 업데이트
+          setUser(pev=>({...pev,userProfileImage:response.data.userProfileImage}));
+        }
+
+      } catch (err) {
+        console.error('파일 업로드 실패:', err);
+      }    
     }
-  };
+  };//프로필이미지번경 버튼
+
+
+  //계정탈퇴 버튼
+  const handleDeleteAccount = async() => {
+    
+    try {
+
+      const userInfo = {
+        userPassword: userPassword
+      }
+      //계정탈퇴 call메서드 사용해서 백엔드 요청
+      const response = await call(`/travel/withdraw/${user.id}`,"DELETE",userInfo,user)
+      //response가 존재하는지 확인 if문
+      if(response){
+        localStorage.clear(); //계정 탈퇴하면 로컬스토리지 전부지우기
+        alert("계정이 탈퇴되었습니다.");
+        navigate('/login');
+      }else{
+        alert("계정 탈퇴실패 비밀번호확인");
+      }
+      
+    } catch (error) {
+      console.error('계정탈퇴 실패:', error);
+    }
+
+  };//계정탈퇴 버튼 종료
+
 
   return (
     <div className="page_wrapper">
@@ -119,7 +176,7 @@ const PersonalInfo = () => {
         <div className="profile_wrapper ">
           <img
             className="profile_image"
-            src={profileImage || defaultImage}
+            src={user.userProfileImage || defaultImage}
             alt="profile"
           />
           <div style={{display:"flex" }}>
@@ -131,9 +188,21 @@ const PersonalInfo = () => {
                 style={{ display: "none" }}
                 onChange={handleProfileImageChange}
               />
-              <button style={{backgroundColor:"transparent"}} type="button" onClick={handleButtonClick}><IoPencil /></button>
+              <button 
+                style={{backgroundColor:"transparent"}} 
+                type="button" 
+                onClick={handleButtonClick}
+              >
+                <IoPencil />
+              </button>
             </div>
-            <button style={{backgroundColor:"transparent"}} type="button" onClick={() => setProfileImage(defaultImage)}>
+            <button 
+              style={{backgroundColor:"transparent"}} 
+              type="button" 
+              onClick={() => setUser(pev=>({
+                ...pev,userProfileImage:defaultImage
+              }))}
+            >
             <FaRegTrashAlt />
             </button>
           </div>
@@ -152,10 +221,8 @@ const PersonalInfo = () => {
           <div className="button-container">
             <button className="custom-button" onClick={() => openPopup('password')}>비밀번호 변경</button>
           </div>
-          <div>
-            <button onClick={handleDeleteAccount} className="delete-button">
-              계정삭제
-            </button>
+          <div className="button-container">
+            <button className="delete-button" onClick={() => openPopup('delete')}>계정탈퇴</button>
           </div>
         </div>
       </div>
@@ -168,6 +235,7 @@ const PersonalInfo = () => {
         className="custom_modal"
         overlayClassName="overlay"
       >
+        {/* 닉네임변경 팝업창 */}
         {currentPopup === 'nickname' && (
           <div className="popup_wrapper">
             <h2>닉네임 변경</h2>
@@ -175,19 +243,20 @@ const PersonalInfo = () => {
               <Input
                 value={userNickName}
                 onChange={(e) => setUserNickName(e.target.value)}
-                placeholder="새로운 닉네임"
+                placeholder="새 닉네임"
               />
             </div>
-            <button onClick={handleChangeNickname} style={{marginRight:"5px"}}>변경</button>
-            <button onClick={closePopup}>닫기</button>
+            <button onClick={handleChangeNickname} style={{margin:"10px 5px 0 0"}}>변경</button>
+            <button onClick={closePopup} >취소</button>
           </div>
         )}
 
+        {/* 비밀번호변경 팝업창 */}
         {currentPopup === 'password' && (
           <div className="popup_wrapper">
             <h2>비밀번호 변경</h2>
             <div>
-              <label>현재 비밀번호</label>
+              <label>비밀번호</label>
               <Input
                 type="password"
                 value={userPassword}
@@ -195,7 +264,7 @@ const PersonalInfo = () => {
               />
             </div>
             <div>
-              <label>새로운 비밀번호</label>
+              <label>새 비밀번호</label>
               <Input
                 type="password"
                 value={newPassword}
@@ -203,15 +272,37 @@ const PersonalInfo = () => {
               />
             </div>
             <div>
-              <label>새로운 비밀번호 확인</label>
+              <label>새 비밀번호 확인</label>
               <Input
                 type="password"
                 value={newPasswordConfirm}
                 onChange={(e) => setNewPasswordConfirm(e.target.value)}
               />
             </div>
-            <button onClick={handleChangePassword} style={{marginRight:"5px"}}>변경</button>
-            <button onClick={closePopup}>닫기</button>
+            <button onClick={handleChangePassword} style={{margin:"10px 5px 0 0"}}>변경</button>
+            <button onClick={closePopup}>취소</button>
+          </div>
+        )}
+
+        {/* 계정탈퇴 팝업창 */}
+        {currentPopup === 'delete' && (
+          <div className="popup_wrapper">
+            <h2 style={{color:"#ff4d4f"}}>계정탈퇴 하시겠습니까?</h2>
+            <div>
+              <label>비밀번호</label>
+              <Input
+                type="password"
+                value={userPassword}
+                onChange={(e) => setUserPassword(e.target.value)}
+              />
+            </div>
+            <button 
+              style={{margin:"10px 5px 0 0",color:"#ff4d4f"}}
+              onClick={handleDeleteAccount} 
+            >
+              탈퇴
+            </button>
+            <button onClick={closePopup}>취소</button>
           </div>
         )}
       </Modal>

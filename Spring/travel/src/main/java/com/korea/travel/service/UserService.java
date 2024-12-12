@@ -142,7 +142,7 @@ public class UserService {
 		
 	
 	//userNickName 수정하기
-    public boolean userNickNameEdit(Long id,UserDTO dto) {
+    public UserDTO userNickNameEdit(Long id,UserDTO dto) {
     	
     	Optional <UserEntity> user = repository.findById(id);
     	
@@ -152,9 +152,13 @@ public class UserService {
 			//변경된 userNickName 저장
 			entity.setUserNickName(dto.getUserNickName());
     		repository.save(entity);
-    		return true;
+    		//변경된 userNickName 반환
+    		return UserDTO.builder()
+    				.userNickName(entity.getUserNickName())
+    				.build();
 		} else {
-			return false;
+			System.out.println("유저가 존재하지않거나 닉네임이 같다");
+			return null;
 		}    	
     	
     }
@@ -238,16 +242,11 @@ public class UserService {
     public boolean userWithdrawal (Long id, UserDTO dto) {
     	
     	Optional<UserEntity> user = repository.findById(id);
+    	//유저존재&&비밀번호 맞으면 유저삭제후 true
     	if(user.isPresent() && passwordEncoder.matches(dto.getUserPassword(),user.get().getUserPassword())) {
-    		String token = dto.getToken();
-    		
-    		if(!tokenProvider.isTokenExpired(token)) {
-    			UserEntity entity = user.get();
-        		repository.delete(entity);
-        		return true;
-    		}else {
-    			return false;
-    		}
+			UserEntity entity = user.get();
+    		repository.delete(entity);
+    		return true;    		
     	}else {
 			return false;
 		}

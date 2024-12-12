@@ -209,8 +209,27 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease; /* 호버 애니메이션 */
 }
 
-.icon:hover {
-  transform: scale(1.1); /* 호버 시 확대 효과 */
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1); /* 호버 시 그림자 강화 */
+
+.tooltip {
+  visibility: hidden; /* 기본적으로 숨김 */
+  opacity: 0; /* 기본적으로 투명 */
+  position: absolute;
+  bottom: -40px; /* 아이콘 아래에 위치 */
+  left: 50%; /* 가운데 정렬 */
+  transform: translateX(-50%); /* 가운데 정렬 보정 */
+  background-color: #4a79de; /* 툴팁 배경색 */
+  color: #fff; /* 툴팁 글씨 색상 */
+  padding: 3px 6px; /* 여백 */
+  border-radius: 4px; /* 둥근 모서리 */
+  width: auto;
+  height: auto;
+  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+  z-index: 500; /* 위에 표시되도록 설정 */
+  transition: opacity 0.3s ease-in-out; /* 부드러운 전환 효과 */
 }
 
+.icon:hover .tooltip {
+  visibility: visible; /* 툴팁 표시 */
+  opacity: 1;          /* 투명도 설정 */
+  transition: opacity 0.2s ease-in-out; /* 부드러운 애니메이션 */
+}

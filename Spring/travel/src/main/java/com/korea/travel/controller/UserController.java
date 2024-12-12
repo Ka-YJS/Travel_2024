@@ -98,13 +98,18 @@ public class UserController {
     
     //userNickName 수정하기
     @PatchMapping("/userNickNameEdit/{id}")
-    public boolean userNickNameEdit(@PathVariable Long id,@RequestBody UserDTO dto){
+    public ResponseEntity<?> userNickNameEdit(@PathVariable Long id,@RequestBody UserDTO dto){
     	
-    	if(service.userNickNameEdit(id,dto)) {
-    		return true;
-    	}else {
-    		return false;
-    	}
+    	UserDTO userDTO = service.userNickNameEdit(id,dto);
+    	
+    	if(userDTO != null) {
+        	return ResponseEntity.ok().body(userDTO);
+        }else {
+        	ResponseDTO responseDTO = ResponseDTO.builder()
+        			.error("닉네임 변경 실패")
+        			.build();
+        	return ResponseEntity.badRequest().body(responseDTO);
+        }
     	
     }
     
@@ -145,7 +150,7 @@ public class UserController {
     //회원탈퇴
     @DeleteMapping("/withdraw/{id}")
     public boolean userWithdrawal(@PathVariable Long id,@RequestBody UserDTO dto){
-    	
+    	//유저정보 삭제완료되었으면 true
     	if(service.userWithdrawal(id,dto)) {
     		return true;
     	}else {

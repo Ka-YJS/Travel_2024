@@ -92,7 +92,7 @@ function Signup() {
     await call("/travel/signup","POST",userInfo,user)
       .then((response)=>{
         if(response){
-          console.log(response)
+          console.log("회원가입 call메서드 response : " + response)
           alert("회원가입이 완료되었습니다.")
           navigate("/Login");
         }

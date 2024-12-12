@@ -125,7 +125,7 @@ const Map = () => {
                     <GoogleMap
                         mapContainerStyle={{
                             width: "100%",
-                            height: "400px", // 원하는 높이로 설정 (450px)
+                            height: "100%", // 원하는 높이로 설정 (450px)
                         }}
                         center={center}
                         zoom={14}

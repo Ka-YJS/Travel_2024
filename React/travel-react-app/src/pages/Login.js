@@ -35,7 +35,7 @@ const Login = () => {
 
       if(response){
         setUser(response);
-        console.log("response:"+response);
+        console.log("로그인 call 메서드 response:"+response);
         alert(`로그인 성공! 환영합니다, ${response.userNickName}님!`);
         navigate("/main")
       }   

@@ -31,7 +31,8 @@ public class SecurityConfig {
           	.requestMatchers("/travel/login","/travel/signup","/travel/userIdCheck","/api/email/**", "/uploads/**").permitAll()  //경로는 인증 없이 허용
           	.anyRequest().authenticated()  // 그 외 요청은 인증 필요
         	.and()
-        	.cors().configurationSource(corsConfigurationSource()) 
+//        	.cors().configurationSource(corsConfigurationSource()) 
+        	.cors()
         	.and()
         	.addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
                             
@@ -39,17 +40,18 @@ public class SecurityConfig {
     }
     
     // CORS 세부 설정
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));  // 허용할 도메인
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE", "PUT", "OPTIONS"));  // 허용할 HTTP 메서드
-        configuration.setAllowedHeaders(Arrays.asList("*"));  // 모든 헤더 허용
-        configuration.setAllowCredentials(true);  // 쿠키와 인증 헤더 포함 가능
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);  // 모든 경로에 CORS 설정 적용
-        return source;
-    }
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));  // 허용할 도메인
+//        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE", "PUT", "OPTIONS"));  // 허용할 HTTP 메서드
+//        configuration.setAllowedHeaders(Arrays.asList("*"));  // 모든 헤더 허용
+//        configuration.setAllowCredentials(true);  // 쿠키와 인증 헤더 포함 가능
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);  // 모든 경로에 CORS 설정 적용
+//        return source;
+//    }
+    
     
     @Bean
     public PasswordEncoder passwordEncoder() {
