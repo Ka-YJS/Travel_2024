@@ -10,13 +10,14 @@ import {call} from "../api/ApiService"
 
 const Login = () => {
   const { user,setUser } = useContext(UserContext); // `user` 배열로부터 사용자 정보를 가져옴
-  const [loginId, setLoginId] = useState(""); // 로그인 ID 상태
-  const [loginPassword, setLoginPassword] = useState(""); // 로그인 비밀번호 상태
+  const [loginId, setLoginId] = useState(""); // 입력받은 ID 저장 useState
+  const [loginPassword, setLoginPassword] = useState(""); // 입력받은 비밀번호 상태 useState
   const navigate = useNavigate();
 
+  //회원가입 버튼
   const toSignup = () => {
     navigate('/Signup')
-  };
+  };//회원가입 버튼 종료
 
   //로그인 버튼
   const handleLogin = async (event) => {
@@ -46,7 +47,8 @@ const Login = () => {
     }
     
 
-  };
+  };//로그인 버튼 종료
+
   //------------연동 주석처리------------------
   // // Google login callback
   // const handleGoogleSuccess = (response) => {

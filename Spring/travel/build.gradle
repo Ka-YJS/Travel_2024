@@ -29,7 +29,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
-	implementation 'mysql:mysql-connector-java:8.0.33'
+	implementation 'mysql:mysql-connector-java:8.0.40'
 	annotationProcessor 'org.projectlombok:lombok'
 	//Test 의존성
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

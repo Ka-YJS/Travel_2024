@@ -25,6 +25,7 @@ const Map = () => {
     const { isLoaded, loadError } = useJsApiLoader({
         googleMapsApiKey: config.MAP_API_KEY,
         libraries: ["places"],
+        language:"ko"
     });
 
     const [topIconHeight, setTopIconHeight] = useState(0);
@@ -76,6 +77,8 @@ const Map = () => {
             }
         }
     };
+
+    
 
     const getPhotoUrl = (photoReference) => {
         return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${config.MAP_API_KEY}`;
