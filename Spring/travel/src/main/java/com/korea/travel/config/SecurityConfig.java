@@ -36,13 +36,13 @@ public class SecurityConfig {
           			"/uploads/**").permitAll() //경로는 인증 없이 허용
           	.anyRequest().authenticated()  // 그 외 요청은 인증 필요
         	.and()
-        	.cors()	//CORS 설정 활성화
+        	.cors()//CORS 설정 활성화
         	.and()
         	//JWT 인증 필터 추가 요청이 들어올 때마다 JWT 토큰을 검증하고 인증처리하도록
         	.addFilterBefore(
         			new JwtAuthenticationFilter(tokenProvider), 
         			UsernamePasswordAuthenticationFilter.class);
-        
+
         return http.build();
     }
     

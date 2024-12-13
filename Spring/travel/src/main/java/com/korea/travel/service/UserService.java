@@ -87,9 +87,7 @@ public class UserService {
 		if(user != null && passwordEncoder.matches(dto.getUserPassword(),user.getUserPassword())) {
 			//토큰생성(180분설정해둠)
 			final String token = tokenProvider.create(user);
-			
-			user.setToken(token);
-			
+						
 			return UserDTO.builder()
 				.id(user.getId())
 				.userId(user.getUserId())
@@ -97,7 +95,7 @@ public class UserService {
 				.userNickName(user.getUserNickName())
 				.userPassword(user.getUserPassword())
 				.userProfileImage(user.getUserProfileImage())
-				.token(user.getToken())
+				.token(token)
 				.build();
 		}else {
 			return null;
@@ -177,7 +175,7 @@ public class UserService {
             //기존 프로필 파일이 없거나 null이면 true
             if (existingUserProfileImage != null && !existingUserProfileImage.isEmpty()) {
             	//저장된 file 경로로 수정
-                String existingFilePath = existingUserProfileImage.replace("http://localhost:9090", System.getProperty("user.dir"));
+                String existingFilePath = System.getProperty("user.dir")+existingUserProfileImage;
                 File existingFile = new File(existingFilePath);	//객체 생성
                 if (existingFile.exists()) {	//해당 파일이있으면 true
                     if (existingFile.delete()) {
@@ -212,7 +210,7 @@ public class UserService {
             
             //filePath는 파일저장 경로지 불러올때는 fileUrl로 불러와야한다.
             //fileUrl - file불러올 경로 db에 저장
-            String fileUrl = "http://localhost:9090/uploads/profilePictures/" + id + "_" + fileName;
+            String fileUrl = "/uploads/profilePictures/" + id + "_" + fileName;
             
             //UserEntity에 프로필 사진 경로 업데이트
             userEntity.setUserProfileImage(fileUrl);
@@ -244,7 +242,7 @@ public class UserService {
         //기존 프로필 파일이 없거나 null이면 true
         if (existingUserProfileImage != null && !existingUserProfileImage.isEmpty()) {
         	//저장된 file 경로로 수정
-            String existingFilePath = existingUserProfileImage.replace("http://localhost:9090", System.getProperty("user.dir"));
+        	String existingFilePath = System.getProperty("user.dir")+existingUserProfileImage;
             File existingFile = new File(existingFilePath);	//객체 생성
             if (existingFile.exists()) {	//해당 파일이있으면 true
                 if (existingFile.delete()) {
@@ -268,8 +266,6 @@ public class UserService {
     	Optional<UserEntity> user = repository.findById(id);
     	
     	if(user.isPresent()) {
-    		UserEntity.builder()
-    			.token(null);
     		UserDTO.builder()
 	    		.id(null)
 				.userId(null)

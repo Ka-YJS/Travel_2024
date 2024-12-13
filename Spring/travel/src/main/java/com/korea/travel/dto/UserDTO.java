@@ -30,7 +30,6 @@ public class UserDTO {
 		this.userNickName = entity.getUserNickName();
 		this.userPassword = entity.getUserPassword();
 		this.userProfileImage = entity.getUserProfileImage();
-		this.token = entity.getToken();
 	}
 	
 	

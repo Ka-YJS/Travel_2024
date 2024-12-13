@@ -17,7 +17,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Table
+@Table(name = "users")
 @Entity
 @Builder
 @AllArgsConstructor 
@@ -33,7 +33,6 @@ public class UserEntity {
 	private String userPassword;	//비밀번호
 	private String userProfileImage;//프로필이미지
 	private String userCreatedAt;	//생성시간
-	private String token;			//토큰
 	
 	//관계 설정
 	@OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

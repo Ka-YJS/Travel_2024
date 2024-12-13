@@ -17,13 +17,13 @@ public class PostController {
     @Autowired
     private PostService postService;
 
-    @GetMapping("/posts")
-    public ResponseEntity<List<PostDTO>> getAllPosts() {
-        return ResponseEntity.ok(postService.getAllPosts());
-    }
-
-    @PostMapping("/map")
-    public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO) {
-        return ResponseEntity.ok(postService.createPost(postDTO));
-    }
+//    @GetMapping("/posts")
+//    public ResponseEntity<List<PostDTO>> getAllPosts() {
+//        return ResponseEntity.ok(postService.getAllPosts());
+//    }
+//
+//    @PostMapping("/map")
+//    public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO) {
+//        return ResponseEntity.ok(postService.createPost(postDTO));
+//    }
 }

@@ -1,50 +1,78 @@
-import React, { useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { StatusBar } from 'react-native';
-import LoginScreen from './screens/LoginScreen'; // 로그인 화면
-import SignupScreen from './screens/SignupScreen'; // 회원가입 화면
-import MainTabs from './navigations/MainTabs'; // 하단 탭 네비게이션
-import ProfileScreen from './screens/ProfileScreen'; // 내 프로필 화면
+import React, { useEffect, useState } from "react";
+import { StatusBar, Image } from "react-native";
+import { Asset } from "expo-asset";
+import * as Font from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import { ThemeProvider } from "styled-components";
+import { theme } from "./theme";
+import Navigation from "./navigations";
+import { UserProvider } from "./contexts/UserContext"; // UserProvider 가져오기
+import { PlaceProvider } from "./contexts/PlaceContext";
+import { ListProvider } from "./contexts/ListContext";
+import { PostProvider } from "./contexts/PostContext";
+import { ImageProvider } from "./contexts/ImageContext";
+import { CopyListProvider } from "./contexts/CopyListContext";
 
-const Stack = createNativeStackNavigator();
+SplashScreen.preventAutoHideAsync();
+
+const cacheResources = async () => {
+    const images = [require("../assets/splash.png")];
+    const fonts = []; // 필요한 폰트 추가
+
+    const cacheImages = images.map((image) =>
+        typeof image === "string" ? Image.prefetch(image) : Asset.fromModule(image).downloadAsync()
+    );
+    const cacheFonts = fonts.map((font) => Font.loadAsync(font));
+
+    await Promise.all([...cacheImages, ...cacheFonts]);
+};
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태 관리
+    const [isReady, setIsReady] = useState(false);
 
-  return (
-    <NavigationContainer>
-      <StatusBar barStyle='dark-content' />
-      <Stack.Navigator initialRouteName="Login">
-        {/* 로그인 화면 */}
-        {!isLoggedIn ? (
-          <Stack.Screen
-            name="Login"
-            component={() => <LoginScreen setIsLoggedIn={setIsLoggedIn} />}
-            options={{ headerShown: false }}
-          />
-        ) : (
-          <Stack.Screen
-            name="Main"
-            component={MainTabs} // 로그인 후 MainTabs 화면으로 이동
-            options={{ headerShown: false }}
-          />
-        )}
-        {/* 회원가입 화면 */}
-        <Stack.Screen
-          name="Signup"
-          component={SignupScreen}
-          options={{ headerShown: false }}
-        />
-        {/* 내 프로필 화면 */}
-        <Stack.Screen
-          name="Profile"
-          component={() => <ProfileScreen setIsLoggedIn={setIsLoggedIn} />}
-          options={{ headerShown: false }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+    useEffect(() => {
+        const prepareResources = async () => {
+            try {
+                await cacheResources();
+            } catch (error) {
+                console.warn("Error loading resources:", error);
+            } finally {
+                setIsReady(true);
+            }
+        };
+
+        prepareResources();
+    }, []);
+
+    useEffect(() => {
+        if (isReady) {
+            SplashScreen.hideAsync();
+        }
+    }, [isReady]);
+
+    if (!isReady) {
+        return null; // 준비되지 않았을 때 빈 화면
+    }
+
+    return (
+        <PlaceProvider>
+            <ListProvider>
+                <CopyListProvider>
+                    <PostProvider>
+                        <ImageProvider>
+                            <UserProvider>{/* UserProvider로 Navigation 감싸기 */}
+                                <ThemeProvider theme={theme}>
+                                    <StatusBar barStyle="dark-content" />
+                                    <Navigation />
+                                </ThemeProvider>
+                            </UserProvider>
+                        </ImageProvider>
+                    </PostProvider>
+                </CopyListProvider>
+            </ListProvider>
+        </PlaceProvider>
+
+    );
 };
 
 export default App;

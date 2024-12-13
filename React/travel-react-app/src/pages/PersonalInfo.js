@@ -206,7 +206,7 @@ const PersonalInfo = () => {
         <div className="profile_wrapper ">
           <img
             className="profile_image"
-            src={user.userProfileImage || defaultImage}
+            src={user.userProfileImage?`http://localhost:9090${user.userProfileImage}`: defaultImage}
             alt="profile"
           />
           <div style={{display:"flex" }}>
