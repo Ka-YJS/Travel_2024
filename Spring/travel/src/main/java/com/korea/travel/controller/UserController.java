@@ -132,7 +132,20 @@ public class UserController {
         }
         
     }
+    
 
+    //프로필사진 삭제
+    @PatchMapping("/userProfileImageDelete/{id}")
+    public boolean userProfileImageDelete(@PathVariable Long id) {
+    	
+    	//정상 삭제되었으면 true
+    	if(service.userProfileImageDelete(id)) {
+        	return true;
+        }else {
+        	return false;
+        }
+    	
+    }
     
     //로그아웃
     @PostMapping("/logout/{id}")

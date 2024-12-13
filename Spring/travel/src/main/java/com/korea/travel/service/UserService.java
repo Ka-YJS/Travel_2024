@@ -165,56 +165,103 @@ public class UserService {
     
     
     //프로필사진 수정
-    @Transactional
     public UserDTO userProfileImageEdit(Long id, MultipartFile file) {
     	
         try {
-            // 1. ID로 사용자 정보 확인 (UserEntity 찾기)
+            //ID로 사용자 정보 확인 (UserEntity 찾기)
             UserEntity userEntity = repository.findById(id)
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
-            // 2. 파일 경로 설정 및 저장 처리
+            
+            //기존 프로필 사진 삭제 처리
+            String existingUserProfileImage = userEntity.getUserProfileImage();
+            //기존 프로필 파일이 없거나 null이면 true
+            if (existingUserProfileImage != null && !existingUserProfileImage.isEmpty()) {
+            	//저장된 file 경로로 수정
+                String existingFilePath = existingUserProfileImage.replace("http://localhost:9090", System.getProperty("user.dir"));
+                File existingFile = new File(existingFilePath);	//객체 생성
+                if (existingFile.exists()) {	//해당 파일이있으면 true
+                    if (existingFile.delete()) {
+                        System.out.println("기존 프로필이미지가 삭제되었습니다: " + existingFilePath);
+                    } else {
+                        System.err.println("기존 프로필이미지 삭제 실패: " + existingFilePath);
+                    }
+                }
+            }
+            
+            //파일경로 지정
             String uploadDir = System.getProperty("user.dir") + "/uploads/profilePictures/";
             String fileName = file.getOriginalFilename().replaceAll("[\\s\\(\\)]", "_");
             //filePath - file 저장할 경로
             String filePath = uploadDir + id + "_" + fileName;
-                        
-            File dest = new File(filePath);            
-            File parentDir = dest.getParentFile();
-            if (!parentDir.exists()) {
-            	parentDir.mkdirs();  // 디렉토리 생성
+            
+            File dest = new File(filePath);			//파일객체 생성
+            File parentDir = dest.getParentFile();	//부모 디렉토리 경로 추출
+            if (!parentDir.exists()) {	//부모 디렉토리가 없으면 true
+            	parentDir.mkdirs();		// 디렉토리 생성
             }
             
             
             try {
-                file.transferTo(dest);
+                file.transferTo(dest);	//파일 저장
                 System.out.println("파일저장완료");
             } catch (IOException e) {
                 System.err.println("파일 저장 실패: " + e.getMessage());
                 e.printStackTrace();  // 스택 트레이스 출력
                 throw new RuntimeException("파일 저장 중 오류가 발생했습니다.", e);
             }
+            
             //filePath는 파일저장 경로지 불러올때는 fileUrl로 불러와야한다.
             //fileUrl - file불러올 경로 db에 저장
             String fileUrl = "http://localhost:9090/uploads/profilePictures/" + id + "_" + fileName;
             
-            // 3. UserEntity에 프로필 사진 경로 업데이트
+            //UserEntity에 프로필 사진 경로 업데이트
             userEntity.setUserProfileImage(fileUrl);
             repository.save(userEntity);  // UserEntity 업데이트 저장
             
-            // 4. 업데이트된 UserEntity를 UserDTO로 변환하여 반환
+            //업데이트된 UserEntity를 UserDTO로 변환하여 반환
             return UserDTO.builder().
             		userProfileImage(userEntity.getUserProfileImage())
             		.build();
             
         } catch (IOException e) {
-            // 파일 저장 오류 처리
-            throw new RuntimeException("프로필 사진 업로드 중 오류가 발생했습니다.", e);
+            //파일 저장 오류 처리
+            throw new RuntimeException("프로필이미지 업로드 중 오류가 발생했습니다.", e);
         } catch (Exception e) {
-            // 다른 예외 처리
-            throw new RuntimeException("프로필 사진 수정 중 오류가 발생했습니다.", e);
+            //다른 예외 처리
+            throw new RuntimeException("프로필이미지 수정 중 오류가 발생했습니다.", e);
         }
     }
 
+    
+    //프로필사진 삭제
+    public boolean userProfileImageDelete (Long id) {
+    	
+    	UserEntity userEntity = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        
+        //기존 프로필 사진 삭제 처리
+        String existingUserProfileImage = userEntity.getUserProfileImage();
+        //기존 프로필 파일이 없거나 null이면 true
+        if (existingUserProfileImage != null && !existingUserProfileImage.isEmpty()) {
+        	//저장된 file 경로로 수정
+            String existingFilePath = existingUserProfileImage.replace("http://localhost:9090", System.getProperty("user.dir"));
+            File existingFile = new File(existingFilePath);	//객체 생성
+            if (existingFile.exists()) {	//해당 파일이있으면 true
+                if (existingFile.delete()) {
+                    System.out.println("기존 프로필이미지가 삭제되었습니다: " + existingFilePath);
+                } else {
+                    System.err.println("기존 프로필이미지 삭제 실패: " + existingFilePath);
+                }
+            }
+            userEntity.setUserProfileImage(null);
+            repository.save(userEntity);
+            return true;
+        }else {
+        	throw new IllegalArgumentException("프로필 사진이 없습니다.");
+        }
+        
+    }
+    
     
     //로그아웃
     public boolean logout (Long id) {

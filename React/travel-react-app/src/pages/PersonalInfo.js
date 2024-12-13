@@ -52,8 +52,8 @@ const PersonalInfo = () => {
         //response가 존재하면 user 업데이트 if문
         if(response){
           console.log("닉네임 변경 call 메서드 : " + response)
-          setUser(pev =>(
-            {...pev,userNickName:response.userNickName}
+          setUser(prev =>(
+            {...prev,userNickName:response.userNickName}
           ))
           alert("닉네임이 변경되었습니다.");
           setUserNickName("");
@@ -76,7 +76,7 @@ const PersonalInfo = () => {
     try {
       //새로운 비밀번호확인 if문
       if (newPassword === newPasswordConfirm) {
-        console.log(user)
+        
         const userInfo = {
           userPassword: userPassword,
           newPassword: newPassword
@@ -134,7 +134,7 @@ const PersonalInfo = () => {
         if(response.data){
           console.log(response.data)
           //성공적으로 업로드되면 사용자 정보 업데이트
-          setUser(pev=>({...pev,userProfileImage:response.data.userProfileImage}));
+          setUser(prev=>({...prev,userProfileImage:response.data.userProfileImage}));
         }
 
       } catch (err) {
@@ -142,6 +142,36 @@ const PersonalInfo = () => {
       }    
     }
   };//프로필이미지번경 버튼
+
+
+  //프로필이미지 삭제 버튼
+  const handleProfileImageDelete = async () => {
+    
+    try {      
+      //유저프로필이미지 있는지확인 있으면 true
+      if(user.userProfileImage !== null){        
+
+        const response = await axios.patch(`http://localhost:9090/travel/userProfileImageDelete/${user.id}`,null, {
+          headers: {
+            'Authorization': `Bearer ${user.token}`
+          },
+        });
+
+        if(response.data){
+          console.log(response.data)
+          console.log(response.data.userProfileImage)
+          setUser(prev=>({...prev,userProfileImage:null}));
+        }
+
+      }else{
+        alert("삭제할 프로필이미지가 없습니다.")
+      }
+
+    } catch (error) {
+      console.error('프로필이미지 삭제 실패:', error);
+    }
+
+  }//프로필이미지 삭제 버튼
 
 
   //계정탈퇴 버튼
@@ -199,9 +229,7 @@ const PersonalInfo = () => {
             <button 
               style={{backgroundColor:"transparent"}} 
               type="button" 
-              onClick={() => setUser(pev=>({
-                ...pev,userProfileImage:defaultImage
-              }))}
+              onClick={handleProfileImageDelete}
             >
             <FaRegTrashAlt />
             </button>
