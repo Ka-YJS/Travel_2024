@@ -17,9 +17,9 @@ const TopIcon = () => {
   const navigate = useNavigate();
 
   const iconComponents = [
-    { id: "home", component: <SlHome size={30} />, route: "/main", label: "Home"},
-    { id: "map", component: <IoMapOutline size={30} />, route: "/map",label: "Map" },
-    { id: "post", component: <MdNoteAlt size={35} />, route: "/post",label: "Post" },
+    { id: "home", component: <SlHome size={23} />, route: "/main", label: "Home"},
+    { id: "map", component: <IoMapOutline size={23} />, route: "/map",label: "Map" },
+    { id: "post", component: <MdNoteAlt size={25} />, route: "/post",label: "Post" },
   ];
 
   //로그아웃 버튼

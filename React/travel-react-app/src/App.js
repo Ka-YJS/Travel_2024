@@ -16,8 +16,7 @@ import MapEdit from "./pages/MapEdit";
 import { ListContext } from "./context/ListContext";
 import { ImageContext } from "./context/ImageContext";
 import { CopyListContext } from "./context/CopyListContext";
-import Logo from './pages/Logo';
-
+import Logo from "./pages/Logo"
 
   
 function App() {
@@ -57,7 +56,7 @@ function App() {
               <CopyListContext.Provider value={{copyList,setCopyList}}>
                 <div className="AppWrapper">
                   <Router>
-                    <Logo/>
+                    <Logo />
                     <Routes>
                       <Route path="/" element={<HomeScreen />} />
                       <Route path="/main" element={<MainScreen />} />

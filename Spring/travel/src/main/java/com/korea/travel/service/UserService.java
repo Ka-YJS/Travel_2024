@@ -33,14 +33,6 @@ public class UserService {
 	private final TokenProvider tokenProvider;
 	
 	
-	//모든유저 조회
-	public List<UserDTO> getAllUsersId() {
-		
-		List<UserEntity> allUsersId = repository.findAll();
-		
-		return allUsersId.stream().map(UserDTO::new).collect(Collectors.toList());
-		
-	}
 	
 	
 	//userId가 있는지 중복체크
@@ -63,6 +55,7 @@ public class UserService {
 				.userId(dto.getUserId())
 				.userName(dto.getUserName())
 				.userNickName(dto.getUserNickName())
+				.userPhoneNumber(dto.getUserPhoneNumber())
 				.userPassword(passwordEncoder.encode(dto.getUserPassword()))
 				.userCreatedAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
 				.build();
@@ -75,6 +68,20 @@ public class UserService {
 		}
 		
 		
+	}
+	
+	
+	//Id찾기
+	public UserDTO userFindId(UserDTO dto) {
+		
+		UserEntity user = repository.findByUserName(dto.getUserName());
+		if(user != null && user.getUserPhoneNumber().equals(dto.getUserPhoneNumber())) {
+			return UserDTO.builder()
+					.userId(user.getUserId())
+					.build();
+		}else {
+			 throw new IllegalStateException("User not found");
+		}
 	}
 	
 	

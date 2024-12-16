@@ -102,6 +102,9 @@ const Map = () => {
                <TopIcon /> 
             </div>
             <div className="map-sidebar">
+                <div className="write_h1">
+                    <h1>경로 추가</h1>
+                </div>
                 <div className="map-search-container">
                     <Autocomplete onLoad={handleSearchBoxLoad} onPlaceChanged={handlePlaceChanged}>
                         <input

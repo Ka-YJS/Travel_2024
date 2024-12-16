@@ -32,8 +32,10 @@ public class SecurityConfig {
           			"/travel/login",
           			"/travel/signup",
           			"/travel/userIdCheck",
+          			"/travel/userFindId",
           			"/api/email/**", 
-          			"/uploads/**").permitAll() //경로는 인증 없이 허용
+          			"/uploads/**"
+          			).permitAll() //경로는 인증 없이 허용
           	.anyRequest().authenticated()  // 그 외 요청은 인증 필요
         	.and()
         	.cors()//CORS 설정 활성화

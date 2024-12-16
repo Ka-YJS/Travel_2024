@@ -26,8 +26,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 		
 		String requestURI = request.getRequestURI();
-		
-	    if (requestURI.equals("/travel/userIdCheck") ||requestURI.equals("/travel/login") || requestURI.equals("/travel/signup")|| requestURI.startsWith("/api/email")|| requestURI.startsWith("/uploads")) {
+
+	    if (requestURI.equals("/travel/userIdCheck") ||
+	    		requestURI.equals("/travel/login") || 
+	    		requestURI.equals("/travel/signup")|| 
+	    		requestURI.equals("/travel/userFindId")|| 
+	    		requestURI.startsWith("/api/email")|| 
+	    		requestURI.startsWith("/uploads")) {
 	        filterChain.doFilter(request, response);
 	        return; // 이 경로들은 필터를 넘기고 종료
 	    }

@@ -10,6 +10,7 @@ CREATE TABLE users (
     user_id VARCHAR(255) NOT NULL UNIQUE,
     user_name VARCHAR(255) NOT NULL,
     user_nick_name VARCHAR(255) NOT NULL,
+	user_phone_number VARCHAR(255) NOT NULL,
     user_password VARCHAR(255) NOT NULL,
     user_profile_image VARCHAR(255),
     user_created_at VARCHAR(255) NOT NULL
@@ -34,6 +35,21 @@ SHOW TABLES;
 
 DESCRIBE users;
 DESCRIBE posts;
+
+
+-- users 테이블 조회
+SELECT * FROM users;
+
+-- posts 테이블 조회
+SELECT * FROM posts;
+
+
+
+-- users 테이블 삭제
+-- DROP TABLE IF EXISTS users;
+
+-- posts 테이블 삭제
+-- DROP TABLE IF EXISTS posts;
 
 ALTER USER 'root'@'localhost' IDENTIFIED WITH 'mysql_native_password' BY '1111';
 FLUSH PRIVILEGES;

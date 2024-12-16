@@ -12,12 +12,125 @@ const Login = () => {
   const { user,setUser } = useContext(UserContext); // `user` 배열로부터 사용자 정보를 가져옴
   const [loginId, setLoginId] = useState(""); // 입력받은 ID 저장 useState
   const [loginPassword, setLoginPassword] = useState(""); // 입력받은 비밀번호 상태 useState
+  const [findUserName, setFindUserName] = useState(""); // ID찾기 userName 저장 useState
+  const [findUserPhoneNumber, setFindUserPhoneNumber] = useState(""); // ID찾기 userPhoneNumber 상태 useState
+  const [popupContent, setPopupContent] = useState(""); // 팝업 내용
+  const [isPopupVisible, setIsPopupVisible] = useState(false); // 팝업 표시 상태
   const navigate = useNavigate();
-
+  
   //회원가입 버튼
   const toSignup = () => {
     navigate('/Signup')
   };//회원가입 버튼 종료
+
+  //ID 찾기 팝업창
+  const handleFindId = () => {
+    setPopupContent(
+      <div>
+        <h4>이메일(아이디) 찾기</h4>
+        <div className="form-group">
+          <label htmlFor="findUserName">이름</label>
+          <input 
+            id="findUserName" 
+            name="findUserName" 
+            value={findUserName}
+            placeholder="Name" 
+            onChange={(e) => setFindUserName(e.target.value)}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="findUserPhoneNumber">전화번호</label>
+          <input
+            id="findUserPhoneNumber"
+            name="findUserPhoneNumber"
+            value={findUserPhoneNumber}
+            placeholder=" - 빼고 숫자만 입력하세요"
+            onChange={(e) => setFindUserPhoneNumber(e.target.value)}
+          />
+        </div>
+        <div className="popup-buttons">
+          <button onClick={handleFindIdConfirm}>확인</button>
+          <button onClick={closePopup}>취소</button>
+        </div>
+      </div>
+    );
+    setIsPopupVisible(true);
+  };//ID 찾기 팝업창 종료
+
+
+  //ID 찾기 팝업창 확인 버튼
+  const handleFindIdConfirm = async(event) => {
+
+    event.preventDefault();
+
+    const userInfo = {
+      userName: findUserName,
+      userPhoneNumber: findUserPhoneNumber
+    };
+    try {
+      //ID찾기 call 메서드
+      const response = await call("/travel/userFindId","POST",userInfo,user)
+
+      if(response){
+        console.log("ID찾기 call 메서드 response:"+response);
+        alert(`ID는 ${response.userId} 입니다`);
+        setIsPopupVisible(false);
+        setPopupContent("");
+      }   
+
+    } catch (error) {
+      console.error("ID찾기 실패:", error);
+      alert("이름or전화번호 확인해주세요");
+    }
+  }//ID 찾기 팝업창 확인 버튼 종료
+
+
+  
+  //Password 찾기 팝업창
+  const handleFindPassword = () => {
+    setPopupContent(
+      <div>
+        <h4>Password 찾기</h4>
+        <div className="form-group">
+          <label htmlFor="findIdName">이메일(아이디)</label>
+          <input 
+            id="findIdName" 
+            name="findIdName" 
+            type="text" 
+            placeholder="example@email.com"             
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="findIdName">이름</label>
+          <input id="findIdName" name="findIdName" type="text" placeholder="Name" />
+        </div>
+        <div className="form-group">
+          <label htmlFor="findIdPhone">전화번호</label>
+          <input
+            id="findIdPhone"
+            name="findIdPhone"
+            type="text"
+            placeholder=" - 빼고 숫자만 입력하세요"
+          />
+        </div>
+        <div className="popup-buttons">
+          <button onClick={handleFindIdConfirm}>확인</button>
+          <button onClick={closePopup}>취소</button>
+        </div>
+      </div>
+    );
+    setIsPopupVisible(true);
+  };//Password 찾기 팝업창 종료
+
+  // 팝업 닫기
+  const closePopup = () => {
+    setIsPopupVisible(false);
+    setPopupContent("");
+    setFindUserPhoneNumber("");
+    setFindUserName("");
+  };  
+
+  
 
   //로그인 버튼
   const handleLogin = async (event) => {
@@ -45,9 +158,9 @@ const Login = () => {
       console.error("로그인 실패:", error);
       alert("아이디 또는 비밀번호가 올바르지 않습니다.");
     }
-    
-
   };//로그인 버튼 종료
+  
+
 
   //------------연동 주석처리------------------
   // // Google login callback
@@ -74,6 +187,8 @@ const Login = () => {
   //   alert('카카오 로그인 실패');
   // };
 
+
+
   return (
     <div className="container">
       <main>
@@ -98,9 +213,33 @@ const Login = () => {
               name="loginPassword"
               type="password"
               value={loginPassword}
+              placeholder="Password"
               onChange={(e) => setLoginPassword(e.target.value)}
             />
           </div>
+
+          {/* ID 찾기 및 Password 찾기 텍스트 */}
+          <div className="find-texts">
+            <span className="find-text" onClick={handleFindId}>
+              ID 찾기
+            </span>
+            <span className="divider">|</span>
+            <span className="find-text" onClick={handleFindPassword}>
+              Password 찾기
+            </span>
+          </div>
+
+          {/* id찾기/password찾기 팝업 모달 */}
+          {isPopupVisible && (
+            <div className="popup">
+              <div className="popup-content">
+                <span className="close-button" onClick={closePopup}>
+                  &times;
+                </span>
+                <div>{popupContent}</div>
+              </div>
+            </div>
+          )}
 
           <div className="submit-container">
             <input type="submit" value="로그인" className="submit" />

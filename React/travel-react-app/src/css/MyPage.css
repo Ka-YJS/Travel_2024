@@ -193,12 +193,12 @@
   gap: 15px; /* 아이콘 간 간격 */
   margin-left: auto; /* 오른쪽으로 이동 */
   align-items: center;
-  margin-right: 10px;
+  margin-right: 40px;
 }
 
 .icon {
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   margin-bottom: 15px;
   border-radius: 20px; /* 모서리를 둥글게 */
   background: linear-gradient(135deg, #42a5f5, #fff); /* 그라데이션 배경 */

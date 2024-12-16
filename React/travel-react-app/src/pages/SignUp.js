@@ -23,6 +23,8 @@ function Signup() {
   const [userName, setUserName] = useState("");
   //userNickName 저장 useState
   const [userNickName, setUserNickName] = useState("");
+  //userPhoneNumber 저장 useState
+  const [userPhoneNumber, setUserPhoneNumber] = useState("");
   //emailError 상태 저장 useState
   const [emailError, setEmailError] = useState(false);
   //email 인증상태 저장 useState
@@ -52,6 +54,13 @@ function Signup() {
     return email
   };
 
+  //전화번호 정규식
+  const validataeUserPhoneNumber = (userPhoneNumber) =>{
+    // const userPhoneNumberRegex = /^01\d{9}$/;
+    // return userPhoneNumberRegex.test(userPhoneNumber);
+    return userPhoneNumber
+  }
+
   //회원가입 버튼
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -72,6 +81,13 @@ function Signup() {
       alert("비밀번호는 8자 이상이며 특수문자를 포함해야 합니다.");
       return;
     }
+    // 전화번호 정규식 검증
+    
+    if (!validataeUserPhoneNumber(userPhoneNumber)) {
+      alert("전화번호는 - 들어가지않은 11자리 숫자로 이루어져야 됩니다..");
+      return;
+    }
+    
     // 비밀번호 확인 일치 여부
     if (userPassword !== userPasswordConfirm) {
       alert("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
@@ -84,9 +100,10 @@ function Signup() {
     }
     const userInfo = {
       userId: userId,
-      userPassword: userPassword,
       userName: userName,
       userNickName: userNickName,
+      userPhoneNumber:userPhoneNumber,
+      userPassword: userPassword,
     };
     //회원가입 call 메서드
     await call("/travel/signup","POST",userInfo,user)
@@ -266,6 +283,7 @@ function Signup() {
               name="userName"
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
+              placeholder="Name"
             />
           </div>
 
@@ -277,6 +295,19 @@ function Signup() {
               name="userNickName"
               value={userNickName}
               onChange={(e) => setUserNickName(e.target.value)}
+              placeholder="NickName"
+            />
+          </div>
+          
+          {/* 전화번호 입력 필드 */}
+          <div className="form-group">
+            <label htmlFor="userNickName">전화번호</label>
+            <input
+              id="user"
+              name="userPhoneNumber"
+              value={userPhoneNumber}
+              onChange={(e) => setUserPhoneNumber(e.target.value)}
+              placeholder=" - 빼고 숫자만 입력하세요"
             />
           </div>
 
@@ -289,6 +320,7 @@ function Signup() {
               type="password"
               value={userPassword}
               onChange={handleUserPassword}
+              placeholder="Password"
             />
             {passwordError && <span className="error-message">{passwordError}</span>}
           </div>
@@ -302,6 +334,7 @@ function Signup() {
               type="password"
               value={userPasswordConfirm}
               onChange={(e) => setUserPasswordConfirm(e.target.value)}
+              placeholder="PasswordConfirm"
             />
           </div>
 
