@@ -81,9 +81,7 @@ public class UserController {
     @PostMapping("/userFindId")
     public ResponseEntity<?> userFindId(@RequestBody UserDTO dto){
     	
-    	System.out.println(dto);    	
     	UserDTO user = service.userFindId(dto);
-    	System.out.println(user.getUserId());
     	
     	if(user != null) {
     		return ResponseEntity.ok().body(user);

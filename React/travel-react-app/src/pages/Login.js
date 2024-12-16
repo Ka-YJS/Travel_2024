@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useRef } from "react";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
@@ -12,12 +12,14 @@ const Login = () => {
   const { user,setUser } = useContext(UserContext); // `user` 배열로부터 사용자 정보를 가져옴
   const [loginId, setLoginId] = useState(""); // 입력받은 ID 저장 useState
   const [loginPassword, setLoginPassword] = useState(""); // 입력받은 비밀번호 상태 useState
-  const [findUserName, setFindUserName] = useState(""); // ID찾기 userName 저장 useState
-  const [findUserPhoneNumber, setFindUserPhoneNumber] = useState(""); // ID찾기 userPhoneNumber 상태 useState
   const [popupContent, setPopupContent] = useState(""); // 팝업 내용
   const [isPopupVisible, setIsPopupVisible] = useState(false); // 팝업 표시 상태
   const navigate = useNavigate();
   
+  const findUserIdRef = useRef("");
+  const findUserNameRef = useRef("");
+  const findUserPhoneNumberRef = useRef("");
+
   //회원가입 버튼
   const toSignup = () => {
     navigate('/Signup')
@@ -33,9 +35,8 @@ const Login = () => {
           <input 
             id="findUserName" 
             name="findUserName" 
-            value={findUserName}
             placeholder="Name" 
-            onChange={(e) => setFindUserName(e.target.value)}
+            onChange={(e) => {findUserNameRef.current =e.target.value}}
           />
         </div>
         <div className="form-group">
@@ -43,9 +44,8 @@ const Login = () => {
           <input
             id="findUserPhoneNumber"
             name="findUserPhoneNumber"
-            value={findUserPhoneNumber}
             placeholder=" - 빼고 숫자만 입력하세요"
-            onChange={(e) => setFindUserPhoneNumber(e.target.value)}
+            onChange={(e) => {findUserPhoneNumberRef.current =e.target.value}}
           />
         </div>
         <div className="popup-buttons">
@@ -63,9 +63,11 @@ const Login = () => {
 
     event.preventDefault();
 
+    console.log("findUserId"+findUserNameRef.current)
+    console.log("findUserPhoneNumber"+findUserPhoneNumberRef.current)
     const userInfo = {
-      userName: findUserName,
-      userPhoneNumber: findUserPhoneNumber
+      userName: findUserNameRef.current,
+      userPhoneNumber: findUserPhoneNumberRef.current
     };
     try {
       //ID찾기 call 메서드
@@ -74,8 +76,6 @@ const Login = () => {
       if(response){
         console.log("ID찾기 call 메서드 response:"+response);
         alert(`ID는 ${response.userId} 입니다`);
-        setIsPopupVisible(false);
-        setPopupContent("");
       }   
 
     } catch (error) {
@@ -92,29 +92,34 @@ const Login = () => {
       <div>
         <h4>Password 찾기</h4>
         <div className="form-group">
-          <label htmlFor="findIdName">이메일(아이디)</label>
+          <label htmlFor="findUserId">이메일(아이디)</label>
           <input 
-            id="findIdName" 
-            name="findIdName" 
-            type="text" 
-            placeholder="example@email.com"             
+            id="findUserId" 
+            name="findUserId" 
+            placeholder="example@email.com"  
+            onChange={(e) => {findUserIdRef.current =e.target.value}}           
           />
         </div>
         <div className="form-group">
           <label htmlFor="findIdName">이름</label>
-          <input id="findIdName" name="findIdName" type="text" placeholder="Name" />
+          <input 
+            id="findIdName" 
+            name="findIdName" 
+            placeholder="Name"
+            onChange={(e) => {findUserPhoneNumberRef.current =e.target.value}} 
+          />
         </div>
         <div className="form-group">
           <label htmlFor="findIdPhone">전화번호</label>
           <input
             id="findIdPhone"
             name="findIdPhone"
-            type="text"
             placeholder=" - 빼고 숫자만 입력하세요"
+            onChange={(e) => {findUserNameRef.current =e.target.value}}
           />
         </div>
         <div className="popup-buttons">
-          <button onClick={handleFindIdConfirm}>확인</button>
+          <button onClick={handleFindPasswordConfirm}>확인</button>
           <button onClick={closePopup}>취소</button>
         </div>
       </div>
@@ -122,12 +127,15 @@ const Login = () => {
     setIsPopupVisible(true);
   };//Password 찾기 팝업창 종료
 
+  //Password 찾기 팝업창 확인 버튼
+  const handleFindPasswordConfirm = () => {
+
+  }//Password 찾기 팝업창 확인 버튼 종료
+
   // 팝업 닫기
   const closePopup = () => {
     setIsPopupVisible(false);
     setPopupContent("");
-    setFindUserPhoneNumber("");
-    setFindUserName("");
   };  
 
   

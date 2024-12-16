@@ -65,8 +65,7 @@ public class UserService {
 			return true;
 		}else {
 			return false;
-		}
-		
+		}		
 		
 	}
 	
