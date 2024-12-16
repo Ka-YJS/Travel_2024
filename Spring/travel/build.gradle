@@ -28,8 +28,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.h2database:h2'
-	implementation 'mysql:mysql-connector-java:8.0.40'
 	annotationProcessor 'org.projectlombok:lombok'
 	//Test 의존성
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -44,8 +42,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     //Redis(캐시 및 데이터 스토리지)
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    // Spring Boot DevTools (핫 리로드)
+    //Spring Boot DevTools (핫 리로드)
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    //mysql
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'com.mysql:mysql-connector-j'
 }
 
 tasks.named('test') {
