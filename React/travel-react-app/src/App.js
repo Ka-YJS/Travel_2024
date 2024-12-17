@@ -11,7 +11,6 @@ import MyPage from "./pages/MyPage"; // Mypage 추가
 import { PostContext } from "./context/PostContext";
 import { UserContext } from "./context/UserContext";
 import {PlaceContext} from "./context/PlaceContext";
-import img1 from "./image/bhc.jpg";
 import MapEdit from "./pages/MapEdit";
 import { ListContext } from "./context/ListContext";
 import { ImageContext } from "./context/ImageContext";
@@ -24,15 +23,7 @@ function App() {
   const [list,setList] = useState([]);
   const [copyList,setCopyList] = useState([]);
   const [copyImage, setCopyImage] = useState([]);
-  const [postList, setPostList] = useState([
-    {
-      title: "",
-      content: "",
-      placeList:[],
-      like: 0,
-      thumbnail: `${img1}`,
-    },
-  ]);
+  const [postList, setPostList] = useState([]);
   //user정보 저장useState
   const [user, setUser] = useState(() => {
     // 새로고침 시 로컬 스토리지에서 사용자 정보 복원
@@ -66,7 +57,7 @@ function App() {
                       <Route path="post" element={<Post />} />
                       <Route path="postEdit/:id" element={<MapEdit />} />
                       <Route path="map" element={<Map />} />
-                      <Route path="/mypage/*" element={<MyPage />} /> {/* Mypage 경로 추가 */}
+                      <Route path="/mypage/mypost/:id" element={<MyPage />} /> {/* Mypage 경로 추가 */}
                     </Routes>
                   </Router>
                 </div>

@@ -3,6 +3,8 @@ package com.korea.travel.dto;
 
 import java.util.List;
 
+import com.korea.travel.model.UserEntity;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +25,7 @@ public class PostDTO {
 	private String thumbnail;
 	private int likes;
 	private String postCreatedAt;	//게시글등록시간
+	private UserDTO userEntity;  
 	
 }
 

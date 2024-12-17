@@ -51,13 +51,12 @@ const Post = () => {
 
     const filteredPosts = Array.isArray(postList)
         ? postList.filter((post) =>
-            searchQuery === "" || post.title && post.title.toLowerCase().includes(searchQuery.toLowerCase())
+            searchQuery === "" || post.postTitle && post.postTitle.toLowerCase().includes(searchQuery.toLowerCase())
     ) : [];
 
     const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
 
     console.log(currentPosts)
-    console.log(currentPosts[0].postId)
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };

@@ -23,7 +23,6 @@ CREATE TABLE posts (
     post_content TEXT,                           -- 게시글 내용 (TEXT 타입)
     user_nickname VARCHAR(255) NOT NULL,         -- 사용자 닉네임
     likes INT DEFAULT 0,                         -- 좋아요 수 (기본값 0)
-    thumbnail VARCHAR(255),                      -- 썸네일 이미지 URL
     post_created_at VARCHAR(255),                -- 게시글 작성 시간 (문자열로 저장)
     user_id BIGINT,                              -- 외래 키 (UserEntity와 연결)
 

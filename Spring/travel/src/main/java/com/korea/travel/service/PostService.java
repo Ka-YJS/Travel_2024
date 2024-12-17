@@ -1,28 +1,33 @@
 package com.korea.travel.service;
 
-import com.korea.travel.dto.PostDTO;
-import com.korea.travel.model.PostEntity;
-import com.korea.travel.persistence.PostRepository;
-
-import lombok.RequiredArgsConstructor;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.korea.travel.dto.PostDTO;
+import com.korea.travel.dto.UserDTO;
+import com.korea.travel.model.PostEntity;
+import com.korea.travel.model.UserEntity;
+import com.korea.travel.persistence.PostRepository;
 
 @Service
 public class PostService {
 
 	@Autowired
     private PostRepository postRepository;
+	
+	
 
     @Value("${file.upload-dir}") // 파일 저장 경로 설정
     private String uploadDir;
@@ -33,6 +38,15 @@ public class PostService {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
+    
+    // 마이 게시판 조회
+    public List<PostDTO> getMyPosts(Long id) {
+    	
+        return postRepository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+    
 
     // 게시글 한 건 조회
     public PostDTO getPostById(Long id) {
@@ -45,12 +59,14 @@ public class PostService {
 		}
     }
 
+    
     // 게시글 생성
     public PostDTO createPost(PostDTO postDTO) {
         PostEntity savedEntity = postRepository.save(convertToEntity(postDTO));
         return convertToDTO(savedEntity);
     }
 
+    
     public List<String> saveFiles(List<MultipartFile> files) {
         List<String> fileUrls = new ArrayList<>();
         for (MultipartFile file : files) {
@@ -109,9 +125,9 @@ public class PostService {
                 .userNickname(entity.getUserNickname())
                 .placeList(entity.getPlaceList())
                 .imageUrls(entity.getImageUrls())
-                .thumbnail(entity.getThumbnail())
                 .likes(entity.getLikes())
                 .postCreatedAt(entity.getPostCreatedAt())
+                .userEntity(new UserDTO(entity.getUserEntity())) 
                 .build();
     }
 
@@ -122,7 +138,6 @@ public class PostService {
                 .userNickname(dto.getUserNickname())
                 .placeList(dto.getPlaceList())
                 .imageUrls(dto.getImageUrls())
-                .thumbnail(dto.getThumbnail())
                 .likes(dto.getLikes())
                 .postCreatedAt(dto.getPostCreatedAt())
                 .build();

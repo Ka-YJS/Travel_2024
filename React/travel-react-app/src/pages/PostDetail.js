@@ -59,17 +59,21 @@ const PostDetail = () => {
 
     // 수정 버튼 클릭
     const toPostEdit = () => {
-        navigate(`/postedit/${id}`);
+        navigate(`/postEdit/${id}`);
     };
 
     // 삭제 버튼 클릭
     const handleDelete = async () => {
         if (window.confirm("게시글을 삭제하시겠습니까?")) {
             try {
-                const response = await axios.delete(`http://localhost:9090/api/postDelete/${id}`);
+                const response = await axios.delete(`http://localhost:9090/api/postDelete/${id}`, {
+                    headers: { 
+                        'Authorization': `Bearer ${user.token}`
+                    },
+                });
                 if (response.data) {
                     alert("삭제되었습니다.");
-                    navigate("/");
+                    navigate("/post");
                 } else {
                     alert("삭제에 실패했습니다.");
                 }
@@ -191,22 +195,24 @@ const PostDetail = () => {
                 >
                     목록
                 </Button>
-                <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={toPostEdit}
-                    style={{ width: "10%" }}
-                >
-                    수정
-                </Button>
-                <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={handleDelete}
-                    style={{ width: "10%" }}
-                >
-                    삭제
-                </Button>
+                {/* {user.userNickname === user.userNickname&&( */}
+                    <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={toPostEdit}
+                        style={{ width: "10%" }}
+                    >
+                        수정
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={handleDelete}
+                        style={{ width: "10%" }}
+                    >
+                        삭제
+                    </Button>
+                {/* )} */}
             </div>
         </div>
     );

@@ -21,9 +21,10 @@ const Map = () => {
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [photoUrl, setPhotoUrl] = useState(null);
 
+    const [ libraries ] = useState(['places']);
     const { isLoaded, loadError } = useJsApiLoader({
         googleMapsApiKey: config.MAP_API_KEY,
-        libraries: ["places"],
+        libraries: libraries,
         language:"ko"
     });
 

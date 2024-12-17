@@ -206,6 +206,7 @@ const PersonalInfo = () => {
         <div className="profile_wrapper ">
           <img
             className="profile_image"
+            //                          D:\Aproject\Travel_2024\Spring\travel\uploads
             src={user.userProfileImage?`http://localhost:9090${user.userProfileImage}`: defaultImage}
             alt="profile"
           />
