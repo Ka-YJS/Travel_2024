@@ -24,5 +24,10 @@ yarn-error.log*
 
 config.js
 
+<<<<<<< HEAD
+# Ignore sensitive yml files
+src/main/resources/application-oauth.yml
+=======
 # googleAPI_key
 /src/Apikey.js
+>>>>>>> parent of 62b8b239 (update_google)
