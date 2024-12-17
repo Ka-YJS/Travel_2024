@@ -82,7 +82,7 @@ const MapEdit = () => {
     // To-Do List에 장소 추가
     const handleAddToPlaceList = () => {
         if (placeName) {
-            setCopyList((prevList) => [...prevList, placeName]);
+            setPlaceList((prevList) => [...prevList, placeName]);
             console.log(placeName, +"placeList: "+list)
             setPlaceName(""); // 입력 필드 초기화
         }
@@ -91,7 +91,7 @@ const MapEdit = () => {
     // To-Do List에서 항목 삭제
     const handleDeleteFromTodoList = (index) => {
         setList((prevList) => prevList.filter((_, i) => i !== index));
-        setCopyList((prevList) => prevList.filter((_, i) => i !== index));
+        setPlaceList((prevList) => prevList.filter((_, i) => i !== index));
     };
 
     return (
@@ -127,26 +127,11 @@ const MapEdit = () => {
                         />
                     </Autocomplete>
                     {placeName && (
-                        <div
-                            style={{
-                                padding: "10px",
-                                border: "1px solid #ddd",
-                                borderRadius: "5px",
-                                marginBottom: "10px",
-                            }}
-                        >
+                        <div className="place-info-container">
                             <strong>장소 이름:</strong> {placeName}
                             <button
                                 onClick={handleAddToPlaceList}
-                                style={{
-                                    marginLeft: "10px",
-                                    padding: "5px 10px",
-                                    backgroundColor: "#007bff",
-                                    color: "#fff",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    cursor: "pointer",
-                                }}
+                                className="place-info-button"
                             >
                                 추가
                             </button>
@@ -205,32 +190,19 @@ const MapEdit = () => {
                         }}
                     >
                         여행지 List
-                        <Button onClick={() => setList([...copyList])}>추가하기</Button>
+                        <Button onClick={() => setList([placeList])}>추가하기</Button>
                     </h3>
                     <ul>
-                        {copyList.map((item, index) => (
+                        {placeList.map((item, index) => (
                             <li
                                 title="-"
                                 key={index}
-                                style={{
-                                    marginBottom: "10px",
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    alignItems: "center",
-                                
-                                }}
+                                className="map-list-item"
                             >
                                 {item}
                                 <button
                                     onClick={() => handleDeleteFromTodoList(index)}
-                                    style={{
-                                        padding: "5px 10px",
-                                        backgroundColor: "red",
-                                        color: "#fff",
-                                        border: "none",
-                                        borderRadius: "5px",
-                                        cursor: "pointer",
-                                    }}
+                                    className="map-list-item-button"
                                 >
                                     삭제
                                 </button>
@@ -241,7 +213,7 @@ const MapEdit = () => {
             </div>
 
             {/* 수정 + To-Do List 영역 */}
-            <div style={{ flex: 1, padding: "20px", backgroundColor: "#f9f9f9" }}>
+            <div className="map-content">
                 <PostEdit/>
                 
             </div>

@@ -14,10 +14,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PostDTO {
 	
-	private Long postId;				//고유 id
+	private Long postId;			//고유 id
 	private String postTitle;		//게시글제목
-	private String postContent;	//게시글내용
-	private String userName;
+	private String postContent;		//게시글내용
+	private String userNickname;
 	private List<String> placeList;
 	private List<String> imageUrls;
 	private String thumbnail;
@@ -25,3 +25,4 @@ public class PostDTO {
 	private String postCreatedAt;	//게시글등록시간
 	
 }
+

@@ -77,23 +77,52 @@ public class UserController {
         
     }
     
-    //Id찾기
+  //Id찾기
     @PostMapping("/userFindId")
     public ResponseEntity<?> userFindId(@RequestBody UserDTO dto){
-    	
-    	UserDTO user = service.userFindId(dto);
-    	
-    	if(user != null) {
-    		return ResponseEntity.ok().body(user);
-    	}else {
-        	ResponseDTO responseDTO = ResponseDTO.builder()
-        			.error("ID를 찾을수없습니다.")
-        			.build();
-        	return ResponseEntity.badRequest().body(responseDTO);
+       
+       UserDTO user = service.userFindId(dto);
+       
+       if(user != null) {
+          return ResponseEntity.ok().body(user);
+       }else {
+           ResponseDTO responseDTO = ResponseDTO.builder()
+                 .error("ID를 찾을수없습니다.")
+                 .build();
+           return ResponseEntity.badRequest().body(responseDTO);
         }
-    	
+       
     }
     
+    // 비밀번호 찾기 (사용자 정보 확인)
+    @PostMapping("/userFindPassword")
+    public ResponseEntity<?> findPassword(@RequestBody UserDTO dto) {
+        UserDTO foundUser = service.userFindPassword(dto);
+        
+        if (foundUser != null) {
+            return ResponseEntity.ok().body(foundUser);
+        } else {
+            ResponseDTO responseDTO = ResponseDTO.builder()
+                    .error("일치하는 사용자를 찾을 수 없습니다.")
+                    .build();
+            return ResponseEntity.badRequest().body(responseDTO);
+        }
+    }
+
+    // 비밀번호 초기화
+    @PostMapping("/userResetPassword")
+    public ResponseEntity<?> resetPassword(@RequestBody UserDTO dto) {
+        boolean isReset = service.userResetPassword(dto);
+        
+        if (isReset) {
+            return ResponseEntity.ok().body(true);
+        } else {
+            ResponseDTO responseDTO = ResponseDTO.builder()
+                    .error("비밀번호 재설정에 실패했습니다.")
+                    .build();
+            return ResponseEntity.badRequest().body(responseDTO);
+        }
+    }
     
     //userPassword 수정하기
     @PatchMapping("/userPasswordEdit/{id}")

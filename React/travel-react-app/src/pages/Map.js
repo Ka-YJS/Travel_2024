@@ -12,8 +12,7 @@ import "../css/Map.css";
 const Map = () => {
     const { placeList, setPlaceList } = useContext(PlaceContext);
     const { list, setList } = useContext(ListContext);
-    const { copyList, setCopyList } = useContext(CopyListContext);
-
+    
     const [map, setMap] = useState(null);
     const [center, setCenter] = useState({ lat: 37.5665, lng: 126.9780 });
     const [markerPosition, setMarkerPosition] = useState(null);

@@ -33,6 +33,8 @@ public class SecurityConfig {
           			"/travel/signup",
           			"/travel/userIdCheck",
           			"/travel/userFindId",
+          			"/travel/userFindPassword",
+          			"/travel/userResetPassword",
           			"/api/email/**", 
           			"/uploads/**"
           			).permitAll() //경로는 인증 없이 허용

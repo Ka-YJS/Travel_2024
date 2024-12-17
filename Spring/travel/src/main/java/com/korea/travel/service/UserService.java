@@ -65,23 +65,59 @@ public class UserService {
 			return true;
 		}else {
 			return false;
-		}		
+		}
+		
 		
 	}
 	
 	
 	//Id찾기
-	public UserDTO userFindId(UserDTO dto) {
-		
-		UserEntity user = repository.findByUserName(dto.getUserName());
-		if(user != null && user.getUserPhoneNumber().equals(dto.getUserPhoneNumber())) {
-			return UserDTO.builder()
-					.userId(user.getUserId())
-					.build();
-		}else {
-			 throw new IllegalStateException("User not found");
-		}
-	}
+	   public UserDTO userFindId(UserDTO dto) {
+	      
+	      UserEntity user = repository.findByUserName(dto.getUserName());
+	      if(user != null && user.getUserPhoneNumber().equals(dto.getUserPhoneNumber())) {
+	         return UserDTO.builder()
+	               .userId(user.getUserId())
+	               .build();
+	      }else {
+	          throw new IllegalStateException("User not found");
+	      }
+	   }
+	   
+	   // 비밀번호 찾기 (사용자 정보 확인)
+	    public UserDTO userFindPassword(UserDTO dto) {
+	        // 아이디, 이름, 전화번호로 사용자 조회
+	        UserEntity user = repository.findByUserIdAndUserNameAndUserPhoneNumber(
+	            dto.getUserId(), 
+	            dto.getUserName(), 
+	            dto.getUserPhoneNumber()
+	        );
+	        
+	        if (user != null) {
+	            return UserDTO.builder()
+	                .userId(user.getUserId())
+	                .userName(user.getUserName())
+	                .build();
+	        }
+	        
+	        return null;
+	    }
+
+	    // 비밀번호 초기화
+	    @Transactional
+	    public boolean userResetPassword(UserDTO dto) {
+	        // 아이디로 사용자 조회
+	        UserEntity user = repository.findByUserId(dto.getUserId());
+	        
+	        if (user != null) {
+	            // 새 비밀번호 암호화하여 저장
+	            user.setUserPassword(passwordEncoder.encode(dto.getUserPassword()));
+	            repository.save(user);
+	            return true;
+	        }
+	        
+	        return false;
+	    }
 	
 	
 	//로그인(로그인할때 토큰생성)

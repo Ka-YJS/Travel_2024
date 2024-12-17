@@ -1,26 +1,43 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { TextField, Button } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import { PostContext } from "../context/PostContext";
 import { UserContext } from "../context/UserContext";
-import { PlaceContext } from "../context/PlaceContext";
-import { ListContext } from "../context/ListContext";
-import { ImageContext } from "../context/ImageContext";
-import TopIcon from "../TopIcon/TopIcon"
+import axios from "axios";
+import TopIcon from "../TopIcon/TopIcon";
 
 const PostDetail = () => {
-    const { postList, setPostList } = useContext(PostContext); // 게시글 데이터
-    const {placeList, setPlaceList} = useContext(PlaceContext);
-    const { user } = useContext(UserContext); // 사용자 데이터
-    const {list} = useContext(ListContext);
-    const {copyImage} = useContext(ImageContext);
-
-    const { id } = useParams(); // URL에서 게시글 ID 추출
-    const postId = Number(id) - 1; // 배열 인덱스 계산
+    const { user } = useContext(UserContext); // 사용자 정보
+    const { id } = useParams(); // 게시글 ID
     const navigate = useNavigate();
-    
-    // 게시글이 존재하지 않을 경우 처리
-    if (!postList[postId]) {
+
+    const [post, setPost] = useState({});
+    const [imageUrls, setImageUrls] = useState([]);
+
+    // 게시글 상세 데이터 가져오기
+    const getPostDetail = async () => {
+        try {
+            const response = await axios.get(`http://localhost:9090/api/posts/postDetail/${id}`, {
+                headers: { 
+                    'Authorization': `Bearer ${user.token}`
+                },
+            });
+            const data = response.data.data[0];
+            setPost(data);
+            setImageUrls(data.imageUrls || []); // 이미지 URL 설정
+            console.log("data"+data)
+            console.log("imageUrls"+data.imageUrls)
+        } catch (error) {
+            console.error("Error fetching post details:", error);
+            alert("게시글 정보를 불러오는 중 오류가 발생했습니다.");
+            navigate(-1); // 이전 페이지로 이동
+        }
+    };
+
+    useEffect(() => {
+        getPostDetail();
+    }, [id]);
+
+    if (!post) {
         return (
             <div style={{ textAlign: "center", padding: "20px" }}>
                 <h2>잘못된 경로입니다.</h2>
@@ -35,8 +52,6 @@ const PostDetail = () => {
         );
     }
 
-    const post = postList[postId]; // 현재 게시글 데이터
-
     // 목록 버튼 클릭
     const listButtonClick = () => {
         navigate("/Post");
@@ -47,9 +62,27 @@ const PostDetail = () => {
         navigate(`/postedit/${id}`);
     };
 
+    // 삭제 버튼 클릭
+    const handleDelete = async () => {
+        if (window.confirm("게시글을 삭제하시겠습니까?")) {
+            try {
+                const response = await axios.delete(`http://localhost:9090/api/postDelete/${id}`);
+                if (response.data) {
+                    alert("삭제되었습니다.");
+                    navigate("/");
+                } else {
+                    alert("삭제에 실패했습니다.");
+                }
+            } catch (error) {
+                console.error("Error deleting post:", error);
+                alert("삭제 중 오류가 발생했습니다.");
+            }
+        }
+    };
+
     return (
         <div>
-            <div style={{}}>
+            <div>
                <TopIcon /> 
             </div>
             <h1
@@ -63,19 +96,20 @@ const PostDetail = () => {
             </h1>
             <div style={{position:"relative", zIndex:"-1"}}>
                 <div>
+                    {/* 제목 */}
                     <TextField style={{ marginBottom: "20px" }}
                         InputProps={{
                             readOnly: true,
                         }}
-                        value={post.title}
+                        value={post.postTitle|| "제목"}
                         fullWidth
                         variant="outlined"
                         label="제목"
-                        placeholder="제목"
                     />
                 </div>
 
                 <div style={{ marginBottom: "20px" }}>
+                    {/* 작성자 */}
                     <TextField
                         InputProps={{
                             readOnly: true,
@@ -83,11 +117,12 @@ const PostDetail = () => {
                         label="작성자"
                         fullWidth
                         variant="outlined"
-                        value={user[0]?.nickname || "알 수 없는 사용자"}
+                        value={post.userNickname || "알 수 없는 사용자"}
                     />
                 </div>
 
                 <div style={{ marginBottom: "20px" }}>
+                    {/* 여행지 */}
                     <TextField
                         inputProps={{
                             readOnly: true,
@@ -96,21 +131,21 @@ const PostDetail = () => {
                         variant="outlined"
                         label="여행지"
                         value={post.placeList?.join(", ") || "등록된 여행지가 없습니다."}
-                        multiline
-                        rows={2}
+                        // multiline
+                        // rows={2}
                     />
                 </div>
 
                 <div style={{ marginBottom: "20px" }}>
+                    {/* 내용 */}
                     <TextField
                         InputProps={{
                             readOnly: true,
                         }}
-                        value={post.content}
+                        value={post.postContent || "내용"}
                         fullWidth
                         variant="outlined"
                         label="내용"
-                        placeholder="내용"
                         multiline
                         rows={8}
                     />
@@ -120,27 +155,29 @@ const PostDetail = () => {
                     gridTemplateColumns:"repeat(3, 1fr)",
                     gap: "10px",
                     marginTop: "20px"
-                    }}>
-                {copyImage.map((image, id) => (
-                    <div key={id} style={{
-                        display:"flex", 
-                        justifyContent:"center",
-                        alignItems:"center",
-                        border: "1px solid #ddd", // 테두리 추가 (선택 사항)
-                        borderRadius: "5px", // 모서리 둥글게
-                        overflow: "hidden", // 이미지가 영역을 벗어나지 않도록 처리
-                        backgroundColor: "#f9f9f9", // 배경색 추가 (선택 사항)
+                }}>
+                    {imageUrls.map((image, index) => (
+                        <div key={index} style={{
+                            display:"flex", 
+                            justifyContent:"center",
+                            alignItems:"center",
+                            border: "1px solid #ddd", // 테두리 추가 (선택 사항)
+                            borderRadius: "5px", // 모서리 둥글게
+                            overflow: "hidden", // 이미지가 영역을 벗어나지 않도록 처리
+                            backgroundColor: "#f9f9f9", // 배경색 추가 (선택 사항)
                         }}>
-                        <img src={image} alt={`${image}-${id}`}
-                            style={{
-                                height:"20vh",
-                                width: "20vw",
-                                padding: 0,
-                                margin: 0,
-                            }}
-                        />
-                    </div>
-                ))}
+                            <img 
+                                src={`http://localhost:9090${image}`} 
+                                alt={`image-${index}`}
+                                style={{
+                                    height:"20vh",
+                                    width: "20vw",
+                                    padding: 0,
+                                    margin: 0,
+                                }}
+                            />
+                        </div>
+                    ))}
                 </div>
             </div>
 
@@ -161,6 +198,14 @@ const PostDetail = () => {
                     style={{ width: "10%" }}
                 >
                     수정
+                </Button>
+                <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={handleDelete}
+                    style={{ width: "10%" }}
+                >
+                    삭제
                 </Button>
             </div>
         </div>

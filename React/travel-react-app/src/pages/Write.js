@@ -1,85 +1,109 @@
 import React, { useContext, useState } from "react";
 import { TextField, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { PostContext } from "../context/PostContext";
-import { UserContext } from "../context/UserContext";
-import { PlaceContext } from "../context/PlaceContext";
 import { ListContext } from "../context/ListContext";
+import { UserContext } from "../context/UserContext";
 import { Delete } from "@mui/icons-material";
-import { ImageContext } from "../context/ImageContext";
-import { CopyListContext } from "../context/CopyListContext";
+import axios from "axios";
 import '../css/Map.css';  // Map.css 파일을 import
 
 const Write = () => {
-    const { placeList, setPlaceList } = useContext(PlaceContext);
-    const { user } = useContext(UserContext);
-    const { postList, setPostList } = useContext(PostContext);
-    const {copyList,setCopyList} = useContext(CopyListContext);
-    const { list, setList } = useContext(ListContext);
-    const {copyImage, setCopyImage} = useContext(ImageContext);
-    const navigate = useNavigate();
-
-    // 상태 변수
+    const {user} = useContext(UserContext)
+    const {list} = useContext(ListContext)
     const [postTitle, setPostTitle] = useState("");
     const [postContent, setPostContent] = useState("");
-    const [previewPhoto, setPreviewPhoto] = useState(""); // 미리보기 이미지 URL
-    const [showImages, setShowImages] = useState([]);
+    const [selectedFiles, setSelectedFiles] = useState([]); // 사용자가 선택한 파일들
+    const [previewUrls, setPreviewUrls] = useState([]); // 미리보기 URL들
+    const navigate = useNavigate();
+
+    //상태 변수
+   
 
 
-    // 이미지 업로드 핸들러
-    const handleAddImage = (e) => {
-        const imageList = e.target.files;
-        let imageUrlList = [...showImages];
+    //파일 추가 핸들러
+    const handleAddImages = async (e) => {
+        const files = Array.from(e.target.files);
         
-        for(let i = 0; i < imageList.length ; i++){
-            const currentImageUrl = URL.createObjectURL(imageList[i]);
-            imageUrlList.push(currentImageUrl);
+        //10개 이미지 제한
+        if (selectedFiles.length + files.length > 10) {
+            alert("최대 10개의 이미지만 업로드 가능합니다.");
+            return;
         }
-        if (imageUrlList.length > 10) {
-            imageUrlList = imageUrlList.slice(0, 10);
-        }
-        setShowImages(imageUrlList);
-        setPreviewPhoto(imageUrlList[0])
-        setCopyImage(imageUrlList);
-        console.log(copyImage)
-    }
-    const handleDeleteImage = (id) => {
-        setShowImages(showImages.filter((_, index)=>index !== id));
-    }
 
-    // 제목 변경 핸들러
-    const handleTitleChange = (e) => {
-        setPostTitle(e.target.value);
+        //파일 정보와 미리보기 URL 설정
+        setSelectedFiles((prevFiles) => [...prevFiles, ...files]);
+        const newPreviews = files.map((file) => URL.createObjectURL(file));
+        setPreviewUrls((prevUrls) => [...prevUrls, ...newPreviews]);
     };
 
-    // 내용 변경 핸들러
-    const handleContentChange = (e) => {
-        setPostContent(e.target.value);
+
+    //이미지 삭제 핸들러
+    const handleDeleteImage = (index) => {
+        setSelectedFiles((prevFiles) => prevFiles.filter((_, idx) => idx !== index));
+        setPreviewUrls((prevUrls) => prevUrls.filter((_, idx) => idx !== index));
     };
 
-    // 저장 버튼 핸들러
-    const handleSave = () => {
-        if (postTitle && postContent) {
-            const newPost = {
-                id: postList.length + 1,
-                title: postTitle,
-                placeList: placeList,
-                content: postContent,
-                thumbnail: previewPhoto || "https://via.placeholder.com/150", // 썸네일로 업로드된 첫 번째 이미지 사용
-                like: 0,
-            };
-            setPostList([...postList, newPost]);
-            alert("글이 저장되었습니다!");
-            navigate("/PostDetail/" + newPost.id);
-        } else {
+
+    //저장 버튼 핸들러
+    const handleSave = async () => {
+
+        if (!postTitle || !postContent) {
             alert("제목과 내용을 모두 입력해주세요.");
+            return;
+        }        
+    
+        //허용된 파일 확장자 검사
+        const allowedExtensions = ["png", "jpg", "jpeg", "gif"];
+        const invalidFiles = selectedFiles.filter(
+            (file) => !allowedExtensions.includes(file.name.split('.').pop().toLowerCase())
+        );
+    
+        if (invalidFiles.length > 0) {
+            alert("허용되지 않은 파일 형식이 포함되어 있습니다.");
+            return;
         }
-        setCopyList(placeList);
-  
-        console.log(`copyList: ${copyList}\n placeList: ${placeList} \n list: ${list}`)
+    
+        //FormData 생성 및 전송
+        const formData = new FormData();
+        console.log("postTitle: ", postTitle)
+        console.log("postContent: ", postContent)
+        console.log("placeList: ", list.join(", "))
+        console.log("userNickname", user.userNickName)
+
+        formData.append("postTitle", postTitle);
+        formData.append("postContent", postContent);
+        formData.append("userNickName", user.userNickName);
+        formData.append("placeList", list.join(", "));
+        formData.append("imageUrls", previewUrls);
+
+        selectedFiles.forEach((file) => formData.append("files", file));
+    
+        try {
+            for (let [key, value] of formData.entries()) {
+                console.log(key, value);
+            }
+            const response = await axios.post("http://localhost:9090/api/write", formData, {
+                headers: { 
+                    "Content-Type": "multipart/form-data" ,
+                    'Authorization': `Bearer ${user.token}`
+                },
+            });
+            console.log("User Token:", user.token);
+
+            console.log("Response:", response);
+            alert("글이 저장되었습니다!");
+            navigate("/PostDetail/" + response.data.postId);
+        } catch (error) {
+            console.error("Error saving post:", error.response || error.message);
+            alert("저장 중 오류가 발생했습니다.");
+            if (error.response) {
+                console.log("Response Data:", error.response.data);
+                console.log("Response Status:", error.response.status);
+            }
+        }
     };
 
-    // 취소 버튼 핸들러
+    // 취소 버튼 핸들러`````````````````````````````
     const handleCancel = () => {
         setPostTitle("");
         setPostContent("");
@@ -102,7 +126,7 @@ const Write = () => {
                     variant="outlined"
                     label="제목"
                     value={postTitle}
-                    onChange={handleTitleChange}
+                    onChange={(e) => {setPostTitle(e.target.value)}}
                     placeholder="제목을 입력하세요."
                 />
             </div>
@@ -110,22 +134,18 @@ const Write = () => {
             {/* 작성자 표시 */}
             <div>
                 <TextField
-                    InputProps={{
-                        readOnly: true,
-                    }}
+                    InputProps={{ readOnly: true }}
                     label="작성자"
                     fullWidth
                     variant="outlined"
-                    value={user[0]?.nickname || "알 수 없는 사용자"}
+                    value={user.userNickName || "알 수 없는 사용자"}
                 />
             </div>
 
             {/* 여행지 표시 */}
             <div>
                 <TextField
-                    inputProps={{
-                        readOnly: true,
-                    }}
+                    inputProps={{readOnly: true}}
                     fullWidth
                     variant="outlined"
                     label="여행지"
@@ -142,7 +162,7 @@ const Write = () => {
                     variant="outlined"
                     label="내용"
                     value={postContent}
-                    onChange={handleContentChange}
+                    onChange={(e) => {setPostContent(e.target.value)}}
                     placeholder="내용을 입력하세요."
                     multiline
                     rows={7}
@@ -159,14 +179,17 @@ const Write = () => {
                     accept=".png, .jpg, .jpeg, .gif" 
                     id="input-file" 
                     multiple 
-                    onChange={handleAddImage} 
+                    onChange={handleAddImages} 
                 />
                 {/* 저장해둔 이미지들을 순회하면서 화면에 이미지 출력 */}
                 <div className="image-grid">
-                    {showImages.map((image, id) => (
-                        <div key={id}>
-                            <img src={image} alt={`${image}-${id}`} />
-                            <Delete onClick={() => handleDeleteImage(id)} />
+                    {previewUrls.map((url, index) => (
+                        <div key={index}>
+                            <img 
+                                src={url} 
+                                alt={`preview-${index}`}
+                            />
+                            <Delete onClick={() => handleDeleteImage(index)} />
                         </div>
                     ))}
                 </div>
@@ -184,7 +207,7 @@ const Write = () => {
                 <Button
                     variant="outlined"
                     color="error"
-                    onClick={handleCancel}
+                    onClick={() => navigate("/post")}
                 >
                     취 소
                 </Button>
