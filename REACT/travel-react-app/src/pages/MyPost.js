@@ -8,10 +8,14 @@ import '../css/Post.css';
 
 const MyPost = () => {
     const navigate = useNavigate();
-    const { postList } = useContext(PostContext); // 전체 게시물 데이터
-    const { user } = useContext(UserContext); // 현재 로그인한 사용자 데이터
-    const [searchQuery, setSearchQuery] = useState(""); // 검색어
-    const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+    // 전체 게시물 데이터 useState 
+    const { postList } = useContext(PostContext); 
+    // 현재 로그인한 사용자 데이터 useState 
+    const { user } = useContext(UserContext); 
+    // 검색어 useState 
+    const [searchQuery, setSearchQuery] = useState("");
+    // 현재 페이지 useState 
+    const [currentPage, setCurrentPage] = useState(1); 
     const postsPerPage = 9; // 페이지당 표시할 게시물 수
 
     const loggedInUserId = user.userId; // 현재 로그인한 사용자 ID

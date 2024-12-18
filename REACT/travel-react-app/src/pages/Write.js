@@ -145,17 +145,22 @@ const Write = () => {
                     onChange={handleContentChange}
                     placeholder="내용을 입력하세요."
                     multiline
-                    rows={8}
+                    rows={7}
                 />
             </div>
 
             {/* 이미지 업로드 */}
             <div className="photo_style">
                 <label htmlFor="input-file" className="input-file-label">
-                    <input type="file" accept=".png, .jpg, .jpeg, .gif" id="input-file" multiple onChange={handleAddImage} />
-                    <span>사진추가</span>
+                    사진추가
                 </label>
-
+                <input 
+                    type="file" 
+                    accept=".png, .jpg, .jpeg, .gif" 
+                    id="input-file" 
+                    multiple 
+                    onChange={handleAddImage} 
+                />
                 {/* 저장해둔 이미지들을 순회하면서 화면에 이미지 출력 */}
                 <div className="image-grid">
                     {showImages.map((image, id) => (
@@ -167,21 +172,21 @@ const Write = () => {
                 </div>
             </div>
 
-            {/* 버튼들 */}
+            {/* 저장/취소 버튼 */}
             <div className="write-buttons">
                 <Button
                     variant="contained"
                     color="primary"
                     onClick={handleSave}
                 >
-                    저장
+                    저 장
                 </Button>
                 <Button
                     variant="outlined"
                     color="error"
                     onClick={handleCancel}
                 >
-                    취소
+                    취 소
                 </Button>
             </div>
         </div>

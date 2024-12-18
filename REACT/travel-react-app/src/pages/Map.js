@@ -25,6 +25,7 @@ const Map = () => {
     const { isLoaded, loadError } = useJsApiLoader({
         googleMapsApiKey: config.MAP_API_KEY,
         libraries: ["places"],
+        language:"ko"
     });
 
     const [topIconHeight, setTopIconHeight] = useState(0);
@@ -77,6 +78,8 @@ const Map = () => {
         }
     };
 
+    
+
     const getPhotoUrl = (photoReference) => {
         return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${config.MAP_API_KEY}`;
     };
@@ -119,52 +122,63 @@ const Map = () => {
                         </div>
                     )}
                 </div>
-                <GoogleMap
-                    mapContainerStyle={{
-                        width: "100%",
-                        height: "100%",
-                    }}
-                    center={center}
-                    zoom={14}
-                    onClick={handleMapClick}
-                    onLoad={(map) => setMap(map)}
-                >
-                    {markerPosition && (
-                        <Marker
-                            position={markerPosition}
-                            onClick={() =>
-                                setSelectedMarker({
-                                    position: markerPosition,
-                                })
-                            }
-                        />
-                    )}
 
-                    {selectedMarker && (
-                        <InfoWindow
-                            position={selectedMarker.position}
-                            onCloseClick={() => setSelectedMarker(null)}
-                        >
-                            <div>
-                                <h3>{placeName}</h3>
-                                {photoUrl ? (
-                                    <img
-                                        src={photoUrl}
-                                        alt="장소 사진"
-                                        style={{ width: "100%", borderRadius: "5px" }}
-                                    />
-                                ) : (
-                                    <p>사진이 없습니다.</p>
-                                )}
-                            </div>
-                        </InfoWindow>
-                    )}
-                </GoogleMap>
+                {/* GoogleMap을 map-search-container 아래에 배치 */}
+                <div className="google-map-container">
+                    <GoogleMap
+                        mapContainerStyle={{
+                            width: "100%",
+                            height: "100%", // 원하는 높이로 설정 (450px)
+                        }}
+                        center={center}
+                        zoom={14}
+                        onClick={handleMapClick}
+                        onLoad={(map) => setMap(map)}
+                    >
+                        {markerPosition && (
+                            <Marker
+                                position={markerPosition}
+                                onClick={() =>
+                                    setSelectedMarker({
+                                        position: markerPosition,
+                                    })
+                                }
+                            />
+                        )}
+
+                        {selectedMarker && (
+                            <InfoWindow
+                                position={selectedMarker.position}
+                                onCloseClick={() => setSelectedMarker(null)}
+                            >
+                                <div>
+                                    <h3>{placeName}</h3>
+                                    {photoUrl ? (
+                                        <img
+                                            src={photoUrl}
+                                            alt="장소 사진"
+                                            style={{ width: "100%", borderRadius: "5px" }}
+                                        />
+                                    ) : (
+                                        <p>사진이 없습니다.</p>
+                                    )}
+                                </div>
+                            </InfoWindow>
+                        )}
+                    </GoogleMap>
+                </div>
 
                 <div className="map-list-container">
                     <h3 className="map-list-title">
                         여행지 List
-                        <Button onClick={() => {setList(placeList); console.log("list: " + list, "placeList: " + placeList)}}>추가하기</Button>
+                        <Button
+                            onClick={() => {
+                                setList(placeList);
+                                console.log("list: " + list, "placeList: " + placeList);
+                            }}
+                        >
+                            추가하기
+                        </Button>
                     </h3>
                     <ul>
                         {placeList.map((item, index) => (
