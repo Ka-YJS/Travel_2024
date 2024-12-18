@@ -1,25 +1,23 @@
 package com.korea.travel.service;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import com.korea.travel.dto.PostDTO;
+import com.korea.travel.model.PostEntity;
+import com.korea.travel.persistence.PostRepository;
+import com.korea.travel.persistence.UserRepository;
+
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.korea.travel.dto.PostDTO;
-import com.korea.travel.dto.UserDTO;
-import com.korea.travel.model.PostEntity;
-import com.korea.travel.model.UserEntity;
-import com.korea.travel.persistence.PostRepository;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -59,14 +57,12 @@ public class PostService {
 		}
     }
 
-    
     // 게시글 생성
     public PostDTO createPost(PostDTO postDTO) {
         PostEntity savedEntity = postRepository.save(convertToEntity(postDTO));
         return convertToDTO(savedEntity);
     }
 
-    
     public List<String> saveFiles(List<MultipartFile> files) {
         List<String> fileUrls = new ArrayList<>();
         for (MultipartFile file : files) {
@@ -120,6 +116,7 @@ public class PostService {
     private PostDTO convertToDTO(PostEntity entity) {
         return PostDTO.builder()
                 .postId(entity.getPostId())
+                .userId(entity.getUserEntity().getId())
                 .postTitle(entity.getPostTitle())
                 .postContent(entity.getPostContent())
                 .userNickname(entity.getUserNickname())
@@ -127,7 +124,6 @@ public class PostService {
                 .imageUrls(entity.getImageUrls())
                 .likes(entity.getLikes())
                 .postCreatedAt(entity.getPostCreatedAt())
-                .userEntity(new UserDTO(entity.getUserEntity())) 
                 .build();
     }
 
@@ -140,6 +136,7 @@ public class PostService {
                 .imageUrls(dto.getImageUrls())
                 .likes(dto.getLikes())
                 .postCreatedAt(dto.getPostCreatedAt())
+                .userEntity(dto.getUserEntity())
                 .build();
     }
 }

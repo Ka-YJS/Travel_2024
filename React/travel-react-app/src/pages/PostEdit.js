@@ -2,15 +2,16 @@ import React, { useContext, useState, useEffect } from "react";
 import { TextField, Button } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { ListContext } from "../context/ListContext";
 import { UserContext } from "../context/UserContext";
 import { Delete } from "@mui/icons-material";
 import TopIcon from "../TopIcon/TopIcon";
+import { CopyListContext } from "../context/CopyListContext";
+import { CopyPlaceListContext } from "../context/CopyPlaceListContext";
 
 const PostEdit = () => {
     const { user } = useContext(UserContext);
-    const { list, setList } = useContext(ListContext);
-    const [placeList, setPlaceList] = useState([]);
+    const { copyList, setCopyList } = useContext(CopyListContext);
+    const {copyPlaceList, setCopyPlaceList} = useContext(CopyPlaceListContext);
     const [postTitle, setPostTitle] = useState("");
     const [postContent, setPostContent] = useState("");
     const [selectedFiles, setSelectedFiles] = useState([]); 
@@ -34,11 +35,11 @@ const PostEdit = () => {
                 setExistingImageUrls(postData.imageUrls || []);
                 
                 // 여행지 리스트 설정
-                if (postData.placeList) {
-                    setPlaceList(postData.placeList);
-                    console.log(postData.placeList)
+                setCopyPlaceList(postData.placeList);
+                setCopyList(postData.placeList)
+                console.log(postData.placeList)
                     
-                }
+                
             } catch (error) {
                 console.error("게시글 정보 불러오기 실패:", error);
                 alert("게시글 정보를 불러오는 중 오류가 발생했습니다.");
@@ -46,7 +47,7 @@ const PostEdit = () => {
         };
 
         fetchPostDetails();
-    }, [id, user.token, setList]);
+    }, [id, user.token, setCopyList]);
 
     // 파일 추가 핸들러
     const handleAddImages = (e) => {
@@ -105,7 +106,7 @@ const PostEdit = () => {
         formData.append("postTitle", postTitle);
         formData.append("postContent", postContent);
         formData.append("userNickName", user.userNickName);
-        formData.append("placeList", list?.join(", ") || ""); // 빈 문자열로 기본값 설정
+        formData.append("placeList", copyList?.join(", ") || ""); // 빈 문자열로 기본값 설정
         
         formData.append("existingImageUrls", JSON.stringify(existingImageUrls));
 
@@ -119,7 +120,7 @@ const PostEdit = () => {
         }
 
         try {
-            const response = await axios.put(`http://localhost:9090/api/posts/postEdit/${id}`, formData, {
+            const response = await axios.put(`http://192.168.3.24:9090/api/posts/postEdit/${id}`, formData, {
                 headers: { 
                     "Content-Type": "multipart/form-data",
                     'Authorization': `Bearer ${user.token}`
@@ -182,7 +183,7 @@ const PostEdit = () => {
                     fullWidth
                     variant="outlined"
                     label="여행지"
-                    value={placeList.join(", ")}
+                    value={copyList.join(", ")}
                     multiline
                     rows={2}
                 />
@@ -219,7 +220,7 @@ const PostEdit = () => {
                     {existingImageUrls.map((url, index) => (
                         <div key={`existing-${index}`}>
                             <img 
-                                src={`http://localhost:9090${url}`} 
+                                src={`http://192.168.3.24:9090${url}`} 
                                 alt={`existing-${index}`}
                             />
                             <Delete onClick={() => handleDeleteImage(index)} />

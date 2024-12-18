@@ -3,15 +3,19 @@ import { GoogleMap, Marker, InfoWindow, Autocomplete, useJsApiLoader } from "@re
 import PostEdit from "./PostEdit";
 import TopIcon from "../TopIcon/TopIcon";
 import config from "../Apikey";
-import { PlaceContext } from "../context/PlaceContext";
 import { ListContext } from "../context/ListContext";
 import { Button } from "@mui/material";
 import "../css/Map.css";
+import { CopyListContext } from "../context/CopyListContext";
+import { CopyPlaceListContext } from "../context/CopyPlaceListContext";
+
+// 컴포넌트 외부에서 libraries 배열을 정의
+const libraries = ["places"];
 
 const MapEdit = () => {
-    const { placeList, setPlaceList } = useContext(PlaceContext);
-    const { list, setList } = useContext(ListContext);
-    
+    const [placeList, setPlaceList] = useState([])
+    const { copyList, setCopyList } = useContext(CopyListContext);
+    const {copyPlaceList, setCopyPlaceList} = useContext(CopyPlaceListContext);
     const [map, setMap] = useState(null);
     const [center, setCenter] = useState({ lat: 37.5665, lng: 126.9780 });
     const [markerPosition, setMarkerPosition] = useState(null);
@@ -19,10 +23,11 @@ const MapEdit = () => {
     const [searchBox, setSearchBox] = useState(null);
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [photoUrl, setPhotoUrl] = useState(null);
+    
 
     const { isLoaded, loadError } = useJsApiLoader({
         googleMapsApiKey: config.MAP_API_KEY,
-        libraries: ["places"],
+        libraries: libraries,
         language:"ko"
     });
 
@@ -84,14 +89,15 @@ const MapEdit = () => {
 
     const handleAddToPlaceList = () => {
         if (placeName) {
-            setPlaceList((prevList) => [...prevList, placeName]);
+            console.log("placeList: ",copyPlaceList)
+            setCopyPlaceList((prevList) => [...prevList, placeName]);
             setPlaceName("");
         }
     };
 
     const handleDeleteFromTodoList = (index) => {
-        setPlaceList((prevList) => prevList.filter((_, i) => i !== index));
-        setList((prevList) => prevList.filter((_, i) => i !== index));
+        setCopyPlaceList((prevList) => prevList.filter((_, i) => i !== index));
+        setCopyList((prevList) => prevList.filter((_, i) => i !== index));
     };
 
     return (
@@ -174,15 +180,15 @@ const MapEdit = () => {
                         여행지 List
                         <Button
                             onClick={() => {
-                                setList(placeList);
-                                console.log("list: " + list, "placeList: " + placeList);
+                                setCopyList(copyPlaceList);
+                                console.log("list: " + copyList, "placeList: " + copyPlaceList);
                             }}
                         >
                             추가하기
                         </Button>
                     </h3>
                     <ul>
-                        {placeList.map((item, index) => (
+                        {copyPlaceList.map((item, index) => (
                             <li className="map-list-item" key={index}>
                                 {item}
                                 <button

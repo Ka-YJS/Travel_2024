@@ -65,19 +65,25 @@ const Write = () => {
     
         //FormData 생성 및 전송
         const formData = new FormData();
+        console.log("postTitle: ", postTitle)
+        console.log("postContent: ", postContent)
+        console.log("placeList: ", list.join(", "))
+        console.log("userNickname", user.userNickName)
 
         formData.append("postTitle", postTitle);
         formData.append("postContent", postContent);
         formData.append("userNickName", user.userNickName);
         formData.append("placeList", list.join(", "));
         formData.append("imageUrls", previewUrls);
-        selectedFiles.forEach((file) => formData.append("files", file));
 
+        selectedFiles.forEach((file) => formData.append("files", file));
+    
         try {
             for (let [key, value] of formData.entries()) {
                 console.log(key, value);
             }
-            const response = await axios.post(`http://localhost:9090/api/write/${user.id}`, formData, {
+            
+            const response = await axios.post(`http://192.168.3.24:9090/api/write/${user.id}`, formData, {
                 headers: { 
                     "Content-Type": "multipart/form-data" ,
                     'Authorization': `Bearer ${user.token}`

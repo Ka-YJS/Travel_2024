@@ -8,81 +8,71 @@ import axios from "axios";
 import { PlaceContext } from "../context/PlaceContext";
 import { ListContext } from "../context/ListContext";
 import { UserContext } from "../context/UserContext";
-import logo from "../image/logo4.png"
+import logo from "../image/logo4.png";
 
 const Post = () => {
     const navigate = useNavigate();
-    const {user} = useContext(UserContext)
+    const { user } = useContext(UserContext);
     const { postList, setPostList } = useContext(PostContext);
-    const {setPlaceList} = useContext(PlaceContext)
-    const {setList} = useContext(ListContext)
-
+    const { setPlaceList } = useContext(PlaceContext);
+    const { setList } = useContext(ListContext);
 
     const [likedPosts, setLikedPosts] = useState({});
     const [searchQuery, setSearchQuery] = useState(""); // 검색어
     const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
-    const [totalPages, setTotalPages] = useState(1);
+    const [postsPerPage, setPostsPerPage] = useState(3); // 페이지당 게시물 수
 
-    const initialPostsPerPage = parseInt(localStorage.getItem("postsPerPage")) || 3;
-    const [postsPerPage, setPostsPerPage] = useState(initialPostsPerPage);// 페이지당 표시할 게시물 수
-
+    // 서버에서 게시물 가져오기
     const getPostList = async () => {
         try {
-            const response = await axios.get("http://localhost:9090/api/posts", {
-                headers: { 
-                    'Authorization': `Bearer ${user.token}`
+            const response = await axios.get("http://192.168.3.24:9090/api/posts", {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
                 },
             });
             console.log("Fetched posts:", response.data.data);
-            setPostList(response.data.data); // 데이터 구조에 따라 적절히 수정
+            setPostList(response.data.data); // 데이터 설정
         } catch (error) {
             console.error("Error fetching posts:", error);
         }
     };
 
+    // 컴포넌트 마운트 시 게시물 가져오기
     useEffect(() => {
         getPostList();
-        console.log(postList)
     }, []);
 
-
-    const indexOfLastPost = currentPage * postsPerPage;
-    const indexOfFirstPost = indexOfLastPost - postsPerPage;
-
+    // 검색 및 필터링
     const filteredPosts = Array.isArray(postList)
         ? postList.filter((post) =>
-            searchQuery === "" || post.postTitle && post.postTitle.toLowerCase().includes(searchQuery.toLowerCase())
-    ) : [];
+            searchQuery === "" ||
+            (post.postTitle && post.postTitle.toLowerCase().includes(searchQuery.toLowerCase()))
+        )
+        : [];
 
-    const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
+    // 페이지네이션 계산
+    const totalPages = Math.ceil(filteredPosts.length / postsPerPage); // 전체 페이지 수
+    const indexOfLastPost = currentPage * postsPerPage; // 현재 페이지 마지막 게시물 인덱스
+    const indexOfFirstPost = indexOfLastPost - postsPerPage; // 현재 페이지 첫 게시물 인덱스
+    const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost); // 현재 페이지에 표시할 게시물
 
-    console.log(currentPosts)
+    // 페이지 변경
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
 
-    const handlePostsPerPage = (e) => {
-        setPostsPerPage(parseInt(e.target.value, 10));
-        setCurrentPage(1);
+    // 글쓰기 페이지 이동
+    const toWritePage = () => {
+        setPlaceList([]);
+        setList([]);
+        navigate("/map");
     };
 
-
-    const toWritePage = () => {
-        setPlaceList([])
-        setList([])
-        navigate("/map")
-    }
-    
-
-    useEffect(() => {
-        setTotalPages(Math.ceil(filteredPosts.length / postsPerPage));
-        setCurrentPage(1);
-    }, [filteredPosts, postsPerPage]);
-
+    // 좋아요 버튼 클릭
     const likeButtonClick = (id) => {
         setPostList((prevPosts) =>
             prevPosts.map((post) =>
-                post.id === id
+                post.postId === id
                     ? {
                           ...post,
                           like: likedPosts[id] ? post.like - 1 : post.like + 1,
@@ -97,79 +87,74 @@ const Post = () => {
         }));
     };
 
+    // 게시글 상세 페이지 이동
     const handlePostClick = (id) => {
-        console.log(id)
         navigate(`/postdetail/${id}`);
     };
 
     return (
         <div>
-            <div style={{margin:"0"}}>
-                <TopIcon/>
+            <div style={{ margin: "0" }}>
+                <TopIcon />
             </div>
             <div className="post">
                 <h1 style={{ textAlign: "center" }}>게시물 목록</h1>
                 <table>
                     <tbody>
-                {/* 게시물 목록 */}
-                <tr className="post_list" style={{ marginTop: "50px" }}>
-                    {postList.length > 0 ? (
-                        currentPosts.map((post) => (
-                            <td
-                                key={post.id}
-                                style={{
-                                    width: "200px",
-                                    cursor: "pointer",
-                                    textAlign: "center",
-                                }}
-                            >
-                                <img
-                                    onClick={() => handlePostClick(post.postId)}
-                                    src={
-                                        post.imageUrls && post.imageUrls.length > 0 ? 
-                                        `http://localhost:9090${post.imageUrls[0]}` : 
-                                        logo
-                                    }
-                                    alt="썸네일"
-                                    style={{
-                                        width: "180px",
-                                        height: "180px",
-                                        marginRight: "60px",
-                                        borderRadius: "5px",
-                                        objectFit: "cover",
-                                    }}
-                                />
-                                <div style={{ display: "flex" }}>
-                                    <h3 style={{ margin: 0 }}>
-                                        {post.postTitle}
-                                        <span
-                                            className="span_style"
-                                            onClick={() => likeButtonClick(post.postId)}
+                        <tr className="post_list" style={{ marginTop: "50px" }}>
+                            {currentPosts.length > 0 ? (
+                                currentPosts.map((post) => (
+                                    <td
+                                        key={post.postId}
+                                        style={{
+                                            width: "200px",
+                                            cursor: "pointer",
+                                            textAlign: "center",
+                                        }}
+                                    >
+                                        <img
+                                            onClick={() => handlePostClick(post.postId)}
+                                            src={
+                                                post.imageUrls && post.imageUrls.length > 0
+                                                    ? `http://192.168.3.24:9090${post.imageUrls[0]}`
+                                                    : logo
+                                            }
+                                            alt="썸네일"
                                             style={{
-                                                cursor: "pointer",
-                                                color: "red",
-                                                marginRight: "10px",
+                                                width: "180px",
+                                                height: "180px",
+                                                marginRight: "60px",
+                                                borderRadius: "5px",
+                                                objectFit: "cover",
                                             }}
-                                        >
-                                            ❤️
-                                        </span>
-                                        {post.like}
-                                    </h3>
-                                </div>
-                                
-                                
-                                    <div>
-                                        {post.postCreatedAt}
-                                    </div>
-                                
-                            </td>
-                        ))
-                    ) : (
-                        <td>게시글이 없습니다.</td>
-                    )}
-                </tr>
-                </tbody>
+                                        />
+                                        <div style={{ display: "flex" }}>
+                                            <h3 style={{ margin: 0 }}>
+                                                {post.postTitle}
+                                                <span
+                                                    className="span_style"
+                                                    onClick={() => likeButtonClick(post.postId)}
+                                                    style={{
+                                                        cursor: "pointer",
+                                                        color: "red",
+                                                        marginRight: "10px",
+                                                    }}
+                                                >
+                                                    ❤️
+                                                </span>
+                                                {post.like}
+                                            </h3>
+                                        </div>
+                                        <div>{post.postCreatedAt}</div>
+                                    </td>
+                                ))
+                            ) : (
+                                <td>게시글이 없습니다.</td>
+                            )}
+                        </tr>
+                    </tbody>
                 </table>
+
                 {/* 글쓰기 버튼 */}
                 <div
                     style={{
@@ -187,18 +172,6 @@ const Post = () => {
                         글쓰기
                     </Button>
                 </div>
-
-                {/* 게시물 수 설정 */}
-                {/* <div className="board-posts-per-page">
-                    <label>
-                        게시물 수:{" "}
-                        <select value={postsPerPage} onChange={handlePostsPerPage}>
-                            <option value={3}>3개</option>
-                            <option value={5}>5개</option>
-                            <option value={10}>10개</option>
-                        </select>
-                    </label>
-                </div> */}
 
                 {/* 페이지네이션 */}
                 <div
@@ -218,8 +191,7 @@ const Post = () => {
                                 fontSize: "14px",
                                 backgroundColor:
                                     currentPage === index + 1 ? "#007bff" : "#fff",
-                                color:
-                                    currentPage === index + 1 ? "#fff" : "#007bff",
+                                color: currentPage === index + 1 ? "#fff" : "#007bff",
                                 border: "1px solid #ddd",
                                 borderRadius: "5px",
                                 cursor: "pointer",

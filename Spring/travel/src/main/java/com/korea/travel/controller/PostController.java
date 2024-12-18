@@ -1,5 +1,7 @@
 package com.korea.travel.controller;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +27,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.korea.travel.dto.PostDTO;
 import com.korea.travel.dto.ResponseDTO;
-import com.korea.travel.dto.UserDTO;
 import com.korea.travel.model.UserEntity;
 import com.korea.travel.persistence.UserRepository;
 import com.korea.travel.service.PostService;
@@ -73,23 +74,22 @@ public class PostController {
             @RequestPart("placeList") String placeList,
             @RequestPart("userNickName") String userNickName,
             @RequestPart("files") List<MultipartFile> files) {
-    	
     	// 유저 ID를 통해 UserEntity 가져오기
         Optional<UserEntity> userOptional = userRepository.findById(userId);
         if (!userOptional.isPresent()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  // 유저가 없으면 오류 반환
         }
         UserEntity user = userOptional.get();  // UserEntity 가져오기
-        System.out.println(user);
-        System.out.println(userId);
+
         // 서비스 호출 및 DTO 빌드
         PostDTO postDTO = new PostDTO();
         postDTO.setPostTitle(postTitle);
         postDTO.setPostContent(postContent);
         postDTO.setPlaceList(Arrays.asList(placeList.split(", ")));
         postDTO.setUserNickname(userNickName);
-        postDTO.setUserEntity(new UserDTO(user));
-
+        postDTO.setUserEntity(user);
+        postDTO.setPostCreatedAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+              
         // 파일 저장 로직 호출
         List<String> imageUrls = postService.saveFiles(files);
         postDTO.setImageUrls(imageUrls);

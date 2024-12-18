@@ -2,8 +2,6 @@ package com.korea.travel.model;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -50,7 +48,7 @@ public class PostEntity {
     @CollectionTable(name = "post_images", joinColumns = @JoinColumn(name = "post_id"))
     @Column(name = "image_urls")
     private List<String> imageUrls;
-        
+    
     private int likes;
     
     private String postCreatedAt;
@@ -58,7 +56,6 @@ public class PostEntity {
  // UserEntity와의 연관 관계 설정 (ManyToOne)
     @ManyToOne(fetch = FetchType.EAGER)  // 다대일 관계 user가 여러 게시글을 쓸수있게해준다.
     @JoinColumn(name = "user_id")       // 외래 키 컬럼명
-    @JsonIgnore
     private UserEntity userEntity;            // 해당 게시글을 작성한 UserEntity
     
     

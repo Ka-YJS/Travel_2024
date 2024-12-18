@@ -16,7 +16,7 @@ const PostDetail = () => {
     // 게시글 상세 데이터 가져오기
     const getPostDetail = async () => {
         try {
-            const response = await axios.get(`http://localhost:9090/api/posts/postDetail/${id}`, {
+            const response = await axios.get(`http://192.168.3.24:9090/api/posts/postDetail/${id}`, {
                 headers: { 
                     'Authorization': `Bearer ${user.token}`
                 },
@@ -25,13 +25,16 @@ const PostDetail = () => {
             setPost(data);
             setImageUrls(data.imageUrls || []); // 이미지 URL 설정
             console.log("data"+data)
-            console.log("imageUrls"+data.imageUrls)
+            
         } catch (error) {
             console.error("Error fetching post details:", error);
             alert("게시글 정보를 불러오는 중 오류가 발생했습니다.");
             navigate(-1); // 이전 페이지로 이동
         }
     };
+    useEffect(() => {
+        
+    }, [post]); 
 
     useEffect(() => {
         getPostDetail();
@@ -66,7 +69,7 @@ const PostDetail = () => {
     const handleDelete = async () => {
         if (window.confirm("게시글을 삭제하시겠습니까?")) {
             try {
-                const response = await axios.delete(`http://localhost:9090/api/postDelete/${id}`, {
+                const response = await axios.delete(`http://192.168.3.24:9090/api/postDelete/${id}`, {
                     headers: { 
                         'Authorization': `Bearer ${user.token}`
                     },
@@ -171,7 +174,7 @@ const PostDetail = () => {
                             backgroundColor: "#f9f9f9", // 배경색 추가 (선택 사항)
                         }}>
                             <img 
-                                src={`http://localhost:9090${image}`} 
+                                src={`http://192.168.3.24:9090${image}`} 
                                 alt={`image-${index}`}
                                 style={{
                                     height:"20vh",
@@ -195,24 +198,26 @@ const PostDetail = () => {
                 >
                     목록
                 </Button>
-                {/* {user.userNickname === user.userNickname&&( */}
-                    <Button
-                        variant="outlined"
-                        color="error"
-                        onClick={toPostEdit}
-                        style={{ width: "10%" }}
-                    >
-                        수정
-                    </Button>
-                    <Button
-                        variant="outlined"
-                        color="error"
-                        onClick={handleDelete}
-                        style={{ width: "10%" }}
-                    >
-                        삭제
-                    </Button>
-                {/* )} */}
+                {post.userId === user.id&&(
+                    <div>
+                        <Button
+                            variant="outlined"
+                            color="error"
+                            onClick={toPostEdit}
+                            style={{ width: "10%" }}
+                        >
+                            수정
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            color="error"
+                            onClick={handleDelete}
+                            style={{ width: "10%" }}
+                        >
+                            삭제
+                        </Button>
+                    </div>
+                )} 
             </div>
         </div>
     );
