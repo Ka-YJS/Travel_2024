@@ -6,7 +6,13 @@ import axios from 'axios';
 import { validateEmail, validatePassword, removeWhitespace } from '../utils/common';
 import { UserContext } from '../contexts/UserContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Modal, Text, TouchableOpacity } from 'react-native';
+import { Modal, Text, TouchableOpacity,View } from 'react-native';
+import { getAuth, GoogleAuthProvider, signInWithCredential, signOut } from 'firebase/auth';
+import * as WebBrowser from 'expo-web-browser';
+import * as Google from 'expo-auth-session/providers/google';
+import { auth } from '../FirebaseConfig';
+
+WebBrowser.maybeCompleteAuthSession();
 
 const ModalBackground = styled.View`
   flex: 1;
@@ -104,6 +110,22 @@ const Login = ({ navigation }) => {
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [newPasswordError, setNewPasswordError] = useState('');
   const [confirmNewPasswordError, setConfirmNewPasswordError] = useState('');
+
+  //Google
+  const [googleAuthUser, setGoogleAuthUser] = useState(null);
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    webClientId: "603854896278-0m3gjaepcsvqta00j4sl6svg8ge9vlhd.apps.googleusercontent.com",
+    androidClientId: "603854896278-miscrm3oudatljm61i0kobovpn22972k.apps.googleusercontent.com",
+    redirectUri: "exp://192.168.3.23:8081",
+  });
+
+  useEffect(() => {
+  const unsubscribe = auth.onAuthStateChanged(authUser => {
+    setGoogleAuthUser(authUser);
+  });
+
+  return unsubscribe;
+  }, []);
 
   // 로그인 아이디 핸들러
   const _handleLoginIdChange = loginId => {
@@ -347,6 +369,31 @@ const Login = ({ navigation }) => {
     }
   };
 
+  // Google
+  const googleLogIn = async () => {
+    try {
+      const result = await promptAsync();  // hooks에서 가져온 promptAsync 사용
+      if (result?.type === 'success') {
+        const { id_token } = result.params;
+        const credential = GoogleAuthProvider.credential(id_token);
+        const googleAuthCredential = await signInWithCredential(auth, credential);
+        console.log('Google 로그인 성공:', googleAuthCredential.user.email);
+      }
+    } catch (error) {
+      console.error('Google 로그인 에러:', error);
+    }
+  };
+
+  const googleLogOut = async () => {
+    try {
+      await signOut(auth);
+      setGoogleAuthUser(null);
+      console.log('로그아웃 성공');
+    } catch (error) {
+      console.error('로그아웃 에러:', error);
+    }
+  };
+
   return (
     <KeyboardAwareScrollView
       contentContainerStyle={{ flex: 1 }}
@@ -383,6 +430,21 @@ const Login = ({ navigation }) => {
 
         <Button title="로그인" onPress={_handleLoginButtonPress} />
         <Button title="회원가입" onPress={() => navigation.navigate('Signup')} isFilled={false} />
+
+        {/* Google */}
+        <View>
+          {!googleAuthUser ? (
+            <Button
+              title="Google로 로그인"
+              onPress={googleLogIn}
+            />
+              ) : (
+                <Button
+                  title="로그아웃" 
+                  onPress={googleLogOut}
+                />
+          )}
+        </View>
 
         <Modal
           visible={isModalVisible}
