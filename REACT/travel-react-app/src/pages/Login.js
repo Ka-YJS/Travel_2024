@@ -52,32 +52,56 @@ const Login = () => {
     // Google 로그인 성공 처리
     const handleGoogleSuccess = async (googleResponse) => {
       try {
-          if (!googleResponse.credential) {
-              throw new Error("No credential received");
-          }
-          
-          console.log("Google response:", googleResponse); // 구글 응답 로깅
-          
+        if (!googleResponse.credential) {
+          throw new Error("No credential received");
+        }
+        
+        // JWT 디코딩하여 Google 사용자 정보 확인
+        const payload = googleResponse.credential.split('.')[1];
+        const decodedPayload = JSON.parse(atob(payload));
+    
+        const requestData = { credential: googleResponse.credential };
+    
+        try {
           const response = await call(
-              "/travel/oauth2/google/callback",
-              "POST",
-              { credential: googleResponse.credential }
+            "/travel/oauth2/google/callback",
+            "POST",
+            requestData
           );
           
-          console.log("Server response:", response); // 서버 응답 로깅
-
-          if (response) {  // response.token 대신 response 자체를 확인
-              localStorage.setItem("token", response); // 토큰이 직접 반환되는 경우
-              // 사용자 정보는 별도 API 호출로 가져오기
-              navigate("/main");
-          } else {
-              throw new Error("Invalid server response");
+          console.log("백엔드 응답:", response);
+          
+          if (response) {
+            const { token, ...userData } = response;
+            const userInfo = {
+              name: userData.name || decodedPayload.name,
+              email: userData.email || decodedPayload.email,
+              picture: userData.picture || decodedPayload.picture,
+              googleId: userData.googleId || decodedPayload.sub
+            };
+    
+            setUser(userInfo);
+            localStorage.setItem("token", token);
+            localStorage.setItem("userInfo", JSON.stringify(userInfo));
+            
+            alert(`로그인 성공! ${userInfo.name}님 환영합니다!`);
+            // 로그인 성공 후 main 페이지로 이동
+            navigate('/main');
           }
+        } catch (backendError) {
+          console.error("백엔드 통신 에러:", {
+            상태: backendError.response?.status,
+            메시지: backendError.message,
+            데이터: backendError.response?.data
+          });
+          throw backendError;
+        }
+    
       } catch (error) {
-          console.error("Full error object:", error); // 전체 에러 객체 로깅
-          handleGoogleFailure(error);
+        console.error("전체 로그인 프로세스 에러:", error);
+        handleGoogleFailure(error);
       }
-  };
+    };
 
   // Google 로그인 실패 처리
   const handleGoogleFailure = (error) => {
@@ -113,6 +137,10 @@ const Login = () => {
     setLoginPassword("");
   };
 
+  const googleOAuthConfig = {
+    clientId: process.env.REACT_APP_GOOGLE_CLIENT_ID  // 환경변수가 제대로 로드되는지 확인
+  };
+
   return (
     <div className="container">
       <main>
@@ -142,8 +170,8 @@ const Login = () => {
           </div>
 
           <div className="submit-container">
-            <input type="submit" value="로그인" className="submit" />
-            <input type="button" value="회원가입" className="cancel" onClick={toSignup} />
+            {/* <input type="submit" value="로그인" className="submit" />
+            <input type="button" value="회원가입" className="cancel" onClick={toSignup} /> */}
           </div>
           <div className="login-container">
             {/* Google OAuth */}

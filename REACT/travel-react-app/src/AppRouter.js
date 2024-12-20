@@ -12,7 +12,7 @@ function AppRouter() {
                     <Route path="/" element={<Login />} />
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/travel/oauth2/google/callback" element={<Login />} />
-                    <Route path="/main" element={<MainScreen />} />  {/* 메인 페이지 라우트도 필요 */}
+                    {/* <Route path="/main" element={<MainScreen />} />  메인 페이지 라우트도 필요 */}
                 </Routes>
             </BrowserRouter>
         </div>
