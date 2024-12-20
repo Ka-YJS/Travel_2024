@@ -23,6 +23,7 @@ body {
     width: 100vw;
     height: 100vh;
     overflow: hidden;
+    margin-top: 140px;
 }
 
 .map-sidebar {
@@ -49,6 +50,7 @@ body {
     border-radius: 5px;
     box-sizing: border-box;
 }
+
 
 .place-info-container {
     background-color: var(--hover-color);
@@ -121,6 +123,7 @@ body {
     padding: 20px;
     background-color: var(--background-color);
 }
+
 
 .google-map-container {
     width: 100%;

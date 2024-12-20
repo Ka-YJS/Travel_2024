@@ -65,17 +65,11 @@ const Write = () => {
     
         //FormData 생성 및 전송
         const formData = new FormData();
-        console.log("postTitle: ", postTitle)
-        console.log("postContent: ", postContent)
-        console.log("placeList: ", list.join(", "))
-        console.log("userNickname", user.userNickName)
 
         formData.append("postTitle", postTitle);
         formData.append("postContent", postContent);
         formData.append("userNickName", user.userNickName);
         formData.append("placeList", list.join(", "));
-        formData.append("imageUrls", previewUrls);
-
         selectedFiles.forEach((file) => formData.append("files", file));
     
         try {
@@ -89,7 +83,6 @@ const Write = () => {
                     'Authorization': `Bearer ${user.token}`
                 },
             });
-            console.log("User Token:", user.token);
 
             console.log("Response:", response);
             alert("글이 저장되었습니다!");
@@ -116,9 +109,6 @@ const Write = () => {
 
     return (
         <div className="write">
-            <div className="write_h1">
-                <h1>글쓰기</h1>
-            </div>
 
             {/* 제목 입력 */}
             <div>
@@ -150,7 +140,7 @@ const Write = () => {
                     fullWidth
                     variant="outlined"
                     label="여행지"
-                    value={list.join(", ")}
+                    value={list.join(" -> ")}
                     multiline
                     rows={2}
                 />

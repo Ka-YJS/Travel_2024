@@ -9,8 +9,9 @@ import PersonalInfo from "../pages/PersonalInfo"; // PersonalInfo 컴포넌트 i
 import "../css/MyPage.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import defaultImage from '../image/defaultImage.png';
+import Logo from "../pages/Logo";
 
-const TopIcon = () => {
+const TopIcon = ({text}) => {
   const [isProfileDropdownVisible, setIsProfileDropdownVisible] = useState(false);
   const [isMyInfoVisible, setIsMyInfoVisible] = useState(false); // Collapse 상태 관리
   const { user } = useContext(UserContext); // userNickName 가져오기
@@ -34,8 +35,35 @@ const TopIcon = () => {
   return (
     <header
       className="home-header"
-      style={{ display: "flex", justifyContent: "space-between", alignItems: "center"}}
+      style={{ 
+        display: "flex", 
+        justifyContent: "space-between", 
+        alignItems: "center",
+        height:"135px",
+        width: "100%"  // 전체 너비
+      }}
     >
+      <div>
+        <Logo/>
+      </div>
+      <div
+        style={{
+          fontSize: "50px", // 글자 크기 설정
+          fontWeight: "bold", // 두껍게
+          position: "absolute", // 절대 위치 설정
+          top: "50%", // 수직 가운데
+          left: "50%", // 수평 가운데
+          transform: "translate(-50%, -50%)", // 실제 가운데로 맞추기 위해 이동
+          color: "transparent", // 기본 색상을 투명으로 설정
+          backgroundImage: "linear-gradient(90deg, #42a5f5, #a7d7f9)", // 그라데이션 색상
+          WebkitBackgroundClip: "text", // 텍스트에만 배경색 적용
+          backgroundClip: "text", // 텍스트에만 배경색 적용
+          textShadow: "2px 2px 5px rgba(0, 0, 0, 0.3)", // 텍스트 그림자
+          textAlign: "center", // 가운데 정렬
+        }}
+      >
+        {text}
+      </div>
       {/* 아이콘 영역 */}
       <div
         className="icon-container"
@@ -155,7 +183,10 @@ const TopIcon = () => {
                 border: "none",
                 borderRadius: "5px",
               }}
-              onClick={() => navigate(`/mypage/mypost/${user.id}`)}
+              onClick={() => {
+                navigate(`/mypost/${user.id}`);
+                setIsProfileDropdownVisible(!isProfileDropdownVisible)
+              }}
             >
               My post
             </button>

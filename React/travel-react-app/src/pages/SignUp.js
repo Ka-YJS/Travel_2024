@@ -5,7 +5,6 @@ import {call} from "../api/ApiService"
 import axios from "axios";
 import "../css/Strat.css";
 import logo2 from '../image/logo2.JPG'
-
 function Signup() {
   //user정보 useContext
   const { user } = useContext(UserContext);
@@ -218,148 +217,151 @@ function Signup() {
   };
 
   return (
-    <div className="container">
-      <main>
-        <form className="form" onSubmit={handleSubmit}>
-          <h3>::: 회원가입 :::</h3>
+      <div 
+        className="container"
+        style={{height:"100vh"}}
+      >
+        <main>
+          <form className="form" onSubmit={handleSubmit}>
+            <h3>::: 회원가입 :::</h3>
 
-          {/* 이메일 입력 필드 */}
-          <div className="form-group">
-            <label htmlFor="userId">이메일 (아이디)</label>
-            <input
-              id="userId"
-              name="userId"
-              value={userId}
-              placeholder="example@email.com"
-              onChange={(e) => handleEmailValidation(e.target.value)}
-            />
-            {emailError && <span className="error-message">이메일 형식이 올바르지 않습니다.</span>}
-          </div>
-
-          {/* 버튼 그룹 */}
-          <div className="buttons-container">
-            <input
-              type="button"
-              value="중복체크"
-              className="button-check"
-              onClick={handleUserIdCheck}
-            />
-            {/* <input
-              type="button"
-              value={isLoading ? "발송 중..." : "인증번호 발송"}
-              className="button-verify"
-              onClick={handleEmailVerification}
-              disabled={isLoading || !userId || emailError || isEmailVerified}
-            /> */}
-          </div>
-
-          {/* 인증 코드 입력 필드 */}
-          {/* {isAuthCodeSent && (
+            {/* 이메일 입력 필드 */}
             <div className="form-group">
-              <label htmlFor="authCode">인증 코드</label>
+              <label htmlFor="userId">이메일 (아이디)</label>
               <input
-                id="authCode"
-                name="authCode"
-                value={authCode}
-                onChange={handleAuthCodeChange}
-                placeholder="인증 코드를 입력하세요"
+                id="userId"
+                name="userId"
+                value={userId}
+                placeholder="example@email.com"
+                onChange={(e) => handleEmailValidation(e.target.value)}
               />
-              {authCodeError && <span className="error-message">{authCodeError}</span>}
-              <div className="auth-code-button">
-                <input
-                  type="button"
-                  value="인증 코드 확인"
-                  onClick={handleAuthCodeVerification}
-                />
-              </div>
+              {emailError && <span className="error-message">이메일 형식이 올바르지 않습니다.</span>}
             </div>
-          )} */}
 
-          {/* 이름 입력 필드 */}
-          <div className="form-group">
-            <label htmlFor="userName">이름</label>
-            <input
-              id="userName"
-              name="userName"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-              placeholder="Name"
-            />
-          </div>
-
-          {/* 닉네임 입력 필드 */}
-          <div className="form-group">
-            <label htmlFor="userNickName">닉네임</label>
-            <input
-              id="userNickName"
-              name="userNickName"
-              value={userNickName}
-              onChange={(e) => setUserNickName(e.target.value)}
-              placeholder="NickName"
-            />
-          </div>
-          
-          {/* 전화번호 입력 필드 */}
-          <div className="form-group">
-            <label htmlFor="userNickName">전화번호</label>
-            <input
-              id="user"
-              name="userPhoneNumber"
-              value={userPhoneNumber}
-              onChange={(e) => setUserPhoneNumber(e.target.value)}
-              placeholder=" - 빼고 숫자만 입력하세요"
-            />
-          </div>
-
-          {/* 비밀번호 입력 필드 */}
-          <div className="form-group">
-            <label htmlFor="userPassword">비밀번호</label>
-            <input
-              id="userPassword"
-              name="userPassword"
-              type="password"
-              value={userPassword}
-              onChange={handleUserPassword}
-              placeholder="Password"
-            />
-            {passwordError && <span className="error-message">{passwordError}</span>}
-          </div>
-
-          {/* 비밀번호 확인 필드 */}
-          <div className="form-group">
-            <label htmlFor="userPasswordConfirm">비밀번호 확인</label>
-            <input
-              id="userPasswordConfirm"
-              name="userPasswordConfirm"
-              type="password"
-              value={userPasswordConfirm}
-              onChange={(e) => setUserPasswordConfirm(e.target.value)}
-              placeholder="PasswordConfirm"
-            />
-          </div>
-
-          {/* 제출 및 취소 버튼 */}
-          <div className="submit-container">
-            <input type="submit" value="가입" className="submit" />
-            <input
-              type="button"
-              value="취소"
-              className="cancel"
-              onClick={() => navigate("/login")}
-            />
-          </div>
-        </form>
-
-        {/* 큰 로고 */}
-        <div >
-          <img 
-                src={logo2} 
-                alt="Logo"
-                className="logo-box" 
+            {/* 버튼 그룹 */}
+            <div className="buttons-container">
+              <input
+                type="button"
+                value="중복체크"
+                className="button-check"
+                onClick={handleUserIdCheck}
               />
-        </div>
-      </main>
-    </div>
+              {/* <input
+                type="button"
+                value={isLoading ? "발송 중..." : "인증번호 발송"}
+                className="button-verify"
+                onClick={handleEmailVerification}
+                disabled={isLoading || !userId || emailError || isEmailVerified}
+              /> */}
+            </div>
+
+            {/* 인증 코드 입력 필드 */}
+            {/* {isAuthCodeSent && (
+              <div className="form-group">
+                <label htmlFor="authCode">인증 코드</label>
+                <input
+                  id="authCode"
+                  name="authCode"
+                  value={authCode}
+                  onChange={handleAuthCodeChange}
+                  placeholder="인증 코드를 입력하세요"
+                />
+                {authCodeError && <span className="error-message">{authCodeError}</span>}
+                <div className="auth-code-button">
+                  <input
+                    type="button"
+                    value="인증 코드 확인"
+                    onClick={handleAuthCodeVerification}
+                  />
+                </div>
+              </div>
+            )} */}
+
+            {/* 이름 입력 필드 */}
+            <div className="form-group">
+              <label htmlFor="userName">이름</label>
+              <input
+                id="userName"
+                name="userName"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+                placeholder="Name"
+              />
+            </div>
+
+            {/* 닉네임 입력 필드 */}
+            <div className="form-group">
+              <label htmlFor="userNickName">닉네임</label>
+              <input
+                id="userNickName"
+                name="userNickName"
+                value={userNickName}
+                onChange={(e) => setUserNickName(e.target.value)}
+                placeholder="NickName"
+              />
+            </div>
+            
+            {/* 전화번호 입력 필드 */}
+            <div className="form-group">
+              <label htmlFor="userNickName">전화번호</label>
+              <input
+                id="user"
+                name="userPhoneNumber"
+                value={userPhoneNumber}
+                onChange={(e) => setUserPhoneNumber(e.target.value)}
+                placeholder=" - 빼고 숫자만 입력하세요"
+              />
+            </div>
+
+            {/* 비밀번호 입력 필드 */}
+            <div className="form-group">
+              <label htmlFor="userPassword">비밀번호</label>
+              <input
+                id="userPassword"
+                name="userPassword"
+                type="password"
+                value={userPassword}
+                onChange={handleUserPassword}
+                placeholder="Password"
+              />
+              {passwordError && <span className="error-message">{passwordError}</span>}
+            </div>
+
+            {/* 비밀번호 확인 필드 */}
+            <div className="form-group">
+              <label htmlFor="userPasswordConfirm">비밀번호 확인</label>
+              <input
+                id="userPasswordConfirm"
+                name="userPasswordConfirm"
+                type="password"
+                value={userPasswordConfirm}
+                onChange={(e) => setUserPasswordConfirm(e.target.value)}
+                placeholder="PasswordConfirm"
+              />
+            </div>
+
+            {/* 제출 및 취소 버튼 */}
+            <div className="submit-container">
+              <input type="submit" value="가입" className="submit" />
+              <input
+                type="button"
+                value="취소"
+                className="cancel"
+                onClick={() => navigate("/login")}
+              />
+            </div>
+          </form>
+
+          {/* 큰 로고 */}
+          <div >
+            <img 
+                  src={logo2} 
+                  alt="Logo"
+                  className="logo-box" 
+                />
+          </div>
+        </main>
+      </div>
   );
 }
 

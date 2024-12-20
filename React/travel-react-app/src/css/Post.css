@@ -1,13 +1,16 @@
 .post {
-    width: 800px;
-    height: 600px;
+    width: 90%;
+    min-height: 80vh; /* 최소 높이를 800px로 설정 */
     margin: 50px auto;
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 10px;
     background-color: #f9f9f9;
-    box-shadow: 0 2px 5px rgba(0 0 0 0.1);
-};
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 1200px;
+    margin-top: 140px;
+    height: auto; /* 콘텐츠에 따라 높이 자동 조절 */
+}
 
 .post_list{
     margin-top: 50px;

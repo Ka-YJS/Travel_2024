@@ -24,7 +24,7 @@ const Map = () => {
     const [placeName, setPlaceName] = useState("");  // 검색된 장소 이름
     const [placeDescription, setPlaceDescription] = useState("");  // 장소 설명
     const [searchBox, setSearchBox] = useState(null);  // Autocomplete 검색 박스
-    const [selectedMarker, setSelectedMarker] = useState(null);  // 선택된 마커
+    const [selectedMarker, setSelectedMarker] = useState({ position: { lat: 37.5665, lng: 126.9780 } });  // 선택된 마커
 
     // Google Maps API 로드 상태
     const { isLoaded, loadError } = useJsApiLoader({
@@ -35,6 +35,11 @@ const Map = () => {
     
     // 화면 로딩 중 TopIcon의 높이를 계산하여 상단에 여백을 두기 위한 상태 변수
     const [topIconHeight, setTopIconHeight] = useState(0);
+
+    useEffect(() => {
+        setList([])
+        setPlaceList([])
+    },[])
 
     useEffect(() => {
         const topIconElement = document.querySelector('.home-header');
@@ -53,15 +58,29 @@ const Map = () => {
         return <div>Google Maps API 로드 중 오류가 발생했습니다.</div>;
     }
 
-    // 지도를 클릭했을 때 마커 위치와 관련 정보를 설정
-    const handleMapClick = async (event) => {
-        const lat = event.latLng.lat();  // 클릭된 위치의 위도
-        const lng = event.latLng.lng();  // 클릭된 위치의 경도
-        setMarkerPosition({ lat, lng });  // 마커의 위치 업데이트
-        setPlaceName("선택된 위치");  // 기본 장소 이름
-        setPlaceDescription("");  // 설명 초기화
-        setSelectedMarker({ position: { lat, lng } });  // 선택된 마커 설정
+    
+    // // 지도를 클릭했을 때 마커 위치와 관련 정보를 설정
+    // const handleMapClick = async (event) => {
+    //     const lat = event.latLng.lat();  // 클릭된 위치의 위도
+    //     const lng = event.latLng.lng();  // 클릭된 위치의 경도
+    //     setMarkerPosition({ lat, lng });  // 마커의 위치 업데이트
+    //     setPlaceName("선택된 위치");  // 기본 장소 이름
+    //     setPlaceDescription("");  // 설명 초기화
+    //     setSelectedMarker({ position: { lat, lng } });  // 선택된 마커 설정
+    // };
+
+    // 지도에서 마커를 클릭했을 때 InfoWindow를 다시 표시할 수 있도록 설정
+    const handleMarkerClick = (position) => {
+        setSelectedMarker({
+            position,  // 클릭한 마커 위치
+        });
     };
+
+     // InfoWindow를 닫을 때 selectedMarker를 null로 설정
+     const handleInfoWindowClose = () => {
+        setSelectedMarker(null);  // InfoWindow 닫을 때 selectedMarker를 null로 설정
+    };
+
 
     // Autocomplete 검색 박스를 로드했을 때의 콜백
     const handleSearchBoxLoad = (autocomplete) => {
@@ -106,14 +125,11 @@ const Map = () => {
     };
 
     return (
-        <div className="map-container">
+        <div className="map-container" >
             <div style={{zIndex:"2000"}}>
-               <TopIcon />  {/* 상단 아이콘 표시 */}
+               <TopIcon text="글쓰기" />  {/* 상단 아이콘 표시 */}
             </div>
             <div className="map-sidebar">
-                <div className="write_h1">
-                    <h1>경로 추가</h1>
-                </div>
                 <div className="map-search-container">
                     <Autocomplete onLoad={handleSearchBoxLoad} onPlaceChanged={handlePlaceChanged}>
                         <input
@@ -144,28 +160,27 @@ const Map = () => {
                         }}
                         center={center}  // 지도 중심 좌표
                         zoom={14}  // 기본 줌 레벨
-                        onClick={handleMapClick}  // 지도 클릭 시 콜백
+                        // onClick={handleMapClick}  // 지도 클릭 시 콜백
                         onLoad={(map) => setMap(map)}  // 지도 로드 시 콜백
                     >
                         {markerPosition && (
                             <Marker
                                 position={markerPosition}  // 마커 위치 설정
-                                onClick={() =>
-                                    setSelectedMarker({
-                                        position: markerPosition,  // 마커 클릭 시 선택된 마커 설정
-                                    })
-                                }
+                                onClick={() => handleMarkerClick(markerPosition)}
                             />
                         )}
 
                         {selectedMarker && placeName && (
                             <InfoWindow
-                                position={selectedMarker.position}  // InfoWindow의 위치 설정
-                                onCloseClick={() => setSelectedMarker(null)}  // InfoWindow 닫을 때 콜백
+                                position={{
+                                    lat: selectedMarker.position.lat + 0.0027,
+                                    lng: selectedMarker.position.lng,
+                                }}
+                                onCloseClick={handleInfoWindowClose}
                             >
-                                <div>
-                                    <h3>{placeName}</h3> 
-                                    <p>{placeDescription}</p>  {/* 장소 설명 표시 */}
+                                <div style={{ position: 'relative', fontSize: "12px", lineHeight: "1.5", textAlign: "center", padding: "5px" }}>
+                                    <h3 style={{ fontSize: "14px", margin: "5px 0", color: "#333" }}>{placeName}</h3>
+                                    <p style={{ fontSize: "12px", margin: "5px 0", color: "#666" }}>{placeDescription}</p>
                                 </div>
                             </InfoWindow>
                         )}

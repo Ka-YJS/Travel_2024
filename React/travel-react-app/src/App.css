@@ -87,6 +87,7 @@ button {
   justify-content: center;
   min-height: 80vh;
   background-color: #f9f9f9;
+  margin-top: 140px;
 }
 
 .main-screen .content {

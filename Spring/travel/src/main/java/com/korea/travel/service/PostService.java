@@ -1,30 +1,39 @@
 package com.korea.travel.service;
 
-import com.korea.travel.dto.PostDTO;
-import com.korea.travel.model.PostEntity;
-import com.korea.travel.persistence.PostRepository;
-import com.korea.travel.persistence.UserRepository;
-
-import lombok.RequiredArgsConstructor;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.korea.travel.dto.PostDTO;
+import com.korea.travel.model.PostEntity;
+import com.korea.travel.model.UserEntity;
+import com.korea.travel.persistence.LikeRepository;
+import com.korea.travel.persistence.PostRepository;
+import com.korea.travel.persistence.UserRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class PostService {
 
-	@Autowired
-    private PostRepository postRepository;
+    private final PostRepository postRepository;	
 	
+    private final UserRepository userRepository;
+    
+    private final LikeRepository likeRepository;
 	
 
     @Value("${file.upload-dir}") // 파일 저장 경로 설정
@@ -38,11 +47,20 @@ public class PostService {
     }
     
     // 마이 게시판 조회
-    public List<PostDTO> getMyPosts(Long id) {
+    public List<PostDTO> getMyPosts(Long userId) {
     	
-        return postRepository.findAll().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+       Optional<UserEntity> user = userRepository.findById(userId);
+       
+       if(user.isPresent()) {
+    	   List<PostEntity> posts = postRepository.findByUserEntity(user.get());
+       
+	       return posts.stream()
+	             .map(this::convertToDTO)
+	             .collect(Collectors.toList());
+       }
+       else {
+          throw new IllegalArgumentException("User not found");
+       }
     }
     
 
@@ -79,25 +97,36 @@ public class PostService {
     }
 
 
-    public PostDTO updatePost(Long id, String postTitle, String postContent, List<String> placeList, 
-            List<MultipartFile> files, List<String> existingImageUrls) {
-		PostEntity postEntity = postRepository.findById(id)
+    public PostDTO updatePost(Long id, String postTitle, String postContent, List<String> placeListParsed, 
+    		String userNickName,List<MultipartFile> files, List<String> existingImageUrls) {
+		
+    	
+    	PostEntity postEntity = postRepository.findById(id)
 		.orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
 		
 		postEntity.setPostTitle(postTitle);
 		postEntity.setPostContent(postContent);
-		postEntity.setPlaceList(placeList);
+		postEntity.setUserNickname(userNickName);
+		
+		
+		if(placeListParsed != null && !placeListParsed.isEmpty()) {
+			postEntity.setPlaceList(new ArrayList<>(placeListParsed));
+        }else {
+        	postEntity.setPlaceList(null);
+        }
 		
 		List<String> allImageUrls = new ArrayList<>(existingImageUrls);
+		
 		if (files != null && !files.isEmpty()) {
-		List<String> newImageUrls = saveFiles(files);
-		allImageUrls.addAll(newImageUrls);
+			List<String> newImageUrls = saveFiles(files);
+			allImageUrls.addAll(newImageUrls);
 		}
+		
 		postEntity.setImageUrls(allImageUrls);
 		
 		PostEntity updatedEntity = postRepository.save(postEntity);
 		return convertToDTO(updatedEntity);
-		}
+	}
 
 
 
@@ -122,7 +151,7 @@ public class PostService {
                 .userNickname(entity.getUserNickname())
                 .placeList(entity.getPlaceList())
                 .imageUrls(entity.getImageUrls())
-                .likes(entity.getLikes())
+                .likes(likeRepository.countByPostEntity(entity))
                 .postCreatedAt(entity.getPostCreatedAt())
                 .build();
     }
@@ -134,7 +163,6 @@ public class PostService {
                 .userNickname(dto.getUserNickname())
                 .placeList(dto.getPlaceList())
                 .imageUrls(dto.getImageUrls())
-                .likes(dto.getLikes())
                 .postCreatedAt(dto.getPostCreatedAt())
                 .userEntity(dto.getUserEntity())
                 .build();

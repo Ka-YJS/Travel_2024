@@ -19,6 +19,7 @@ const MapEdit = () => {
     const [map, setMap] = useState(null);
     const [center, setCenter] = useState({ lat: 37.5665, lng: 126.9780 });
     const [markerPosition, setMarkerPosition] = useState(null);
+    const [placeDescription, setPlaceDescription] = useState("");  // 장소 설명
     const [placeName, setPlaceName] = useState("");
     const [searchBox, setSearchBox] = useState(null);
     const [selectedMarker, setSelectedMarker] = useState(null);
@@ -57,6 +58,18 @@ const MapEdit = () => {
         setSelectedMarker({ position: { lat, lng } });
     };
 
+    // 지도에서 마커를 클릭했을 때 InfoWindow를 다시 표시할 수 있도록 설정
+    const handleMarkerClick = (position) => {
+        setSelectedMarker({
+            position,  // 클릭한 마커 위치
+        });
+    };
+
+    // InfoWindow를 닫을 때 selectedMarker를 null로 설정
+    const handleInfoWindowClose = () => {
+        setSelectedMarker(null);  // InfoWindow 닫을 때 selectedMarker를 null로 설정
+    };
+
     const handleSearchBoxLoad = (autocomplete) => {
         setSearchBox(autocomplete);
     };
@@ -69,13 +82,9 @@ const MapEdit = () => {
                 setCenter({ lat: location.lat(), lng: location.lng() });
                 setMarkerPosition({ lat: location.lat(), lng: location.lng() });
                 setPlaceName(place.name || "알 수 없는 장소");
-                if (place.photos && place.photos.length > 0) {
-                    const photoReference = place.photos[0].photo_reference;
-                    const photoUrl = getPhotoUrl(photoReference);
-                    setPhotoUrl(photoUrl);
-                } else {
-                    setPhotoUrl(null);
-                }
+                
+                setPlaceDescription(place.formatted_address || "주소 정보 없음");  // 주소 설정
+
                 setSelectedMarker({ position: { lat: location.lat(), lng: location.lng() } });
             }
         }
@@ -89,7 +98,6 @@ const MapEdit = () => {
 
     const handleAddToPlaceList = () => {
         if (placeName) {
-            console.log("placeList: ",copyPlaceList)
             setCopyPlaceList((prevList) => [...prevList, placeName]);
             setPlaceName("");
         }
@@ -103,12 +111,9 @@ const MapEdit = () => {
     return (
         <div className="map-container">
             <div style={{zIndex:"2000"}}>
-               <TopIcon /> 
+                <TopIcon text="글쓰기"/>
             </div>
             <div className="map-sidebar">
-                <div className="write_h1">
-                    <h1>경로 추가</h1>
-                </div>
                 <div className="map-search-container">
                     <Autocomplete onLoad={handleSearchBoxLoad} onPlaceChanged={handlePlaceChanged}>
                         <input
@@ -139,36 +144,27 @@ const MapEdit = () => {
                         }}
                         center={center}
                         zoom={14}
-                        onClick={handleMapClick}
+                        // onClick={handleMapClick}
                         onLoad={(map) => setMap(map)}
                     >
                         {markerPosition && (
                             <Marker
                                 position={markerPosition}
-                                onClick={() =>
-                                    setSelectedMarker({
-                                        position: markerPosition,
-                                    })
-                                }
+                                onClick={() => handleMarkerClick(markerPosition)}
                             />
                         )}
 
-                        {selectedMarker && (
+                        {selectedMarker && placeName && (
                             <InfoWindow
-                                position={selectedMarker.position}
-                                onCloseClick={() => setSelectedMarker(null)}
+                                position={{
+                                    lat: selectedMarker.position.lat + 0.0027,
+                                    lng: selectedMarker.position.lng,
+                                }}
+                                onCloseClick={handleInfoWindowClose}
                             >
-                                <div>
-                                    <h3>{placeName}</h3>
-                                    {photoUrl ? (
-                                        <img
-                                            src={photoUrl}
-                                            alt="장소 사진"
-                                            style={{ width: "100%", borderRadius: "5px" }}
-                                        />
-                                    ) : (
-                                        <p>사진이 없습니다.</p>
-                                    )}
+                                <div style={{ position: 'relative', fontSize: "12px", lineHeight: "1.5", textAlign: "center", padding: "5px" }}>
+                                    <h3 style={{ fontSize: "14px", margin: "5px 0", color: "#333" }}>{placeName}</h3>
+                                    <p style={{ fontSize: "12px", margin: "5px 0", color: "#666" }}>{placeDescription}</p>
                                 </div>
                             </InfoWindow>
                         )}

@@ -43,42 +43,44 @@ function MainScreen() {
 
   // 내 게시물 보기 버튼 클릭 시 실행되는 함수
   const handleViewPosts = () => {
-    navigate("/Mypage/myPost"); // "/posts" 경로로 이동
+    navigate(`/mypost/${user.id}`); // "/posts" 경로로 이동
   };
 
   return (
-    <div className="main-screen">
+    <div>
       <TopIcon />
-      <div className="content">
-        <h1>{user.userNickName?user.userNickName:"홍길동"}님 환영합니다.</h1>
+      <div className="main-screen">
+        <div className="content">
+          <h1>{user.userNickName?user.userNickName:"홍길동"}님 환영합니다.</h1>
 
-        {/* 이미지 슬라이드 */}
-        <div className="image-slider">
-          {images.map((src, index) => (
-            <img
-              key={index}
-              src={src}
-              alt={`슬라이드 이미지 ${index + 1}`}
-              className="slider-image"
-              style={{
-                opacity: index === currentIndex ? 1 : 0, // 현재 이미지만 보이도록 설정
-                transition: "opacity 1s ease-out", // 애니메이션 효과 추가
-                position: "absolute", // 이미지가 겹치도록 설정
-                width: "100%",
-                height: "60vh", // 이미지 크기 설정
-                objectFit: "cover" // 이미지 비율 유지하며 채우기
-              }}
-            />
-          ))}
-        </div>
+          {/* 이미지 슬라이드 */}
+          <div className="image-slider">
+            {images.map((src, index) => (
+              <img
+                key={index}
+                src={src}
+                alt={`슬라이드 이미지 ${index + 1}`}
+                className="slider-image"
+                style={{
+                  opacity: index === currentIndex ? 1 : 0, // 현재 이미지만 보이도록 설정
+                  transition: "opacity 1s ease-out", // 애니메이션 효과 추가
+                  position: "absolute", // 이미지가 겹치도록 설정
+                  width: "100%",
+                  height: "60vh", // 이미지 크기 설정
+                  objectFit: "cover" // 이미지 비율 유지하며 채우기
+                }}
+              />
+            ))}
+          </div>
 
-        <div className="button-row">
-          <button className="main-button" onClick={handleStartRecord}>
-            기록 시작하기
-          </button>
-          <button className="main-button" onClick={handleViewPosts}>
-            내 게시물 보기
-          </button>
+          <div className="button-row">
+            <button className="main-button" onClick={handleStartRecord}>
+              기록 시작하기
+            </button>
+            <button className="main-button" onClick={handleViewPosts}>
+              내 게시물 보기
+            </button>
+          </div>
         </div>
       </div>
     </div>

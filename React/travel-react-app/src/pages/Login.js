@@ -6,7 +6,8 @@ import { GoogleLogin } from 'react-google-login'; // 구글 로그인 라이브�
 import  KakaoLogin  from 'react-kakao-login'; // 카카오 로그인 라이브러리 import
 import "../css/Strat.css";
 import logo2 from '../image/logo2.JPG';
-import {call} from "../api/ApiService"
+import {call} from "../api/ApiService";
+import Logo from "./Logo";
 
 const Login = () => {
   const { user,setUser } = useContext(UserContext); // `user` 배열로부터 사용자 정보를 가져옴
@@ -160,14 +161,13 @@ const Login = () => {
         console.log("로그인 call 메서드 response:"+response);
         alert(`로그인 성공! 환영합니다, ${response.userNickName}님!`);
         navigate("/main")
-      }   
-
+      }
+      
     } catch (error) {
       console.error("로그인 실패:", error);
       alert("아이디 또는 비밀번호가 올바르지 않습니다.");
     }
   };//로그인 버튼 종료
-  
 
 
   //------------연동 주석처리------------------
@@ -198,90 +198,93 @@ const Login = () => {
 
 
   return (
-    <div className="container">
-      <main>
-        <form className="form" onSubmit={handleLogin}>
-          <h3>::: 로그인 :::</h3>
+    <div>
+        <Logo />    
+      <div className="container">
+        <main>
+          <form className="form" onSubmit={handleLogin}>
+            <h3>::: 로그인 :::</h3>
 
-          <div className="form-group">
-            <label htmlFor="loginId">이메일(아이디)</label>
-            <input
-              id="loginId"
-              name="loginId"
-              value={loginId}
-              placeholder="example@email.com"
-              onChange={(e) => setLoginId(e.target.value)}
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="loginPassword">비밀번호</label>
-            <input
-              id="loginPassword"
-              name="loginPassword"
-              type="password"
-              value={loginPassword}
-              placeholder="Password"
-              onChange={(e) => setLoginPassword(e.target.value)}
-            />
-          </div>
-
-          {/* ID 찾기 및 Password 찾기 텍스트 */}
-          <div className="find-texts">
-            <span className="find-text" onClick={handleFindId}>
-              ID 찾기
-            </span>
-            <span className="divider">|</span>
-            <span className="find-text" onClick={handleFindPassword}>
-              Password 찾기
-            </span>
-          </div>
-
-          {/* id찾기/password찾기 팝업 모달 */}
-          {isPopupVisible && (
-            <div className="popup">
-              <div className="popup-content">
-                <span className="close-button" onClick={closePopup}>
-                  &times;
-                </span>
-                <div>{popupContent}</div>
-              </div>
+            <div className="form-group">
+              <label htmlFor="loginId">이메일(아이디)</label>
+              <input
+                id="loginId"
+                name="loginId"
+                value={loginId}
+                placeholder="example@email.com"
+                onChange={(e) => setLoginId(e.target.value)}
+              />
             </div>
-          )}
 
-          <div className="submit-container">
-            <input type="submit" value="로그인" className="submit" />
-            <input type="button" value="회원가입" className="cancel" onClick={toSignup} />
-          </div>
-
-          <div>
-            {/* Google Login Button */}
-            {/* <div className="google_button">
-              <GoogleLogin
-                clientId="YOUR_GOOGLE_CLIENT_ID" // 구글 API 클라이언트 ID
-                buttonText="구글 로그인"
-                onSuccess={handleGoogleSuccess}
-                onFailure={handleGoogleFailure}
-                cookiePolicy={'single_host_origin'}
+            <div className="form-group">
+              <label htmlFor="loginPassword">비밀번호</label>
+              <input
+                id="loginPassword"
+                name="loginPassword"
+                type="password"
+                value={loginPassword}
+                placeholder="Password"
+                onChange={(e) => setLoginPassword(e.target.value)}
               />
-            </div> */}
+            </div>
 
-            {/* Kakao Login Button */}
-            {/* <div className="kakao_button">
-              <KakaoLogin
-                token="YOUR_KAKAO_JS_KEY" // 카카오 개발자 사이트에서 발급받은 JavaScript 키
-                onSuccess={handleKakaoSuccess}
-                onFailure={handleKakaoFailure}
-                render={(props) => <button onClick={props.onClick}>카카오 로그인</button>}
-              />
-            </div> */}
+            {/* ID 찾기 및 Password 찾기 텍스트 */}
+            <div className="find-texts">
+              <span className="find-text" onClick={handleFindId}>
+                ID 찾기
+              </span>
+              <span className="divider">|</span>
+              <span className="find-text" onClick={handleFindPassword}>
+                Password 찾기
+              </span>
+            </div>
+
+            {/* id찾기/password찾기 팝업 모달 */}
+            {isPopupVisible && (
+              <div className="popup">
+                <div className="popup-content">
+                  <span className="close-button" onClick={closePopup}>
+                    &times;
+                  </span>
+                  <div>{popupContent}</div>
+                </div>
+              </div>
+            )}
+
+            <div className="submit-container">
+              <input type="submit" value="로그인" className="submit" />
+              <input type="button" value="회원가입" className="cancel" onClick={toSignup} />
+            </div>
+
+            <div>
+              {/* Google Login Button */}
+              {/* <div className="google_button">
+                <GoogleLogin
+                  clientId="YOUR_GOOGLE_CLIENT_ID" // 구글 API 클라이언트 ID
+                  buttonText="구글 로그인"
+                  onSuccess={handleGoogleSuccess}
+                  onFailure={handleGoogleFailure}
+                  cookiePolicy={'single_host_origin'}
+                />
+              </div> */}
+
+              {/* Kakao Login Button */}
+              {/* <div className="kakao_button">
+                <KakaoLogin
+                  token="YOUR_KAKAO_JS_KEY" // 카카오 개발자 사이트에서 발급받은 JavaScript 키
+                  onSuccess={handleKakaoSuccess}
+                  onFailure={handleKakaoFailure}
+                  render={(props) => <button onClick={props.onClick}>카카오 로그인</button>}
+                />
+              </div> */}
+            </div>
+          </form>
+          
+          <div >
+            <img src={logo2} alt="Logo" className="logo-box" />
           </div>
-        </form>
-        
-        <div >
-          <img src={logo2} alt="Logo" className="logo-box" />
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 };

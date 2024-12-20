@@ -16,6 +16,7 @@ import { ListContext } from "./context/ListContext";
 import { CopyListContext } from "./context/CopyListContext";
 import Logo from "./pages/Logo"
 import { CopyPlaceListContext } from "./context/CopyPlaceListContext";
+import MyPost from "./pages/MyPost";
 
   
 function App() {
@@ -47,7 +48,7 @@ function App() {
               <CopyPlaceListContext.Provider value={{copyPlaceList,setCopyPlaceList}}>
                 <div className="AppWrapper">
                   <Router>
-                    <Logo />
+                    {/* <Logo /> */}
                     <Routes>
                       <Route path="/" element={<HomeScreen />} />
                       <Route path="/main" element={<MainScreen />} />
@@ -57,7 +58,7 @@ function App() {
                       <Route path="post" element={<Post />} />
                       <Route path="postEdit/:id" element={<MapEdit />} />
                       <Route path="map" element={<Map />} />
-                      <Route path="/mypage/mypost/:id" element={<MyPage />} /> {/* Mypage 경로 추가 */}
+                      <Route path="/mypost/:id" element={<MyPost />} /> {/* Mypage 경로 추가 */}
                     </Routes>
                   </Router>
                 </div>

@@ -22,7 +22,6 @@ CREATE TABLE posts (
     post_title VARCHAR(255) NOT NULL,            -- 게시글 제목 (NOT NULL 제약조건)
     post_content TEXT,                           -- 게시글 내용 (TEXT 타입)
     user_nickname VARCHAR(255) NOT NULL,         -- 사용자 닉네임
-    likes INT DEFAULT 0,                         -- 좋아요 수 (기본값 0)
     post_created_at VARCHAR(255),                -- 게시글 작성 시간 (문자열로 저장)
     user_id BIGINT,                              -- 외래 키 (UserEntity와 연결)
 
@@ -47,13 +46,24 @@ CREATE TABLE post_images (
     FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE
 );
 
+CREATE TABLE likes (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT,
+    post_id BIGINT,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE
+);
+
+
+
+
 SHOW TABLES;
 
 DESCRIBE users;
 DESCRIBE posts;
 DESCRIBE post_places;
 DESCRIBE post_images;
-
+DESCRIBE likes;
 
 -- users 테이블 조회
 SELECT * FROM users;
@@ -63,10 +73,10 @@ SELECT * FROM posts;
 SELECT * FROM post_places;
 -- post_images 테이블 조회
 SELECT * FROM post_images;
+-- likes 테이블 조회
+SELECT * FROM likes;
 
-CREATE USER 'root'@'%' IDENTIFIED BY '1111';
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'%';
-FLUSH PRIVILEGES;
+
 
 
 
@@ -78,8 +88,16 @@ DROP TABLE IF EXISTS posts;
 DROP TABLE IF EXISTS post_places;
 -- post_images 테이블 삭제
 DROP TABLE IF EXISTS post_images;
+-- likes 테이블 삭제
+DROP TABLE IF EXISTS likes;
 
 
+
+
+
+CREATE USER 'root'@'%' IDENTIFIED BY '1111';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%';
+FLUSH PRIVILEGES;
 
 
 

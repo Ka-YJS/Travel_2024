@@ -20,7 +20,7 @@ const Post = () => {
     const [likedPosts, setLikedPosts] = useState({});
     const [searchQuery, setSearchQuery] = useState(""); // 검색어
     const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
-    const [postsPerPage, setPostsPerPage] = useState(3); // 페이지당 게시물 수
+    const [postsPerPage, setPostsPerPage] = useState(10); // 페이지당 게시물 수
 
     // 서버에서 게시물 가져오기
     const getPostList = async () => {
@@ -49,13 +49,16 @@ const Post = () => {
             (post.postTitle && post.postTitle.toLowerCase().includes(searchQuery.toLowerCase()))
         )
         : [];
+    
+    // 게시물 순서를 역순으로 변경
+    const reversedPosts = [...filteredPosts].reverse();    
 
     // 페이지네이션 계산
     const totalPages = Math.ceil(filteredPosts.length / postsPerPage); // 전체 페이지 수
     const indexOfLastPost = currentPage * postsPerPage; // 현재 페이지 마지막 게시물 인덱스
     const indexOfFirstPost = indexOfLastPost - postsPerPage; // 현재 페이지 첫 게시물 인덱스
-    const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost); // 현재 페이지에 표시할 게시물
-
+    const currentPosts = reversedPosts.slice(indexOfFirstPost, indexOfLastPost); // 현재 페이지에 표시할 게시물
+    
     // 페이지 변경
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
@@ -63,8 +66,6 @@ const Post = () => {
 
     // 글쓰기 페이지 이동
     const toWritePage = () => {
-        setPlaceList([]);
-        setList([]);
         navigate("/map");
     };
 
@@ -89,27 +90,34 @@ const Post = () => {
 
     // 게시글 상세 페이지 이동
     const handlePostClick = (id) => {
-        navigate(`/postdetail/${id}`);
+        navigate(`/postdetail/${id}`, { state: { from: `/post` } });
     };
 
     return (
         <div>
-            <div style={{ margin: "0" }}>
-                <TopIcon />
-            </div>
+            <TopIcon text="POST"/>
             <div className="post">
-                <h1 style={{ textAlign: "center" }}>게시물 목록</h1>
                 <table>
                     <tbody>
-                        <tr className="post_list" style={{ marginTop: "50px" }}>
+                        <tr 
+                            className="post_list" 
+                            style={{ 
+                                display: "flex",
+                                flexWrap: "wrap", // 아이템들이 화면에 맞게 줄 바꿈
+                                justifyContent: "center", // 중앙 정렬
+                                gap: "20px", // 아이템들 간의 간격
+                                margin: "0 auto",
+                                maxWidth: "1000px", // 최대 너비 설정
+                            }}
+                        >
                             {currentPosts.length > 0 ? (
                                 currentPosts.map((post) => (
                                     <td
                                         key={post.postId}
                                         style={{
-                                            width: "200px",
-                                            cursor: "pointer",
+                                            width: "180px", // 각 게시물의 너비
                                             textAlign: "center",
+                                            cursor: "pointer",
                                         }}
                                     >
                                         <img
@@ -121,31 +129,59 @@ const Post = () => {
                                             }
                                             alt="썸네일"
                                             style={{
-                                                width: "180px",
+                                                width: "100%",
                                                 height: "180px",
-                                                marginRight: "60px",
                                                 borderRadius: "5px",
                                                 objectFit: "cover",
                                             }}
                                         />
-                                        <div style={{ display: "flex" }}>
-                                            <h3 style={{ margin: 0 }}>
-                                                {post.postTitle}
-                                                <span
-                                                    className="span_style"
-                                                    onClick={() => likeButtonClick(post.postId)}
-                                                    style={{
-                                                        cursor: "pointer",
-                                                        color: "red",
-                                                        marginRight: "10px",
-                                                    }}
-                                                >
-                                                    ❤️
-                                                </span>
-                                                {post.like}
-                                            </h3>
+                                        <div 
+                                            style={{ 
+                                                display: "flex", 
+                                                flexDirection: "column", 
+                                                alignItems: "flex-start" 
+                                            }}
+                                        >
+                                            <span
+                                                className="span_style"
+                                                onClick={() => likeButtonClick(post.postId)}
+                                                style={{
+                                                    cursor: "pointer",
+                                                    color: "red",
+                                                    marginLeft: "5px",                                                   
+                                                }}
+                                            >
+                                                ❤️
+                                            </span>
+                                            {post.like}                                            
                                         </div>
-                                        <div>{post.postCreatedAt}</div>
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                flexDirection: "column",
+                                                alignItems: "flex-end", // 오른쪽 정렬
+                                                marginRight: "10px", // 오른쪽 여백 추가
+                                            }}
+                                        >
+                                            <h3 
+                                                style={{ 
+                                                    margin: 0, 
+                                                    width:"150px",
+                                                    whiteSpace: "nowrap", /* 한 줄로 제한 */
+                                                    overflow: "hidden",   /* 넘치는 텍스트 숨기기 */
+                                                    textOverflow: "ellipsis", /* 넘치면 '...'으로 표시 */
+                                                    textAlign: "right", // 오른쪽 정렬
+                                                }}
+                                            >
+                                                {post.postTitle}                                                
+                                            </h3>
+                                            <div>
+                                                작성자:{post.userNickname}
+                                            </div>                                
+                                            <div>
+                                                {post.postCreatedAt}
+                                            </div>                      
+                                        </div>
                                     </td>
                                 ))
                             ) : (
@@ -161,13 +197,22 @@ const Post = () => {
                         display: "flex",
                         justifyContent: "flex-end",
                         marginTop: "20px",
+                        gap: "20px", // 버튼 간 간격
                     }}
                 >
                     <Button
                         variant="contained"
                         color="primary"
+                        onClick={()=>navigate(`/mypost/${user.id}`)}
+                        sx={{ width: "10%" }}
+                    >
+                        MyPost
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
                         onClick={toWritePage}
-                        sx={{ width: "15%" }}
+                        sx={{ width: "10%" }}
                     >
                         글쓰기
                     </Button>
@@ -216,6 +261,7 @@ const Post = () => {
                             border: "1px solid #ddd",
                             borderRadius: "5px",
                             textAlign: "center",
+                            marginBottom: "20px",
                         }}
                     />
                 </div>
