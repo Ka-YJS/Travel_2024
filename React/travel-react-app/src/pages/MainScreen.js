@@ -15,7 +15,6 @@ import main9 from "../image/mainImage/main9.jpg"
 import main10 from "../image/mainImage/main10.jpg"
 
 function MainScreen() {
-  const [nickname, setNickname] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate(); // useNavigate 훅 사용
   const { user } = useContext(UserContext);

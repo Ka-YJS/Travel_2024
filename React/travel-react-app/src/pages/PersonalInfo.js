@@ -124,7 +124,7 @@ const PersonalInfo = () => {
 
       try {
         // 백엔드에 프로필 사진을 업로드
-        const response = await axios.patch(`http://localhost:9090/travel/userProfileImageEdit/${user.id}`, formData, {
+        const response = await axios.patch(`http://192.168.3.24:9090/travel/userProfileImageEdit/${user.id}`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
             'Authorization': `Bearer ${user.token}`
@@ -151,7 +151,7 @@ const PersonalInfo = () => {
       //유저프로필이미지 있는지확인 있으면 true
       if(user.userProfileImage !== null){        
 
-        const response = await axios.patch(`http://localhost:9090/travel/userProfileImageDelete/${user.id}`,null, {
+        const response = await axios.patch(`http://192.168.3.24:9090/travel/userProfileImageDelete/${user.id}`,null, {
           headers: {
             'Authorization': `Bearer ${user.token}`
           },
@@ -207,7 +207,7 @@ const PersonalInfo = () => {
           <img
             className="profile_image"
             //                          D:\Aproject\Travel_2024\Spring\travel\uploads
-            src={user.userProfileImage?`http://localhost:9090${user.userProfileImage}`: defaultImage}
+            src={user.userProfileImage?`http://192.168.3.24:9090${user.userProfileImage}`: defaultImage}
             alt="profile"
           />
           <div style={{display:"flex" }}>

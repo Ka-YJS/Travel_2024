@@ -27,7 +27,7 @@ const PostEdit = () => {
     useEffect(() => {
         const fetchPostDetails = async () => {
             try {
-                const response = await axios.get(`http://localhost:9090/api/posts/postDetail/${id}`, {
+                const response = await axios.get(`http://192.168.3.24:9090/api/posts/postDetail/${id}`, {
                     headers: { 'Authorization': `Bearer ${user.token}` }
                 });
                 

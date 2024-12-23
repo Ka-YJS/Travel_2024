@@ -16,5 +16,5 @@ public interface LikeRepository extends JpaRepository<LikeEntity, Long> {
     
     int countByPostEntity(PostEntity postEntity);
     // 특정 게시물에 대한 모든 좋아요 조회
-    List<LikeEntity> findByPostEntity(PostEntity postEntity);
+//    List<LikeEntity> findByPostEntity(PostEntity postEntity);
 }

@@ -7,7 +7,6 @@ import Signup from "./pages/SignUp";
 import PostDetail from "./pages/PostDetail";
 import Post from "./pages/Post";
 import Map from "./pages/Map";
-import MyPage from "./pages/MyPage"; // Mypage 추가
 import { PostContext } from "./context/PostContext";
 import { UserContext } from "./context/UserContext";
 import {PlaceContext} from "./context/PlaceContext";

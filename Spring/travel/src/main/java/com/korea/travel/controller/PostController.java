@@ -103,7 +103,6 @@ public class PostController {
         // 파일 저장 로직 호출
         if (files != null && !files.isEmpty()) {
         	List<String> imageUrls = postService.saveFiles(files);
-            imageUrls = postService.saveFiles(files);
             postDTO.setImageUrls(imageUrls);
         }
 
@@ -111,6 +110,8 @@ public class PostController {
         return ResponseEntity.ok(createdPost);
     }
     
+    
+    //게시글 수정
     @PutMapping(value = "/posts/postEdit/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updatePost(
             @PathVariable Long id,

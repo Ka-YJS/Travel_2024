@@ -16,7 +16,7 @@ const MyPost = () => {
     const [likedPosts, setLikedPosts] = useState({});
     const [searchQuery, setSearchQuery] = useState(""); // 검색어
     const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
-    const [postsPerPage, setPostsPerPage] = useState(10); // 페이지당 게시물 수
+    const postsPerPage = 10; // 페이지당 게시물 수
 
     // 서버에서 게시물 가져오기
     const getMyPostList = async () => {
@@ -26,8 +26,25 @@ const MyPost = () => {
                     Authorization: `Bearer ${user.token}`,
                 },
             });
-            console.log("Fetched posts:", response.data.data);
-            setMyPostList(response.data.data); // 데이터 설정
+
+            const fetchedPosts = response.data.data;
+
+            // 좋아요 상태 가져오기
+            const likedStatusPromises = fetchedPosts.map((post) =>
+                axios.get(`http://192.168.3.24:9090/api/likes/${post.postId}/isLiked`, {
+                headers: { Authorization: `Bearer ${user.token}` },
+                })
+            );
+
+            const likedStatusResponses = await Promise.all(likedStatusPromises);
+            const likedStatus = likedStatusResponses.reduce((acc, response, index) => {
+                acc[fetchedPosts[index].postId] = response.data;
+                return acc;
+            }, {});
+
+            setLikedPosts(likedStatus); // 좋아요 상태 업데이트
+            setMyPostList(fetchedPosts); // 게시물 리스트 설정
+
         } catch (error) {
             console.error("Error fetching posts:", error);
         }
@@ -38,6 +55,37 @@ const MyPost = () => {
         getMyPostList();
     }, []);
 
+
+    // 좋아요 버튼 클릭
+    const likeButtonClick = async (postId) => {
+        try {
+            const isLiked = likedPosts[postId];
+            const url = `http://192.168.3.24:9090/api/likes/${postId}`;
+            const method = isLiked ? "delete" : "post";
+
+            await axios({ method, url, headers: { Authorization: `Bearer ${user.token}` } });
+
+            // 좋아요 상태 업데이트
+            setLikedPosts((prev) => ({
+                ...prev,
+                [postId]: !isLiked,
+            }));
+
+            // 게시물의 좋아요 수 업데이트
+            setMyPostList((prev) =>
+                prev.map((post) =>
+                post.postId === postId
+                    ? { ...post, likes: isLiked ? post.likes - 1 : post.likes + 1 }
+                    : post
+                )
+            );
+
+        } catch (error) {
+            console.error("Error updating like:", error);
+            alert("좋아요 처리 중 문제가 발생했습니다.");
+        }
+    };
+
     // 검색 및 필터링
     const filteredPosts = Array.isArray(myPostList)
         ? myPostList.filter((post) =>
@@ -45,9 +93,10 @@ const MyPost = () => {
             (post.postTitle && post.postTitle.toLowerCase().includes(searchQuery.toLowerCase()))
         )
         : [];
+        
     
     // 게시물 순서를 역순으로 변경
-    const reversedPosts = [...filteredPosts].reverse();    
+    const reversedPosts = filteredPosts.slice().reverse(); 
 
     // 페이지네이션 계산
     const totalPages = Math.ceil(filteredPosts.length / postsPerPage); // 전체 페이지 수
@@ -63,25 +112,6 @@ const MyPost = () => {
     // 글쓰기 페이지 이동
     const toWritePage = () => {
         navigate("/map");
-    };
-
-    // 좋아요 버튼 클릭
-    const likeButtonClick = (id) => {
-        setMyPostList((prevPosts) =>
-            prevPosts.map((post) =>
-                post.postId === id
-                    ? {
-                          ...post,
-                          like: likedPosts[id] ? post.like - 1 : post.like + 1,
-                      }
-                    : post
-            )
-        );
-
-        setLikedPosts((prevLikedPosts) => ({
-            ...prevLikedPosts,
-            [id]: !prevLikedPosts[id], // 좋아요 상태 반전
-        }));
     };
 
     // 게시글 상세 페이지 이동
@@ -147,9 +177,9 @@ const MyPost = () => {
                                                     marginLeft: "5px",
                                                 }}
                                             >
-                                                ❤️
+                                                {likedPosts[post.postId] ? "❤️" : "🤍"}
                                             </span>
-                                            {post.like}                                            
+                                            <span>{post.likes}</span>                                          
                                         </div>
                                         <div
                                             style={{

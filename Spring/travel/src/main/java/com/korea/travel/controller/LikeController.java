@@ -26,13 +26,13 @@ public class LikeController {
     private final LikeService likeService;
     private final UserRepository  userRepository;
 
- // 좋아요 추가
+    // 좋아요 추가
     @PostMapping("/{postId}")
     public ResponseEntity<LikeDTO> addLike(@PathVariable("postId") Long postId) {
         Long userId = getCurrentUserId();  // 현재 사용자 ID를 추출
         LikeDTO likeDTO = likeService.addLike(userId, postId);
         return ResponseEntity.ok(likeDTO);
-    }
+    } 
 
     // 좋아요 삭제
     @DeleteMapping("/{postId}")
