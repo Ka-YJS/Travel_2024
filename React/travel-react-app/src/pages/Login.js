@@ -8,9 +8,10 @@ import "../css/Strat.css";
 import logo2 from '../image/logo2.JPG';
 import {call} from "../api/ApiService";
 import Logo from "./Logo";
+import axios from "axios";
 
 const Login = () => {
-  const { user,setUser } = useContext(UserContext); // `user` 배열로부터 사용자 정보를 가져옴
+  const { user,setUser,setGoogleUser } = useContext(UserContext); // `user` 배열로부터 사용자 정보를 가져옴
   const [loginId, setLoginId] = useState(""); // 입력받은 ID 저장 useState
   const [loginPassword, setLoginPassword] = useState(""); // 입력받은 비밀번호 상태 useState
   const [popupContent, setPopupContent] = useState(""); // 팝업 내용
@@ -130,7 +131,7 @@ const Login = () => {
 
   //Password 찾기 팝업창 확인 버튼
   const handleFindPasswordConfirm = () => {
-
+    
   }//Password 찾기 팝업창 확인 버튼 종료
 
   // 팝업 닫기
@@ -152,7 +153,6 @@ const Login = () => {
     };
 
     try {
-
       //로그인 call 메서드
       const response = await call("/travel/login","POST",userProfile,user)
 
@@ -170,6 +170,45 @@ const Login = () => {
   };//로그인 버튼 종료
 
 
+<<<<<<< HEAD
+  //Google 로그인 성공 처리
+  const handleGoogleSuccess = async (response) => {
+    try {
+      
+      console.log('Google Login Success:', response.credential);
+      const credential = response.credential      
+      
+      // JWT 디코딩하여 Google 사용자 정보 확인
+      try {
+        // Authorization 헤더에 Bearer 토큰 포함, payload는 본문에 전달
+        const response = await axios.post('http://192.168.3.24:9090/travel/oauth2/google/callback', { credential },{
+          headers: {
+              'Authorization': `Bearer ${credential}` // Google 로그인 후 받은 credential
+          }
+        })
+
+        console.log("백엔드 응답:", response.data);
+        
+        if (response.data) {          
+          setGoogleUser(response.data);
+          navigate("/signup")
+        }
+
+      } catch (backendError) {
+        console.error("백엔드 통신 에러:", {
+          상태: backendError.response?.status,
+          메시지: backendError.message,
+          데이터: backendError.response?.data
+        });
+        throw backendError;
+      }
+  
+    } catch (error) {
+      console.error("전체 로그인 프로세스 에러:", error);
+      handleGoogleFailure(error);
+    }
+  };//Google 로그인 성공 처리 종료
+=======
   //------------연동 주석처리------------------
   // // Google login callback
   // const handleGoogleSuccess = (response) => {
@@ -177,6 +216,7 @@ const Login = () => {
   //   // response.profileObj 또는 response.tokenId로 사용자 정보 처리
   //   navigate("/main");
   // };
+>>>>>>> parent of ea742e99 (12.23)
 
   // const handleGoogleFailure = (error) => {
   //   console.log('구글 로그인 실패', error);

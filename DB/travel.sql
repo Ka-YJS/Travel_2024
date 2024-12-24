@@ -57,6 +57,20 @@ CREATE TABLE likes (
 
 
 
+CREATE TABLE googles (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    google_id VARCHAR(255) NOT NULL,  -- 구글 고유 ID
+    name VARCHAR(255) NOT NULL,       -- 구글 계정 이름
+    email VARCHAR(255) NOT NULL,      -- 구글 이메일
+    picture VARCHAR(255),             -- 프로필 이미지
+    created_at VARCHAR(255),          -- 생성 시간
+    auth_provider VARCHAR(255),       -- 인증 제공자 (예: "Google")
+    role VARCHAR(255) DEFAULT 'USER', -- 사용자 권한 (기본값은 'USER')
+    UNIQUE (google_id),               -- 구글 고유 ID는 유니크
+    UNIQUE (email)                    -- 이메일도 유니크
+);
+
+
 SHOW TABLES;
 
 DESCRIBE users;
@@ -75,7 +89,8 @@ SELECT * FROM post_places;
 SELECT * FROM post_images;
 -- likes 테이블 조회
 SELECT * FROM likes;
-
+-- googles 테이블 조회
+SELECT * FROM googles;
 
 
 
@@ -90,7 +105,8 @@ DROP TABLE IF EXISTS post_places;
 DROP TABLE IF EXISTS post_images;
 -- likes 테이블 삭제
 DROP TABLE IF EXISTS likes;
-
+-- googles 테이블 삭제
+DROP TABLE IF EXISTS googles;
 
 
 

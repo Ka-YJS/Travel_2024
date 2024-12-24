@@ -35,6 +35,10 @@ public class SecurityConfig {
           			"/travel/userFindId",
           			"/travel/userFindPassword",
           			"/travel/userResetPassword",
+<<<<<<< HEAD
+          			"/travel/oauth2/google/callback",
+=======
+>>>>>>> parent of ea742e99 (12.23)
           			"/api/email/**", 
           			"/uploads/**"
           			).permitAll() //경로는 인증 없이 허용

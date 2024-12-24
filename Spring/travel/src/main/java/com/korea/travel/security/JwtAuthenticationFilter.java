@@ -7,8 +7,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.korea.travel.service.UserService;
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,6 +31,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	    		requestURI.equals("/travel/userFindId")|| 
 	    		requestURI.equals("/travel/userFindPassword")|| 
 	    		requestURI.equals("/travel/userResetPassword")|| 
+<<<<<<< HEAD
+                requestURI.startsWith("/travel/oauth2") ||
+=======
+>>>>>>> parent of ea742e99 (12.23)
 	    		requestURI.startsWith("/api/email")|| 
 	    		requestURI.startsWith("/uploads")) {
 	        filterChain.doFilter(request, response);

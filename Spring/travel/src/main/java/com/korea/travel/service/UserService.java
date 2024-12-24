@@ -4,11 +4,16 @@ import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.korea.travel.dto.UserDTO;
@@ -20,10 +25,8 @@ import com.korea.travel.security.TokenProvider;
 
 import io.jsonwebtoken.io.IOException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class UserService {
 	
@@ -146,6 +149,31 @@ public class UserService {
 		}
 		
 	}
+	
+	
+	//구글 로그인정보가저오기
+	public UserDTO verifyAndGetUserInfo(String credential) {
+	    String tokenInfoUrl = "https://oauth2.googleapis.com/tokeninfo?id_token=" + credential;
+	    RestTemplate restTemplate = new RestTemplate();
+	    ResponseEntity<Map> response = restTemplate.getForEntity(tokenInfoUrl, Map.class);
+
+	    if (response.getStatusCode() != HttpStatus.OK) {
+	        throw new OAuth2AuthenticationException("Invalid ID token");
+	    }
+
+	    Map<String, Object> tokenInfo = response.getBody();
+	    String email = (String) tokenInfo.get("email");
+	    String name = (String) tokenInfo.get("name");
+
+	    // Google 정보를 UserDTO에 매핑
+	    UserDTO userDTO = UserDTO.builder()
+	        .userId(email)                // 이메일을 UserId로 설정
+	        .userName(name)               // 이름 설정
+	        .build();
+
+	    return userDTO;
+	}
+	
 	
 	
 	//userPassword 수정하기

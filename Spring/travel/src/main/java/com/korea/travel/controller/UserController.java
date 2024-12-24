@@ -1,18 +1,17 @@
 package com.korea.travel.controller;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -77,7 +76,31 @@ public class UserController {
         
     }
     
-  //Id찾기
+    
+    //구글로그인
+    @PostMapping("/oauth2/google/callback")
+    public ResponseEntity<?> handleGoogleCallback(@RequestBody Map<String, String> payload) {
+        try {
+            String credential = payload.get("credential");
+            System.out.println("aaa0"+credential);
+            if (credential == null || credential.isEmpty()) {
+                return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Credential is missing or empty"));
+            }
+
+            // Google 정보 검증 및 UserDTO 생성
+            UserDTO userDTO = service.verifyAndGetUserInfo(credential);
+
+            return ResponseEntity.ok(userDTO);
+
+        } catch (Exception e) {
+            log.error("Unexpected error: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body(Collections.singletonMap("error", e.getMessage()));
+        }
+    }
+    
+    
+    //Id찾기
     @PostMapping("/userFindId")
     public ResponseEntity<?> userFindId(@RequestBody UserDTO dto){
        

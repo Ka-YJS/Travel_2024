@@ -13,11 +13,14 @@ import {PlaceContext} from "./context/PlaceContext";
 import MapEdit from "./pages/MapEdit";
 import { ListContext } from "./context/ListContext";
 import { CopyListContext } from "./context/CopyListContext";
-import Logo from "./pages/Logo"
 import { CopyPlaceListContext } from "./context/CopyPlaceListContext";
 import MyPost from "./pages/MyPost";
 
+<<<<<<< HEAD
+
+=======
   
+>>>>>>> parent of ea742e99 (12.23)
 function App() {
   const [placeList, setPlaceList] = useState([]);
   const [list,setList] = useState([]);
@@ -30,6 +33,7 @@ function App() {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : {};
   });
+  const [googleUser,setGoogleUser] = useState({});
 
 
   useEffect(() => {
@@ -39,7 +43,7 @@ function App() {
 
 
   return (
-    <UserContext.Provider value={{user,setUser }}>
+    <UserContext.Provider value={{user,setUser,googleUser,setGoogleUser}}>
       <PostContext.Provider value={{ postList, setPostList }}>
         <PlaceContext.Provider value={{placeList, setPlaceList}}>
           <ListContext.Provider value={{list, setList}}>

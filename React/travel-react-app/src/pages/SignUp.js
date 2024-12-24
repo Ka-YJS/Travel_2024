@@ -7,9 +7,9 @@ import "../css/Strat.css";
 import logo2 from '../image/logo2.JPG'
 function Signup() {
   //user정보 useContext
-  const { user } = useContext(UserContext);
+  const { user,googleUser } = useContext(UserContext);
   //userId 저장 useState
-  const [userId, setUserId] = useState("");
+  const [userId, setUserId] = useState(googleUser.userId);
   //id중복체크 useState
   const [isIdChecked, setIsIdChecked] = useState(false);
   //userPassword 저장 useState
@@ -19,9 +19,9 @@ function Signup() {
   //passwordError 저장 useState
   const [passwordError, setPasswordError] = useState("");
   //userName 저장 useState
-  const [userName, setUserName] = useState("");
+  const [userName, setUserName] = useState(googleUser.userName);
   //userNickName 저장 useState
-  const [userNickName, setUserNickName] = useState("");
+  const [userNickName, setUserNickName] = useState(googleUser.userName);
   //userPhoneNumber 저장 useState
   const [userPhoneNumber, setUserPhoneNumber] = useState("");
   //emailError 상태 저장 useState
