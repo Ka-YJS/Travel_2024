@@ -6,19 +6,21 @@ const TRANSPARENT = 'transparent';
 
 const Container = styled.TouchableOpacity`
   background-color: ${({ theme, isFilled }) =>
-    isFilled ? theme.buttonBackground : TRANSPARENT};
+    isFilled ? theme.buttonBackground : "rgba(255, 255, 255, 0.8)"};
   align-items: center;
   border-radius: 4px;
-  width: 100%;
+  width: ${({ width }) => width || "100%"};
   padding: 10px;
-  margin: 5px 0; 
+  margin: 5px 0;
 `;
+
 const Title = styled.Text`
   height: 30px;
   line-height: 30px;
   font-size: 16px;
   color: ${({ theme, isFilled }) =>
     isFilled ? theme.buttonTitle : theme.buttonUnfilledTitle};
+  font-family: GCB_Bold;
 `;
 
 const Button = ({ containerStyle, title, onPress, isFilled}) => {

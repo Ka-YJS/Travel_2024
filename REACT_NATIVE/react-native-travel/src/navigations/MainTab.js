@@ -6,6 +6,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { ThemeContext } from "styled-components";
 import { CardStyleInterpolators } from '@react-navigation/stack';
 
+
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
@@ -23,7 +24,6 @@ const TabBarIcon = ({ focused, name }) => {
 
 // Main 탭 내부에 스택 네비게이터 생성
 const MainScreenStack = () => {
-    const theme = useContext(ThemeContext);
 
     return (
         <Stack.Navigator
@@ -31,6 +31,9 @@ const MainScreenStack = () => {
                 headerTitleAlign: "center",
                 cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
                 gestureEnabled: true,
+                headerTitleStyle: {
+                    fontFamily: 'GCB_Bold',  // 폰트 설정
+                },
             }}
         >
             <Stack.Screen
@@ -71,6 +74,9 @@ const MainTab = () => {
                 headerShown: false,
                 tabBarActiveTintColor: theme.tabActiveColor,
                 tabBarInactiveTintColor: theme.tabInactiveColor,
+                headerTitleStyle: {
+                    fontFamily: 'GCB_Bold',  // 폰트 설정
+                },
             }}
         >
             <Tab.Screen
@@ -85,7 +91,6 @@ const MainTab = () => {
                 component={MainScreenStack} // MainScreenStack으로 변경
                 options={{
                     tabBarIcon: ({ focused }) => TabBarIcon({ focused, name: "home" }),
-                    unmountOnBlur: true,  // 탭이 블러될 때 컴포넌트 언마운트
                 }}
             />
             <Tab.Screen

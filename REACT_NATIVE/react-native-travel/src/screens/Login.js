@@ -6,23 +6,18 @@ import axios from 'axios';
 import { validateEmail, validatePassword, removeWhitespace } from '../utils/common';
 import { UserContext } from '../contexts/UserContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Modal, Text, TouchableOpacity,View } from 'react-native';
-import { getAuth, GoogleAuthProvider, signInWithCredential, signOut } from 'firebase/auth';
-import * as WebBrowser from 'expo-web-browser';
-import * as Google from 'expo-auth-session/providers/google';
-import { auth } from '../FirebaseConfig';
-
-WebBrowser.maybeCompleteAuthSession();
+import { ImageBackground, Modal, Text, TouchableOpacity } from 'react-native';
 
 const ModalBackground = styled.View`
   flex: 1;
   background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
   justify-content: center;
   align-items: center;
+  
 `;
 
 const ModalContainer = styled.View`
-  width: 90%; /* 화면의 90% 너비 */
+  width: 90%; 
   padding: 20px;
   background-color: ${({ theme }) => theme.background};
   border-radius: 10px;
@@ -43,9 +38,9 @@ const CloseButton = styled.TouchableOpacity`
 
 const ModalTitle = styled.Text`
   font-size: 18px;
-  font-weight: bold;
   margin-bottom: 10px;
   color: ${({ theme }) => theme.text};
+  font-family: GCB_Bold;
 `;
 
 const ErrorText = styled.Text`
@@ -55,14 +50,22 @@ const ErrorText = styled.Text`
   margin-bottom: 10px;
   line-height: 20px;
   color: ${({ theme }) => theme.errorText};
+  font-family: GCB_Bold;
+`;
+
+const Background = styled(ImageBackground)`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Container = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-  background-color: ${({ theme }) => theme.background};
+  background-color: transparent;
   margin:3%;
+  width: 300px;
 `;
 
 const LogoContainer = styled.View`
@@ -111,22 +114,6 @@ const Login = ({ navigation }) => {
   const [newPasswordError, setNewPasswordError] = useState('');
   const [confirmNewPasswordError, setConfirmNewPasswordError] = useState('');
 
-  //Google
-  const [googleAuthUser, setGoogleAuthUser] = useState(null);
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    webClientId: "603854896278-0m3gjaepcsvqta00j4sl6svg8ge9vlhd.apps.googleusercontent.com",
-    androidClientId: "603854896278-miscrm3oudatljm61i0kobovpn22972k.apps.googleusercontent.com",
-    redirectUri: "exp://192.168.3.23:8081",
-  });
-
-  useEffect(() => {
-  const unsubscribe = auth.onAuthStateChanged(authUser => {
-    setGoogleAuthUser(authUser);
-  });
-
-  return unsubscribe;
-  }, []);
-
   // 로그인 아이디 핸들러
   const _handleLoginIdChange = loginId => {
     const changedLoginId = removeWhitespace(loginId);
@@ -142,10 +129,10 @@ const Login = ({ navigation }) => {
   };
 
   const _handleLoginButtonPress = async () => {
-    if (!validateEmail(loginId) || !loginPassword) {
-      setErrorMessage('아이디와 비밀번호를 확인하세요');
-      return;
-    }
+    // if (!validateEmail(loginId) || !loginPassword) {
+    //   setErrorMessage('아이디와 비밀번호를 확인하세요');
+    //   return;
+    // }
 
     //로그인 백엔드에 보낼 객체
     const userProfile = {
@@ -154,7 +141,6 @@ const Login = ({ navigation }) => {
     };
 
     try {
-      
       const response = await axios.post(
         'http://192.168.3.25:9090/travel/login', // 백엔드 엔드포인트
         userProfile,
@@ -369,32 +355,8 @@ const Login = ({ navigation }) => {
     }
   };
 
-  // Google
-  const googleLogIn = async () => {
-    try {
-      const result = await promptAsync();  // hooks에서 가져온 promptAsync 사용
-      if (result?.type === 'success') {
-        const { id_token } = result.params;
-        const credential = GoogleAuthProvider.credential(id_token);
-        const googleAuthCredential = await signInWithCredential(auth, credential);
-        console.log('Google 로그인 성공:', googleAuthCredential.user.email);
-      }
-    } catch (error) {
-      console.error('Google 로그인 에러:', error);
-    }
-  };
-
-  const googleLogOut = async () => {
-    try {
-      await signOut(auth);
-      setGoogleAuthUser(null);
-      console.log('로그아웃 성공');
-    } catch (error) {
-      console.error('로그아웃 에러:', error);
-    }
-  };
-
   return (
+    <Background source={require("../../assets/flowers.png")} resizeMode="cover">
     <KeyboardAwareScrollView
       contentContainerStyle={{ flex: 1 }}
       extraScrollHeight={20}
@@ -412,6 +374,7 @@ const Login = ({ navigation }) => {
           onSubmitEditing={() => { }}
           placeholder="Email"
           returnKeyType="next"
+          
         />
         {errorMessage && <ErrorText>{errorMessage}</ErrorText>}
         {/* 패스워드 */}
@@ -424,27 +387,12 @@ const Login = ({ navigation }) => {
           returnKeyType="done"
           isPassword
         />
-        <TouchableOpacity style={{ alignSelf: 'flex-end', marginBottom: 20 }} onPress={() => setIsModalVisible(true)}>
-          <Text style={{ color: 'blue' }}>아이디 / 비밀번호 찾기</Text>
+        <TouchableOpacity style={{ alignSelf: 'flex-end', marginBottom: 20, backgroundColor: "rgba(255, 255, 255, 0.7)" }} onPress={() => setIsModalVisible(true)}>
+          <Text style={{ color: '#13C3F5', fontFamily:"GCB_Bold" }}>아이디 / 비밀번호 찾기</Text>
         </TouchableOpacity>
 
         <Button title="로그인" onPress={_handleLoginButtonPress} />
         <Button title="회원가입" onPress={() => navigation.navigate('Signup')} isFilled={false} />
-
-        {/* Google */}
-        <View>
-          {!googleAuthUser ? (
-            <Button
-              title="Google로 로그인"
-              onPress={googleLogIn}
-            />
-              ) : (
-                <Button
-                  title="로그아웃" 
-                  onPress={googleLogOut}
-                />
-          )}
-        </View>
 
         <Modal
           visible={isModalVisible}
@@ -583,6 +531,7 @@ const Login = ({ navigation }) => {
         </Modal>
       </Container>
     </KeyboardAwareScrollView>
+    </Background>
   );
 };
 

@@ -26,7 +26,6 @@ const MyPage = () => {
 
   // 계정 삭제 관련 상태
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-  const [profileImage, setProfileImage] = useState(null);
 
   // 모달 애니메이션을 위한 Animated 값 초기화
   const slideAnim = useState(new Animated.Value(0))[0];
@@ -199,7 +198,6 @@ const MyPage = () => {
 
     if (!result.canceled) {
       const selectedImage = result.assets[0].uri;
-      setProfileImage(selectedImage);
 
       // 이미지 업로드를 위한 FormData 생성
       const formData = new FormData();
@@ -221,7 +219,6 @@ const MyPage = () => {
             },
           }
         );
-
         // 프로필 이미지 업데이트 성공 처리
         if (response.status === 200) {
           const updatedUser = {
@@ -230,7 +227,6 @@ const MyPage = () => {
           };
           dispatch(updatedUser);
           AsyncStorage.setItem('user', JSON.stringify(updatedUser));
-          setProfileImage(`http://192.168.3.25:9090${response.data.userProfileImage}`);
         } else {
           alert("프로필 사진 업데이트 실패");
         }
@@ -238,8 +234,37 @@ const MyPage = () => {
         console.error("Error uploading image:", error);
         alert("이미지 업로드 실패");
       }
+
     }
   };
+  //프로필 이미지 삭제
+  const handleProfileImageDelete = async () => {
+
+    try {
+      const response = await axios.patch(
+        `http://192.168.3.25:9090/travel/userProfileImageDelete/${user.id}`, {},
+        {
+          headers: {
+            "Authorization": `Bearer ${user.token}`,
+          }
+        })
+
+      if (response.data === true) {
+        const updatedUser = {
+          ...user,
+          userProfileImage: null
+        };
+        dispatch(updatedUser);
+        AsyncStorage.setItem('user', JSON.stringify(updatedUser));
+        alert("프로필 이미지가 삭제되었습니다.")
+      } else {
+        alert("프로필 이미지 삭제 실패")
+      }
+    } catch (error) {
+      console.error("프로필 이미지 삭제 에러: ", error);
+      alert("프로필 이미지 삭제에 실패했습니다.")
+    }
+  }
 
   // 마이페이지 렌더링
   return (
@@ -257,7 +282,11 @@ const MyPage = () => {
         {/* 프로필 이미지 컨테이너 */}
         <View style={styles.profileImageContainer}>
           <Image
-            source={user.userProfileImage ? { uri: user.userProfileImage } : require("../../assets/profile.jpg")}
+            source={
+              user.userProfileImage && user.userProfileImage !== 'http://192.168.3.25:9090null'
+                ? { uri: user.userProfileImage }
+                : require("../../assets/profile.jpg")
+            }
             style={styles.profileImage}
           />
           {/* 프로필 이미지 수정/삭제 버튼 */}
@@ -269,7 +298,7 @@ const MyPage = () => {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.deleteIcon}
-            onPress={() => setProfileImage(null)}
+            onPress={handleProfileImageDelete}
           >
             <MaterialIcons name="delete" size={20} color="black" />
           </TouchableOpacity>
@@ -279,7 +308,9 @@ const MyPage = () => {
       {/* 계정 설정 메뉴 리스트 */}
       <View style={styles.listContainer}>
         {/* 각 메뉴 항목: 계정 관리, 비밀번호 변경, My Post, 로그아웃, 계정 삭제 */}
-        <TouchableOpacity style={styles.listItem}>
+        <TouchableOpacity style={styles.listItem}
+          onPress={() => console.log(user)}
+        >
           <Text style={styles.listItemText}>계정 관리</Text>
           <Text style={styles.idText}>
             {/* user.userName이 있으면 이름 출력, 없으면 빈 문자열 */}
@@ -447,19 +478,21 @@ const styles = StyleSheet.create({
   profileInfo: {
     flex: 1,
     alignItems: "center",
+    fontFamily: 'GCB_Bold', // 추가
   },
 
   // 프로필 이름 스타일
   profileName: {
     fontSize: 24,
-    fontWeight: "bold",
     marginBottom: 4,
+    fontFamily: 'GCB_Bold', // 추가
   },
 
   // 프로필 편집 텍스트 스타일
   editProfileText: {
     fontSize: 14,
     color: "#007BFF",
+    fontFamily: 'GCB_Bold', // 추가
   },
 
   // 프로필 이미지 컨테이너 스타일
@@ -515,7 +548,7 @@ const styles = StyleSheet.create({
   // 메뉴 아이템 텍스트 스타일
   listItemText: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: 'GCB_Bold', // 추가
   },
 
   slideContent: {
@@ -536,6 +569,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingLeft: 8,
     borderRadius: 5,
+    fontFamily: 'GCB_Bold', // 추가
   },
 
   // 모달 배경 스타일
@@ -559,8 +593,8 @@ const styles = StyleSheet.create({
   // 모달 제목 스타일
   modalTitle: {
     fontSize: 18,
-    fontWeight: "bold",
     marginBottom: 12,
+    fontFamily: 'GCB_Bold', // 추가
   },
 
   // 모달 확인 텍스트 스타일
@@ -569,6 +603,7 @@ const styles = StyleSheet.create({
     color: "red",
     marginBottom: 24,
     textAlign: "center",
+    fontFamily: 'GCB_Bold', // 추가
   },
 
   // 모달 버튼 컨테이너 스타일
@@ -589,6 +624,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#007BFF",
     marginRight: 20,
+    fontFamily: 'GCB_Bold', // 추가
   },
 
   // 저장/삭제 버튼 스타일
@@ -600,12 +636,14 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     textAlign: "center",
     borderRadius: 5,
+    fontFamily: 'GCB_Bold', // 추가
   },
   errorText: {
     color: 'red',
     fontSize: 14,
     marginBottom: 10,
     textAlign: 'left',
+    fontFamily: 'GCB_Bold', // 추가
 
   },
 });

@@ -6,14 +6,22 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { UserContext } from '../contexts/UserContext';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
+import { ImageBackground } from 'react-native';
+
+const Background = styled(ImageBackground)`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
 
 const Container = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-  background-color: ${({ theme }) => theme.background};
+  background-color: transparent;
   padding: 0 20px;
   color: ${({ theme }) => theme.errorText};
+  width : 400px;
 `;
 
 const ErrorText = styled.Text`
@@ -213,6 +221,7 @@ const Signup = () => {
   };
 
   return (
+    <Background source={require("../../assets/flowers.png")} resizeMode="cover">
     <KeyboardAwareScrollView>
       <Container>
         <LogoContainer>
@@ -292,6 +301,7 @@ const Signup = () => {
         <Button title="회원가입" onPress={handleSignup} disabled={!isEmailVerified} />
       </Container>
     </KeyboardAwareScrollView>
+    </Background>
   );
 };
 

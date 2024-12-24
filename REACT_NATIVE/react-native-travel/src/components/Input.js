@@ -15,6 +15,7 @@ const Label = styled.Text`
   margin-bottom: 6px;
   color: ${({ theme, isFocused }) => (isFocused ? theme.text : theme.label)};
   margin-left: 5px;
+  font-family: GCB_Bold;
 `;
 //textinput 컴포넌트 
 const StyledTextInput = styled.TextInput.attrs(({ theme }) => ({
@@ -27,6 +28,8 @@ const StyledTextInput = styled.TextInput.attrs(({ theme }) => ({
     font-size: 16px;
     border : 1px solid ${({ theme, isFocused }) => (isFocused ? theme.text : theme.inputBorder)};
     border-radius : 4px;
+    font-family: GCB_Bold;
+    
 `
 //forwardRef
 //react에서 특정 컴포넌트가 받은 ref를 자식 컴포넌트의 특정 DOM요소나
