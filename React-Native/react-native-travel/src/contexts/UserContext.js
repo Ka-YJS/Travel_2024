@@ -16,11 +16,15 @@ export const UserProvider = ({ children }) => {
     userNickName: null,
     userPassword: null,
     userProfileImage: null,
+    userPhoneNumber: null,
   }); // 현재 로그인한 사용자 정보
   const [users, setUsers] = useState([]); // 모든 사용자 데이터 저장
 
   const dispatch = async (userData) => {
     try {
+      if (!userData.userProfileImage) {
+        userData.userProfileImage = require("../../assets/profile.jpg"); // 기본 이미지 경로
+      }
       setUser(userData); // 상태 업데이트
       await AsyncStorage.setItem('user', JSON.stringify(userData)); // 사용자 정보를 AsyncStorage에 저장
     } catch (error) {
@@ -28,12 +32,10 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-  // 회원가입 함수
   const registerUser = (newUser) => {
     setUsers((prevUsers) => [...prevUsers, newUser]);
   };
 
-  // 로그인 함수
   const loginUser = (userId, password) => {
     const existingUser = users.find((u) => u.userId === userId && u.userPassword === password);
     if (existingUser) {
@@ -44,7 +46,6 @@ export const UserProvider = ({ children }) => {
     return false;
   };
 
-  // 로그아웃 함수
   const logoutUser = () => {
     setUser({
       userId: null,
@@ -52,25 +53,30 @@ export const UserProvider = ({ children }) => {
       userNickName: null,
       userPassword: null,
       userProfileImage: null,
+      userPhoneNumber: null,
     }); // 사용자 상태 초기화
     AsyncStorage.removeItem('user'); // AsyncStorage에서 사용자 정보 삭제
   };
 
-  // 앱 시작 시 AsyncStorage에서 사용자 정보 불러오기
   useEffect(() => {
     const loadUserData = async () => {
       try {
-        const storedUser = await AsyncStorage.getItem('user');
-        if (storedUser) {
-          const parsedUser = JSON.parse(storedUser);
-          setUser(parsedUser); // AsyncStorage에서 사용자 정보 불러오기
-        }
+        // 앱이 켜질 때 AsyncStorage의 사용자 데이터를 초기화
+        await AsyncStorage.removeItem('user');
+        setUser({
+          userId: null,
+          userName: null,
+          userNickName: null,
+          userPassword: null,
+          userProfileImage: null,
+          userPhoneNumber: null,
+        });
       } catch (error) {
-        console.error('AsyncStorage 불러오기 실패:', error);
+        console.error('사용자 데이터 초기화 실패:', error);
       }
     };
 
-    loadUserData(); // 컴포넌트가 마운트될 때 사용자 정보를 불러옴
+    loadUserData(); // 컴포넌트가 마운트될 때 사용자 정보를 초기화
 
     // React Native에서 Promise rejection을 잡는 방법
     window.onunhandledrejection = (event) => {

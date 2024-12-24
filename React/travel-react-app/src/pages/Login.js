@@ -2,8 +2,7 @@ import React, { useState,useRef } from "react";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
-import { GoogleLogin } from 'react-google-login'; // 구글 로그인 라이브러리 import
-import  KakaoLogin  from 'react-kakao-login'; // 카카오 로그인 라이브러리 import
+import { GoogleLogin,GoogleOAuthProvider } from '@react-oauth/google'; // 구글 로그인 라이브러리 import
 import "../css/Strat.css";
 import logo2 from '../image/logo2.JPG';
 import {call} from "../api/ApiService";
@@ -73,7 +72,7 @@ const Login = () => {
     };
     try {
       //ID찾기 call 메서드
-      const response = await call("/travel/userFindId","POST",userInfo,user)
+      const response = await call("/travel/userFindId","POST",userInfo)
 
       if(response){
         console.log("ID찾기 call 메서드 response:"+response);
@@ -170,14 +169,13 @@ const Login = () => {
   };//로그인 버튼 종료
 
 
-<<<<<<< HEAD
   //Google 로그인 성공 처리
   const handleGoogleSuccess = async (response) => {
     try {
       
       console.log('Google Login Success:', response.credential);
       const credential = response.credential      
-      
+
       // JWT 디코딩하여 Google 사용자 정보 확인
       try {
         // Authorization 헤더에 Bearer 토큰 포함, payload는 본문에 전달
@@ -208,33 +206,44 @@ const Login = () => {
       handleGoogleFailure(error);
     }
   };//Google 로그인 성공 처리 종료
-=======
-  //------------연동 주석처리------------------
-  // // Google login callback
-  // const handleGoogleSuccess = (response) => {
-  //   console.log('구글 로그인 성공', response);
-  //   // response.profileObj 또는 response.tokenId로 사용자 정보 처리
-  //   navigate("/main");
-  // };
->>>>>>> parent of ea742e99 (12.23)
 
-  // const handleGoogleFailure = (error) => {
-  //   console.log('구글 로그인 실패', error);
-  //   alert('구글 로그인 실패');
-  // };
+  // Google 로그인 실패 처리
+  const handleGoogleFailure = (error) => {
+    console.error("Google login error details:", {
+        error,
+        response: error.response,
+        message: error.message,
+        status: error.response?.status
+    });
+    
+    let errorMessage;
+    
+    if (!error) {
+      errorMessage = "알 수 없는 오류가 발생했습니다.";
+    } else if (error.error === "popup_closed_by_user") {
+      errorMessage = "로그인 창이 닫혔습니다. 다시 시도해주세요.";
+    } else if (error.error === "access_denied") {
+      errorMessage = "구글 계정 접근이 거부되었습니다.";
+    } else if (error.error === "immediate_failed") {
+      errorMessage = "자동 로그인에 실패했습니다. 다시 시도해주세요.";
+    } else if (error.response?.status === 401) {
+      errorMessage = "인증에 실패했습니다. 다시 로그인해주세요.";
+    } else if (error.response?.status === 500) {
+      errorMessage = "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
+    } else if (error.details) {
+      errorMessage = error.details;
+    } else {
+      errorMessage = "구글 로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
+    }
 
-  // // Kakao login callback
-  // const handleKakaoSuccess = (response) => {
-  //   console.log('카카오 로그인 성공', response);
-  //   // response.profile 또는 response.token으로 사용자 정보 처리
-  //   navigate("/main");
-  // };
+    alert(errorMessage);
+    setLoginId("");
+    setLoginPassword("");
+  };
 
-  // const handleKakaoFailure = (error) => {
-  //   console.log('카카오 로그인 실패', error);
-  //   alert('카카오 로그인 실패');
-  // };
-
+  const googleOAuthConfig = {
+    clientId: process.env.REACT_APP_GOOGLE_CLIENT_ID  // 환경변수가 제대로 로드되는지 확인
+  };
 
 
   return (
@@ -297,26 +306,18 @@ const Login = () => {
             </div>
 
             <div>
-              {/* Google Login Button */}
-              {/* <div className="google_button">
+              {/* Google OAuth */}
+              <GoogleOAuthProvider clientId={googleOAuthConfig.clientId}>
                 <GoogleLogin
-                  clientId="YOUR_GOOGLE_CLIENT_ID" // 구글 API 클라이언트 ID
-                  buttonText="구글 로그인"
                   onSuccess={handleGoogleSuccess}
-                  onFailure={handleGoogleFailure}
+                  useOneTap={false}
+                  type="standard"
+                  ux_mode="popup"
+                  flow="implicit"
+                  scope="email profile"
                   cookiePolicy={'single_host_origin'}
                 />
-              </div> */}
-
-              {/* Kakao Login Button */}
-              {/* <div className="kakao_button">
-                <KakaoLogin
-                  token="YOUR_KAKAO_JS_KEY" // 카카오 개발자 사이트에서 발급받은 JavaScript 키
-                  onSuccess={handleKakaoSuccess}
-                  onFailure={handleKakaoFailure}
-                  render={(props) => <button onClick={props.onClick}>카카오 로그인</button>}
-                />
-              </div> */}
+              </GoogleOAuthProvider>
             </div>
           </form>
           

@@ -8,16 +8,18 @@ import { theme } from "./theme";
 import Navigation from "./navigations";
 import { UserProvider } from "./contexts/UserContext"; // UserProvider 가져오기
 import { PlaceProvider } from "./contexts/PlaceContext";
-import { ListProvider } from "./contexts/ListContext";
 import { PostProvider } from "./contexts/PostContext";
 import { ImageProvider } from "./contexts/ImageContext";
-import { CopyListProvider } from "./contexts/CopyListContext";
+import { setCustomText } from 'react-native-global-props';
 
 SplashScreen.preventAutoHideAsync();
 
 const cacheResources = async () => {
     const images = [require("../assets/splash.png")];
-    const fonts = []; // 필요한 폰트 추가
+    const fonts = [
+        { GCB_Bold: require("../assets/fonts/GCB_Bold.ttf")},
+        { GCB: require("../assets/fonts/GCB.ttf")}
+    ];
 
     const cacheImages = images.map((image) =>
         typeof image === "string" ? Image.prefetch(image) : Asset.fromModule(image).downloadAsync()
@@ -34,6 +36,12 @@ const App = () => {
         const prepareResources = async () => {
             try {
                 await cacheResources();
+                console.log("폰트 로드 완료");
+                setCustomText({
+                    style: {
+                        fontFamily: 'GCB_Bold',
+                    },
+                });
             } catch (error) {
                 console.warn("Error loading resources:", error);
             } finally {
@@ -55,23 +63,18 @@ const App = () => {
     }
 
     return (
-        <PlaceProvider>
-            <ListProvider>
-                <CopyListProvider>
+        <ThemeProvider theme={theme}>
+            <UserProvider>
+                <PlaceProvider>
                     <PostProvider>
                         <ImageProvider>
-                            <UserProvider>{/* UserProvider로 Navigation 감싸기 */}
-                                <ThemeProvider theme={theme}>
-                                    <StatusBar barStyle="dark-content" />
-                                    <Navigation />
-                                </ThemeProvider>
-                            </UserProvider>
+                            <StatusBar barStyle="dark-content" />
+                            <Navigation />
                         </ImageProvider>
                     </PostProvider>
-                </CopyListProvider>
-            </ListProvider>
-        </PlaceProvider>
-
+                </PlaceProvider>
+            </UserProvider>
+        </ThemeProvider>
     );
 };
 

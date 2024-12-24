@@ -5,6 +5,10 @@ const colors = {
     grey_1 : '#a6a6a6',
     red : '#e84118',
     blue : '#3679fe',
+    green_1 : '#08D37A',
+    orange : '#CFA636',
+    orange_1 : '#F9DAB0',
+    brown : 'brown',
 };
 
 export const theme = {
@@ -16,12 +20,11 @@ export const theme = {
     errorText : colors.red,
     buttonBackground : colors.blue,
     buttonTitle : colors.white,
-    buttonUnfilledTitle : colors.blue,
-    logoBorder : colors.grey_0,
-    buttonBackground : colors.blue,
+    buttonUnfilledTitle : colors.green_1,
+    logoBorder : colors.orange_1,
+    buttonBackground : colors.green_1,
     buttonTitle : colors.white,
-    buttonUnfilledTitle : colors.blue,
     headerTintColor:colors.black,
-    tabActiveColor:colors.blue,
+    tabActiveColor:colors.orange,
     tabInactiveColor:colors.grey_1,
 }

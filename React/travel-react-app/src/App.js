@@ -16,11 +16,6 @@ import { CopyListContext } from "./context/CopyListContext";
 import { CopyPlaceListContext } from "./context/CopyPlaceListContext";
 import MyPost from "./pages/MyPost";
 
-<<<<<<< HEAD
-
-=======
-  
->>>>>>> parent of ea742e99 (12.23)
 function App() {
   const [placeList, setPlaceList] = useState([]);
   const [list,setList] = useState([]);
@@ -51,7 +46,6 @@ function App() {
               <CopyPlaceListContext.Provider value={{copyPlaceList,setCopyPlaceList}}>
                 <div className="AppWrapper">
                   <Router>
-                    {/* <Logo /> */}
                     <Routes>
                       <Route path="/" element={<HomeScreen />} />
                       <Route path="/main" element={<MainScreen />} />

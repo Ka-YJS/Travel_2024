@@ -10,7 +10,6 @@ import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -25,8 +24,10 @@ import com.korea.travel.security.TokenProvider;
 
 import io.jsonwebtoken.io.IOException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserService {
 	
@@ -77,52 +78,52 @@ public class UserService {
 	
 	
 	//Id찾기
-	   public UserDTO userFindId(UserDTO dto) {
-	      
-	      UserEntity user = repository.findByUserName(dto.getUserName());
-	      if(user != null && user.getUserPhoneNumber().equals(dto.getUserPhoneNumber())) {
-	         return UserDTO.builder()
-	               .userId(user.getUserId())
-	               .build();
-	      }else {
-	          throw new IllegalStateException("User not found");
-	      }
-	   }
-	   
-	   // 비밀번호 찾기 (사용자 정보 확인)
-	    public UserDTO userFindPassword(UserDTO dto) {
-	        // 아이디, 이름, 전화번호로 사용자 조회
-	        UserEntity user = repository.findByUserIdAndUserNameAndUserPhoneNumber(
-	            dto.getUserId(), 
-	            dto.getUserName(), 
-	            dto.getUserPhoneNumber()
-	        );
-	        
-	        if (user != null) {
-	            return UserDTO.builder()
-	                .userId(user.getUserId())
-	                .userName(user.getUserName())
-	                .build();
-	        }
-	        
-	        return null;
-	    }
+   public UserDTO userFindId(UserDTO dto) {
+      
+      UserEntity user = repository.findByUserName(dto.getUserName());
+      if(user != null && user.getUserPhoneNumber().equals(dto.getUserPhoneNumber())) {
+         return UserDTO.builder()
+               .userId(user.getUserId())
+               .build();
+      }else {
+          throw new IllegalStateException("User not found");
+      }
+   }
+   
+   // 비밀번호 찾기 (사용자 정보 확인)
+    public UserDTO userFindPassword(UserDTO dto) {
+        // 아이디, 이름, 전화번호로 사용자 조회
+        UserEntity user = repository.findByUserIdAndUserNameAndUserPhoneNumber(
+            dto.getUserId(), 
+            dto.getUserName(), 
+            dto.getUserPhoneNumber()
+        );
+        
+        if (user != null) {
+            return UserDTO.builder()
+                .userId(user.getUserId())
+                .userName(user.getUserName())
+                .build();
+        }
+        
+        return null;
+    }
 
-	    // 비밀번호 초기화
-	    @Transactional
-	    public boolean userResetPassword(UserDTO dto) {
-	        // 아이디로 사용자 조회
-	        UserEntity user = repository.findByUserId(dto.getUserId());
-	        
-	        if (user != null) {
-	            // 새 비밀번호 암호화하여 저장
-	            user.setUserPassword(passwordEncoder.encode(dto.getUserPassword()));
-	            repository.save(user);
-	            return true;
-	        }
-	        
-	        return false;
-	    }
+    // 비밀번호 초기화
+    @Transactional
+    public boolean userResetPassword(UserDTO dto) {
+        // 아이디로 사용자 조회
+        UserEntity user = repository.findByUserId(dto.getUserId());
+        
+        if (user != null) {
+            // 새 비밀번호 암호화하여 저장
+            user.setUserPassword(passwordEncoder.encode(dto.getUserPassword()));
+            repository.save(user);
+            return true;
+        }
+        
+        return false;
+    }
 	
 	
 	//로그인(로그인할때 토큰생성)
@@ -151,14 +152,14 @@ public class UserService {
 	}
 	
 	
-	//구글 로그인정보가저오기
-	public UserDTO verifyAndGetUserInfo(String credential) {
+	//구글 로그인정보가져오기
+	public UserDTO verifyAndGetUserInfo(String credential) throws Exception {
 	    String tokenInfoUrl = "https://oauth2.googleapis.com/tokeninfo?id_token=" + credential;
 	    RestTemplate restTemplate = new RestTemplate();
 	    ResponseEntity<Map> response = restTemplate.getForEntity(tokenInfoUrl, Map.class);
 
 	    if (response.getStatusCode() != HttpStatus.OK) {
-	        throw new OAuth2AuthenticationException("Invalid ID token");
+	        throw new Exception("Invalid ID token");
 	    }
 
 	    Map<String, Object> tokenInfo = response.getBody();
@@ -173,8 +174,7 @@ public class UserService {
 
 	    return userDTO;
 	}
-	
-	
+		
 	
 	//userPassword 수정하기
 	public boolean userPasswordEdit (Long id,UserDTO dto) {

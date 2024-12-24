@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useRef, useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -11,39 +11,63 @@ import {
   Alert,
   Image,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker"; // 사진 선택 기능 추가
+import * as ImagePicker from "expo-image-picker";
 import MapView, { Marker } from "react-native-maps";
 import { PlaceContext } from "../contexts/PlaceContext";
-import { PostContext } from "../contexts/PostContext";
 import { UserContext } from "../contexts/UserContext";
 import axios from "axios";
-import UUID from 'react-native-uuid';
-import { useNavigation } from "@react-navigation/native";
+import UUID from "react-native-uuid";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
-const Map = () => {
+const EditPost = () => {
   const navigation = useNavigation();
-  const { placeList, setPlaceList } = useContext(PlaceContext);
-  const { postList, setPostList } = useContext(PostContext);
+  const route = useRoute();
+  const post = route.params;
+  // console.log(post)
+  const [placeList, setPlaceList] = useState(post.placeList);
   const { user } = useContext(UserContext);
   const mapRef = useRef(null);
   const regionRef = useRef({
     latitude: 37.5665,
-    longitude: 126.9780,
+    longitude: 126.978,
     latitudeDelta: 0.01,
     longitudeDelta: 0.01,
   });
-  
+
   const [markerPosition, setMarkerPosition] = useState(null);
   const [placeName, setPlaceName] = useState("");
-  const [postTitle, setPostTitle] = useState("");
-  const [postContent, setPostContent] = useState("");
+  const [postTitle, setPostTitle] = useState(post.postTitle);
+  const [postContent, setPostContent] = useState(post?.postContent || "");
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredPlaceList, setFilteredPlaceList] = useState([]);
   const [selectedFilteredPlaces, setSelectedFilteredPlaces] = useState([]);
   const [selectedPlacesList, setSelectedPlacesList] = useState([]);
-  const [selectedImages, setSelectedImages] = useState([]); // 사진 목록
+  const [selectedImages, setSelectedImages] = useState(
+    (post?.imageUrls || []).map((uri) => ({
+      id: UUID.v4(),
+      uri: `http://192.168.3.25:9090${uri}`, // 앞에 base URL을 추가
+    })) || []
+  );
 
-  const GOOGLE_API_KEY = "AIzaSyDdfuKZuF0IpsUtjlx_Syh-gmJhCE70t-8"; // 여기에 실제 API 키 입력
+  const GOOGLE_API_KEY = "AIzaSyDdfuKZuF0IpsUtjlx_Syh-gmJhCE70t-8";
+
+  useEffect(() => {
+    if (post?.placeList) {
+      const placeListArray = post.placeList.map(place => ({
+        id: UUID.v4(),
+        name: place
+      }));
+      setPlaceList(placeListArray);
+    }
+  }, [post, setPlaceList]);
+
+  useEffect(() => {
+    if (post?.placeList && post.placeList.length > 0) {
+      // 처음 렌더링될 때 장소 목록을 이미 설정된 placeList에서 설정
+      const firstPlace = post.placeList[0];
+      setPlaceName(firstPlace); // 첫 번째 장소 이름으로 초기화
+    }
+  }, [post]);
 
   const handleSearch = async () => {
     if (!searchQuery) return;
@@ -55,23 +79,21 @@ const Map = () => {
           params: {
             query: searchQuery,
             key: GOOGLE_API_KEY,
-            language: 'ko'
+            language: "ko",
           },
         }
       );
 
       const results = response.data.results;
-      
-      // 검색 결과에 고유 ID 추가
       const placesWithUuid = results.map((result) => ({
-        id: UUID.v4(), // 각 결과에 고유 UUID 생성
+        id: UUID.v4(),
         name: result.name,
-        location: result.geometry.location
+        location: result.geometry.location,
       }));
-      
+
       setFilteredPlaceList(placesWithUuid);
       setSelectedFilteredPlaces([]);
-      
+
       if (placesWithUuid.length > 0) {
         const firstResult = placesWithUuid[0];
         const { lat, lng } = firstResult.location;
@@ -84,10 +106,9 @@ const Map = () => {
         };
 
         mapRef.current.animateToRegion(regionRef.current, 1000);
-        
-        setMarkerPosition({ 
-          latitude: lat, 
-          longitude: lng 
+        setMarkerPosition({
+          latitude: lat,
+          longitude: lng,
         });
         setPlaceName(firstResult.name);
       }
@@ -102,7 +123,7 @@ const Map = () => {
     const newPlace = {
       id: UUID.v4(),
       name: "선택된 위치",
-      location: { lat: latitude, lng: longitude }
+      location: { lat: latitude, lng: longitude },
     };
     setMarkerPosition({ latitude, longitude });
     setPlaceName(newPlace.name);
@@ -120,12 +141,10 @@ const Map = () => {
   };
 
   const handleAddSelectedFilteredPlaces = () => {
-    const selectedPlaces = filteredPlaceList.filter(place => 
+    const selectedPlaces = filteredPlaceList.filter((place) =>
       selectedFilteredPlaces.includes(place.id)
     );
-    
-    const newPlaces = [...placeList, ...selectedPlaces];
-    setPlaceList(newPlaces);
+    setPlaceList((prev) => [...prev, ...selectedPlaces]);
     setSelectedFilteredPlaces([]);
   };
 
@@ -150,7 +169,7 @@ const Map = () => {
       (place) => !selectedFilteredPlaces.includes(place.id)
     );
     setFilteredPlaceList(remainingFilteredPlaces);
-    setSelectedFilteredPlaces([]); 
+    setSelectedFilteredPlaces([]);
   };
 
   const handleRemoveSelectedPlaces = () => {
@@ -160,60 +179,6 @@ const Map = () => {
     setPlaceList(remainingPlaces);
     setSelectedPlacesList([]);
   };
-
-  const handleSavePost = async () => {
-    // 필수 입력값 확인
-    if (!postTitle || !postContent) {
-      Alert.alert("알림", "제목과 내용을 입력해주세요.");
-      return;
-    }
-  
-    try {
-      const formData = new FormData();
-  
-      // Append the form fields
-      formData.append("postTitle", postTitle);
-      formData.append("postContent", postContent);
-      formData.append("userNickName", user.userNickName);
-      formData.append("userId", user.id)
-      
-      // Join the place list into a comma-separated string
-      const placeListString = placeList.map(place => place.name).join(", ");
-      formData.append("placeList", placeListString);
-  
-      // Append image URLs
-      const previewUrls = selectedImages.map(image => image.uri);
-      previewUrls.forEach((uri, index) => {
-        const file = {
-          uri,
-          type: "image/jpeg", // Modify based on the image type
-          name: `image_${index}.jpg`,
-        };
-        formData.append("files", file);
-      });
-  
-      // Send POST request
-      const response = await axios.post(`http://192.168.3.25:9090/api/write/${user.id}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          "Authorization": `Bearer ${user.token}`,
-        },
-      });
-  
-      if (response.status === 200) {
-        Alert.alert("성공", "게시물이 업로드되었습니다.");
-        // Optionally, reset the form or navigate after success
-        setPostTitle("");
-        setPostContent("");
-        setPlaceList([]);
-        setSelectedImages([]);
-      }
-    } catch (error) {
-      console.error("게시물 업로드 오류:", error);
-      Alert.alert("오류", "게시물을 업로드하는 중 오류가 발생했습니다.");
-    }
-  };
-  
 
   const handleImagePick = async () => {
     try {
@@ -244,12 +209,66 @@ const Map = () => {
     );
   };
 
+  const handleSavePost = async () => {
+    if (!postTitle || !postContent) {
+      Alert.alert("알림", "제목과 내용을 입력해주세요.");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("postTitle", postTitle);
+      formData.append("postContent", postContent);
+      formData.append("userNickName", user.userNickName);
+
+      // 장소 목록을 문자열로 변환
+      const placeListString =
+        placeList.length > 0 ? placeList.map((place) => place.name).join(", ") : "";
+      formData.append("placeList", placeListString);
+
+      // 기존 이미지 URL들을 JSON 문자열로 변환
+      const existingImageUrls = selectedImages
+        .filter(image => image.uri.startsWith("/uploads/"))
+        .map(image => image.uri);
+      formData.append("existingImageUrls", JSON.stringify(existingImageUrls));
+
+      // 새로 추가된 이미지들만 files로 추가
+      const newImages = selectedImages.filter(image => !image.uri.startsWith("/uploads/"));
+      newImages.forEach((image, index) => {
+        const file = {
+          uri: image.uri,
+          type: "image/jpeg",
+          name: `image_${index}.jpg`,
+        };
+        formData.append("files", file);
+      });
+
+      const response = await axios.put(
+        `http://192.168.3.25:9090/api/posts/postEdit/${post.postId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        Alert.alert("성공", "게시물이 수정되었습니다.");
+        navigation.goBack();
+      }
+    } catch (error) {
+      console.error("게시물 수정 오류:", error);
+      Alert.alert("오류", "게시물을 수정하는 중 오류가 발생했습니다.");
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <Text style={styles.header}>기록하기</Text>
       <FlatList
         ListHeaderComponent={
           <>
@@ -272,10 +291,7 @@ const Map = () => {
                 onChangeText={setPlaceName}
                 placeholder="새 장소 추가"
               />
-              <TouchableOpacity
-                style={styles.inputAddButton}
-                onPress={handleAddNewPlace}
-              >
+              <TouchableOpacity style={styles.inputAddButton} onPress={handleAddNewPlace}>
                 <Text style={styles.addButtonText}>추가</Text>
               </TouchableOpacity>
             </View>
@@ -287,14 +303,12 @@ const Map = () => {
                 onChangeText={setSearchQuery}
                 placeholder="장소 검색"
               />
-              <TouchableOpacity
-                style={styles.inputAddButton}
-                onPress={handleSearch}
-              >
+              <TouchableOpacity style={styles.inputAddButton} onPress={handleSearch}>
                 <Text style={styles.addButtonText}>검색</Text>
               </TouchableOpacity>
             </View>
-            <View style={styles.sectionDivider}></View>
+
+            <View style={styles.sectionDivider} />
             <Text style={styles.sectionLabel}>검색된 장소 목록</Text>
             <FlatList
               data={filteredPlaceList}
@@ -305,9 +319,7 @@ const Map = () => {
                     styles.listItem,
                     selectedFilteredPlaces.includes(item.id) && styles.selectedListItem,
                   ]}
-                  onPress={() => {
-                    toggleFilteredPlaceSelection(item.id);
-                  }}
+                  onPress={() => toggleFilteredPlaceSelection(item.id)}
                 >
                   <Text>{item.name}</Text>
                   {selectedFilteredPlaces.includes(item.id) && (
@@ -342,9 +354,8 @@ const Map = () => {
         }
         ListFooterComponent={
           <>
-            <View style={styles.sectionDivider}></View>
+            <View style={styles.sectionDivider} />
             <Text style={styles.sectionLabel}>전체 장소 목록</Text>
-
             <FlatList
               data={placeList}
               keyExtractor={(item) => item.id}
@@ -377,8 +388,8 @@ const Map = () => {
                 </View>
               }
             />
-            <View style={styles.sectionDivider}></View>
-            <Text style={styles.sectionLabel}>글 작성</Text>
+            <View style={styles.sectionDivider} />
+            <Text style={styles.sectionLabel}>글 수정</Text>
             <View style={styles.writeContainer}>
               <View style={styles.inputContainer}>
                 <TextInput
@@ -388,45 +399,50 @@ const Map = () => {
                   placeholder="제목을 입력하세요"
                 />
               </View>
-              <Text style={styles.userText}>작성자: {user.userNickName || "알 수 없는 사용자"}</Text>
-              <Text style={styles.listText}>여행지: {placeList.map(place => place.name).join(" -> ")}</Text>
-            <TouchableOpacity style={[styles.addButton,{ alignSelf: "flex-end" }]} onPress={handleImagePick}>
-              <Text style={styles.addButtonText}>사진 추가</Text>
-            </TouchableOpacity>
-            <View style={styles.imagesContainer}>
-              <FlatList
-              data={selectedImages}
-              keyExtractor={(item) => item.id}
-              horizontal
-              renderItem={({ item }) => (
-                <View style={styles.imageContainer}>
-                  <Image source={{ uri: item.uri }} style={styles.image} />
-                  <TouchableOpacity
-                    style={styles.deleteButton}
-                    onPress={() => handleRemoveImage(item.id)}
-                  >
-                    <Text style={styles.deleteButtonText}>X</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-              contentContainerStyle={styles.imageListContent} // 왼쪽 정렬
-            />
-            </View>
+              <Text style={styles.userText}>작성자: {user.userNickName}</Text>
+              <Text style={styles.listText}>
+                여행지: {placeList.map((place) => place.name).join(" -> ")}
+              </Text>
+
+              <TouchableOpacity
+                style={[styles.addButton, { alignSelf: "flex-end" }]}
+                onPress={handleImagePick}
+              >
+                <Text style={styles.addButtonText}>사진 추가</Text>
+              </TouchableOpacity>
+
+              <View style={styles.imagesContainer}>
+                <FlatList
+                  data={selectedImages}
+                  keyExtractor={(item) => item.id}
+                  horizontal
+                  renderItem={({ item }) => (
+                    <View style={styles.imageContainer}>
+                      <Image source={{ uri: item.uri }} style={styles.image} />
+                      <TouchableOpacity
+                        style={styles.deleteButton}
+                        onPress={() => handleRemoveImage(item.id)}
+                      >
+                        <Text style={styles.deleteButtonText}>X</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                  contentContainerStyle={styles.imageListContent}
+                />
+              </View>
+
               <TextInput
                 style={styles.textArea}
-                placeholder="내용을 입력하세요"
                 value={postContent}
                 onChangeText={setPostContent}
+                placeholder="내용을 입력하세요"
                 multiline
               />
               <View style={styles.saveButtonContainer}>
-                <TouchableOpacity
-                  style={styles.saveButton}
-                  onPress={handleSavePost}
-                >
+                <TouchableOpacity style={styles.saveButton} onPress={handleSavePost}>
                   <Text style={styles.addButtonText}>저장</Text>
                 </TouchableOpacity>
-             </View>
+              </View>
             </View>
           </>
         }
@@ -438,27 +454,19 @@ const Map = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFD",
-    paddingTop :10,
-  },
-  header: {
-    fontSize: 20,
-    textAlign: "center",
-    marginBottom: 20,
-    marginTop: 5,
-    fontFamily: 'GCB_Bold', // 추가
+    backgroundColor: "#fff",
   },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 10,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   map: {
     height: 300,
     marginBottom: 10,
-    alignSelf: 'center',
-    width: '95%',
+    alignSelf: "center",
+    width: "95%",
   },
   input: {
     flex: 1,
@@ -466,13 +474,13 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     padding: 10,
     borderRadius: 5,
-    marginHorizontal: 10,
+    marginRight: 10,
     maxWidth: 300,
     fontFamily: 'GCB_Bold', // 추가
   },
   titleInput: {
     flex: 1,
-    maxWidth: '100%',
+    maxWidth: "100%",
   },
   inputAddButton: {
     backgroundColor: "#08AA7A",
@@ -483,7 +491,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#08DD7A",
     padding: 10,
     borderRadius: 5,
-    marginLeft : 10,
+    marginLeft: 10,
   },
   addButtonText: {
     color: "#fff",
@@ -493,13 +501,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#FF6347",
     padding: 10,
     borderRadius: 5,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginHorizontal: 10,
   },
   removeButtonText: {
     color: "#fff",
     fontFamily: 'GCB_Bold', // 추가
   },
+
   listItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -518,7 +527,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     padding: 10,
-    marginBottom: 15,
+    marginBottom: 15,  // 버튼들 사이 간격 조정
   },
   sectionDivider: {
     borderTopWidth: 1,
@@ -557,7 +566,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     height: "auto",
     textAlignVertical: "auto",
-    marginBottom: 5,
+    marginBottom: 10,
     width: '100%',
     marginTop: 20,
     textAlign: "auto",
@@ -605,14 +614,13 @@ const styles = StyleSheet.create({
   },
   imageListContent: {
     flexDirection: "row",
-    justifyContent: "flex-start",
+    justifyContent: "flex-start", // 왼쪽 정렬
     alignItems: "center",
   },
   imagesContainer: {
-    width: "100%",
+    width: "100%", // 목록이 너비를 차지하도록
     marginTop: 10,
   },
 });
 
-
-export default Map;
+export default EditPost;
