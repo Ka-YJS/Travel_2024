@@ -201,7 +201,7 @@
   height: 50px;
   margin-bottom: 15px;
   border-radius: 20px; /* 모서리를 둥글게 */
-  background: linear-gradient(135deg, #42a5f5, #fff); /* 그라데이션 배경 */
+  background: linear-gradient(135deg, #df965b, #fff); /* 그라데이션 배경 */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06); /* 그림자 */
   display: flex;
   align-items: center;
@@ -217,7 +217,7 @@
   bottom: -38px; /* 아이콘 아래에 위치 */
   left: 50%; /* 가운데 정렬 */
   transform: translateX(-50%); /* 가운데 정렬 보정 */
-  background-color: #4a79de; /* 툴팁 배경색 */
+  background-color: #df965b; /* 툴팁 배경색 */
   color: #fff; /* 툴팁 글씨 색상 */
   padding: 3px 6px; /* 여백 */
   border-radius: 4px; /* 둥근 모서리 */
@@ -232,4 +232,12 @@
   visibility: visible; /* 툴팁 표시 */
   opacity: 1;          /* 투명도 설정 */
   transition: opacity 0.2s ease-in-out; /* 부드러운 애니메이션 */
+}
+@font-face {
+  font-family: 'GowunDodum-Regular'; /* 폰트 이름 */
+  src: url('/public/font/GowunDodum-Regular.ttf') format('truetype');
+}
+
+body {
+  font-family: 'GowunDodum-Regular', sans-serif; /* 기본 폰트로 설정 */
 }

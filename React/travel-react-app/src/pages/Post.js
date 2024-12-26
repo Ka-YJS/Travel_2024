@@ -9,6 +9,7 @@ import { PlaceContext } from "../context/PlaceContext";
 import { ListContext } from "../context/ListContext";
 import { UserContext } from "../context/UserContext";
 import logo from "../image/logo4.png";
+import config from "../Apikey";
 
 const Post = () => {
     const navigate = useNavigate();
@@ -22,7 +23,7 @@ const Post = () => {
     // 서버에서 게시물 가져오기
     const getPostList = async () => {
         try {
-            const response = await axios.get("http://192.168.3.24:9090/api/posts", {
+            const response = await axios.get(`http://${config.IP_ADD}:9090/api/posts`, {
                 headers: {
                     Authorization: `Bearer ${user.token}`,
                 },
@@ -30,11 +31,11 @@ const Post = () => {
 
             const fetchedPosts = response.data.data;
 
-            
+
             // 좋아요 상태 한번에 가져오기
             const likedStatusPromises = fetchedPosts.map((post) =>
-                axios.get(`http://192.168.3.24:9090/api/likes/${post.postId}/isLiked`, {
-                headers: { Authorization: `Bearer ${user.token}` },
+                axios.get(`http://${config.IP_ADD}:9090/api/likes/${post.postId}/isLiked`, {
+                    headers: { Authorization: `Bearer ${user.token}` },
                 })
             );
 
@@ -65,16 +66,16 @@ const Post = () => {
             (post.postTitle && post.postTitle.toLowerCase().includes(searchQuery.toLowerCase()))
         )
         : [];
-    
+
     // 게시물 순서를 역순으로 변경
-    const reversedPosts = filteredPosts.slice().reverse(); 
+    const reversedPosts = filteredPosts.slice().reverse();
 
     // 페이지네이션 계산
     const totalPages = Math.ceil(filteredPosts.length / postsPerPage); // 전체 페이지 수
     const indexOfLastPost = currentPage * postsPerPage; // 현재 페이지 마지막 게시물 인덱스
     const indexOfFirstPost = indexOfLastPost - postsPerPage; // 현재 페이지 첫 게시물 인덱스
     const currentPosts = reversedPosts.slice(indexOfFirstPost, indexOfLastPost); // 현재 페이지에 표시할 게시물
-    
+
     // 페이지 변경
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
@@ -86,31 +87,31 @@ const Post = () => {
     };
 
     // 좋아요 버튼 클릭
-  const likeButtonClick = async (postId) => {
-    try {
-        const isLiked = likedPosts[postId];
-        const url = `http://192.168.3.24:9090/api/likes/${postId}`;
-        const method = isLiked ? "delete" : "post";
+    const likeButtonClick = async (postId) => {
+        try {
+            const isLiked = likedPosts[postId];
+            const url = `http://${config.IP_ADD}:9090/api/likes/${postId}`;
+            const method = isLiked ? "delete" : "post";
 
-        await axios({ method, url, headers: { Authorization: `Bearer ${user.token}` } });
+            await axios({ method, url, headers: { Authorization: `Bearer ${user.token}` } });
 
-        // 좋아요 상태 업데이트
-        setLikedPosts((prev) => ({
-            ...prev,
-            [postId]: !isLiked,
-        }));
+            // 좋아요 상태 업데이트
+            setLikedPosts((prev) => ({
+                ...prev,
+                [postId]: !isLiked,
+            }));
 
-        // 게시물의 좋아요 수 업데이트
-        setPostList((prev) =>
-            prev.map((post) =>
-            post.postId === postId
-                ? { ...post, likes: isLiked ? post.likes - 1 : post.likes + 1 }
-                : post
-            )
-        );
+            // 게시물의 좋아요 수 업데이트
+            setPostList((prev) =>
+                prev.map((post) =>
+                    post.postId === postId
+                        ? { ...post, likes: isLiked ? post.likes - 1 : post.likes + 1 }
+                        : post
+                )
+            );
         } catch (error) {
-        console.error("Error updating like:", error);
-        alert("좋아요 처리 중 문제가 발생했습니다.");
+            console.error("Error updating like:", error);
+            alert("좋아요 처리 중 문제가 발생했습니다.");
         }
     };
 
@@ -121,19 +122,19 @@ const Post = () => {
 
     return (
         <div>
-            <TopIcon text="POST"/>
+            <TopIcon text="기록일지" />
             <div className="post">
                 <table>
                     <tbody>
-                        <tr 
-                            className="post_list" 
-                            style={{ 
+                        <tr
+                            className="post_list"
+                            style={{
                                 display: "flex",
                                 flexWrap: "wrap", // 아이템들이 화면에 맞게 줄 바꿈
                                 justifyContent: "center", // 중앙 정렬
                                 gap: "20px", // 아이템들 간의 간격
                                 margin: "0 auto",
-                                maxWidth: "1000px", // 최대 너비 설정
+                                maxWidth: "1100px", // 최대 너비 설정
                             }}
                         >
                             {currentPosts.length > 0 ? (
@@ -150,7 +151,7 @@ const Post = () => {
                                             onClick={() => handlePostClick(post.postId)}
                                             src={
                                                 post.imageUrls && post.imageUrls.length > 0
-                                                    ? `http://192.168.3.24:9090${post.imageUrls[0]}`
+                                                    ? `http://${config.IP_ADD}:9090${post.imageUrls[0]}`
                                                     : logo
                                             }
                                             alt="썸네일"
@@ -161,11 +162,11 @@ const Post = () => {
                                                 objectFit: "cover",
                                             }}
                                         />
-                                        <div 
-                                            style={{ 
-                                                display: "flex", 
-                                                flexDirection: "column", 
-                                                alignItems: "flex-start" 
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                flexDirection: "column",
+                                                alignItems: "flex-start"
                                             }}
                                         >
                                             <span
@@ -173,13 +174,17 @@ const Post = () => {
                                                 onClick={() => likeButtonClick(post.postId)}
                                                 style={{
                                                     cursor: "pointer",
-                                                    color: "red",
-                                                    marginLeft: "5px",                                                   
+                                                    marginLeft: "5px",
                                                 }}
                                             >
-                                                {likedPosts[post.postId] ? "❤️" : "🤍"}
+                                                <span style={{ color: "red" }}>
+                                                    {likedPosts[post.postId] ? "❤️" : "🤍"}
+                                                </span>
+                                                <span style={{ color: "black", marginLeft: "5px" }}>
+                                                    {post.likes}
+                                                </span>
                                             </span>
-                                            <span>{post.likes}</span>                                            
+
                                         </div>
                                         <div
                                             style={{
@@ -189,24 +194,24 @@ const Post = () => {
                                                 marginRight: "10px", // 오른쪽 여백 추가
                                             }}
                                         >
-                                            <h3 
-                                                style={{ 
-                                                    margin: 0, 
-                                                    width:"150px",
+                                            <h3
+                                                style={{
+                                                    margin: 0,
+                                                    width: "150px",
                                                     whiteSpace: "nowrap", /* 한 줄로 제한 */
                                                     overflow: "hidden",   /* 넘치는 텍스트 숨기기 */
                                                     textOverflow: "ellipsis", /* 넘치면 '...'으로 표시 */
                                                     textAlign: "right", // 오른쪽 정렬
                                                 }}
                                             >
-                                                {post.postTitle}                                                
+                                                {post.postTitle}
                                             </h3>
                                             <div>
                                                 작성자:{post.userNickname}
-                                            </div>                                
+                                            </div>
                                             <div>
                                                 {post.postCreatedAt}
-                                            </div>                      
+                                            </div>
                                         </div>
                                     </td>
                                 ))
@@ -228,19 +233,20 @@ const Post = () => {
                 >
                     <Button
                         variant="contained"
-                        color="primary"
-                        onClick={()=>navigate(`/mypost/${user.id}`)}
-                        sx={{ width: "10%" }}
+                        onClick={() => navigate(`/mypost/${user.id}`)}
+                        sx={{ width: "10%", backgroundColor: "#4caf50" }}
                     >
-                        MyPost
+                        나의 기록
                     </Button>
                     <Button
                         variant="contained"
-                        color="primary"
                         onClick={toWritePage}
-                        sx={{ width: "10%" }}
+                        sx={{
+                            width: "10%",
+                            backgroundColor: "#4caf50"
+                        }}
                     >
-                        글쓰기
+                        기록하기
                     </Button>
                 </div>
 

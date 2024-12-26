@@ -15,6 +15,7 @@ import main9 from "../image/mainImage/main9.jpg"
 import main10 from "../image/mainImage/main10.jpg"
 
 function MainScreen() {
+  const [nickname, setNickname] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate(); // useNavigate 훅 사용
   const { user } = useContext(UserContext);
@@ -65,8 +66,7 @@ function MainScreen() {
                   transition: "opacity 1s ease-out", // 애니메이션 효과 추가
                   position: "absolute", // 이미지가 겹치도록 설정
                   width: "100%",
-                  height: "60vh", // 이미지 크기 설정
-                  objectFit: "cover" // 이미지 비율 유지하며 채우기
+                  height: "100vh", // 이미지 크기 설정
                 }}
               />
             ))}
@@ -77,7 +77,7 @@ function MainScreen() {
               기록 시작하기
             </button>
             <button className="main-button" onClick={handleViewPosts}>
-              내 게시물 보기
+              내 기록 보기
             </button>
           </div>
         </div>

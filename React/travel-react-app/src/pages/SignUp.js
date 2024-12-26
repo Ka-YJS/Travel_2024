@@ -5,6 +5,9 @@ import {call} from "../api/ApiService"
 import axios from "axios";
 import "../css/Strat.css";
 import logo2 from '../image/logo2.JPG'
+import config from "../Apikey";
+import backgroundImage from "../image/back3.png"
+
 function Signup() {
   //user정보 useContext
   const { user,googleUser } = useContext(UserContext);
@@ -155,7 +158,7 @@ function Signup() {
     setIsLoading(true);
 
     // 이메일 인증 코드 발송
-    axios.get(`http://localhost:9090/api/email/auth?address=${userId}`)
+    axios.get(`http://${config.IP_ADD}:9090/api/email/auth?address=${userId}`)
       .then((response) => {
         setIsLoading(false); // 로딩 상태 해제
         if (response.data.success) {
@@ -186,7 +189,7 @@ function Signup() {
     }
 
     // 인증 코드 검증
-    axios.post(`http://localhost:9090/api/email/auth?address=${userId}&authCode=${authCode}`)
+    axios.post(`http://${config.IP_ADD}:9090/api/email/auth?address=${userId}&authCode=${authCode}`)
       .then((response) => {
         const { success } = response.data;
         if (success) {
@@ -217,6 +220,10 @@ function Signup() {
   };
 
   return (
+    <div
+  className="fullscreen-background"
+  style={{ backgroundImage: `url(${backgroundImage})` }}
+> 
       <div 
         className="container"
         style={{height:"100vh"}}
@@ -362,6 +369,7 @@ function Signup() {
           </div>
         </main>
       </div>
+     </div> 
   );
 }
 

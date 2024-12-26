@@ -1,4 +1,5 @@
 import axios from "axios";
+import config from "../Apikey";
 
 export async function call(api,method,request,user){
 
@@ -13,7 +14,7 @@ export async function call(api,method,request,user){
         // 동적으로 메서드를 호출
         const response = await axios({
             method: method,
-            url: `http://192.168.3.24:9090${api}`,
+            url: `http://${config.IP_ADD}:9090${api}`,
             data: request,
             headers: headers
         });

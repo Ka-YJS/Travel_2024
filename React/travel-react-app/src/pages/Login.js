@@ -4,9 +4,9 @@ import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin,GoogleOAuthProvider } from '@react-oauth/google'; // 구글 로그인 라이브러리 import
 import "../css/Strat.css";
-import logo2 from '../image/logo2.JPG';
+import logo4 from '../image/logo4.png';
 import {call} from "../api/ApiService";
-import Logo from "./Logo";
+import backgroundImage from "../image/back3.png"
 import axios from "axios";
 
 const Login = () => {
@@ -72,7 +72,7 @@ const Login = () => {
     };
     try {
       //ID찾기 call 메서드
-      const response = await call("/travel/userFindId","POST",userInfo)
+      const response = await call("/travel/userFindId","POST",userInfo,user)
 
       if(response){
         console.log("ID찾기 call 메서드 response:"+response);
@@ -130,7 +130,7 @@ const Login = () => {
 
   //Password 찾기 팝업창 확인 버튼
   const handleFindPasswordConfirm = () => {
-    
+
   }//Password 찾기 팝업창 확인 버튼 종료
 
   // 팝업 닫기
@@ -152,6 +152,7 @@ const Login = () => {
     };
 
     try {
+
       //로그인 call 메서드
       const response = await call("/travel/login","POST",userProfile,user)
 
@@ -246,9 +247,12 @@ const Login = () => {
   };
 
 
+
   return (
-    <div>
-        <Logo />    
+<div
+  className="fullscreen-background"
+  style={{ backgroundImage: `url(${backgroundImage})` }}
+>
       <div className="container">
         <main>
           <form className="form" onSubmit={handleLogin}>
@@ -322,7 +326,7 @@ const Login = () => {
           </form>
           
           <div >
-            <img src={logo2} alt="Logo" className="logo-box" />
+            <img src={logo4} alt="Logo" className="logo-box" />
           </div>
         </main>
       </div>

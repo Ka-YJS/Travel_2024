@@ -1,6 +1,5 @@
 {
   "expo": {
-    "platforms": ["ios", "android"],
     "name": "react-native-travel",
     "slug": "react-native-travel",
     "version": "1.0.0",
@@ -14,20 +13,13 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.17sky35@naver.com.react-native-travel",
-      "googleServicesFile": "./google-services.json"
+      "supportsTablet": true
     },
     "android": {
-      "package": "com.17sky35@naver.com.react-native-travel",
-      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       }
-    },
-    "extra": {
-      "googleClientId": "970822306561-nml5hq58lgf7ve90ugj1dhq53s5gatbm.apps.googleusercontent.com"
     },
     "web": {
       "favicon": "./assets/favicon.png"

@@ -39,8 +39,7 @@
     "react-native-screens": "3.31.1",
     "react-native-uuid": "^2.0.3",
     "styled-components": "^5.3.10",
-    "uuid": "^11.0.3",
-    "expo-auth-session": "~5.5.2"
+    "uuid": "^11.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

@@ -1,54 +1,109 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import backgroundImage from "../image/back.png"
+import backgroundImage from "../image/back1.jpg"
 import Logo from "./Logo";
 
 function HomeScreen() {
-  const navigate = useNavigate(); // useNavigate 훅 사용
+  const navigate = useNavigate();
 
   const handleStart = () => {
-    navigate("/Login"); // 
+    navigate("/Login");
   };
 
   return (
-    <div    
+    <div
       style={{
         position: "relative",
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
       }}
     >
-      <Logo/>
-      <div>
-        <button 
-          onClick={handleStart}
-          style={{
-            position: "absolute",
-            top: "50%", // 수직 중앙
-            left: "50%", // 수평 중앙
-            transform: "translate(-50%, -50%)", // 버튼 크기 기준으로 정확히 중앙 정렬
-            padding: "20px 40px", // 버튼 크기 증가 (패딩)
-            fontSize: "24px", // 글씨 크기
-            backgroundColor: "#4CAF50", // 버튼 배경색 (초록색)
-            color: "white", // 글자 색
-            border: "none", // 테두리 없앰
-            borderRadius: "8px", // 둥근 모서리
-            cursor: "pointer", // 커서 모양을 손 모양으로
-            fontWeight: "bold", // 글씨를 두껍게
-            transition: "all 0.3s ease", // 호버 효과 부드럽게
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.backgroundColor = "#f39c12"; // 호버 시 색 변화
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.backgroundColor = "#ff6f61"; // 원래 색으로 돌아오기
-          }}
-        >
-          시작하기
-        </button>
+
+      {/* 로고 */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Logo /> {/* 로고 컴포넌트 호출 */}
       </div>
+
+      {/* 시골쥐의 여행하쥐 텍스트 */}
+      <div
+        style={{
+          fontSize: "36px",
+          fontWeight: "bold",
+          marginBottom: "20px",
+          textAlign: "center",
+          color: "white", // 흰색 텍스트
+          textShadow: `
+            0 0 10px rgba(240, 175, 91, 0.8), 
+            0 0 20px rgba(223, 168, 50, 0.6),
+            0 0 30px rgba(224, 117, 55, 0.4)
+          `, // 광택 효과
+          animation: "pulse 2s infinite", // 빛나는 애니메이션
+        }}
+      >
+        시골쥐의 어디가쥐
+      </div>
+
+      {/* 버튼 */}
+      <button
+        onClick={handleStart}
+        style={{
+          padding: "20px 40px",
+          fontSize: "24px",
+          backgroundColor: "#4CAF50",
+          color: "white",
+          border: "none",
+          borderRadius: "8px",
+          cursor: "pointer",
+          fontWeight: "bold",
+          transition: "all 0.3s ease",
+        }}
+        onMouseEnter={(e) => {
+          e.target.style.backgroundColor = "#f39c12";
+        }}
+        onMouseLeave={(e) => {
+          e.target.style.backgroundColor = "#4CAF50";
+        }}
+      >
+        여행 시작
+      </button>
+
+      {/* 애니메이션 스타일 */}
+      <style>
+        {`
+          @keyframes pulse {
+            0% {
+              text-shadow: 
+                0 0 10px rgba(255, 255, 255, 0.8),
+                0 0 20px rgba(255, 255, 255, 0.6),
+                0 0 30px rgba(255, 255, 255, 0.4);
+            }
+            50% {
+              text-shadow: 
+                0 0 15px rgba(255, 255, 255, 1),
+                0 0 25px rgba(255, 255, 255, 0.8),
+                0 0 40px rgba(255, 255, 255, 0.6);
+            }
+            100% {
+              text-shadow: 
+                0 0 10px rgba(19, 2, 2, 0.8),
+                0 0 20px rgba(24, 3, 3, 0.6),
+                0 0 30px rgba(22, 1, 1, 0.4);
+            }
+          }
+        `}
+      </style>
     </div>
   );
 }

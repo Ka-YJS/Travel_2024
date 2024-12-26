@@ -57,6 +57,8 @@ button {
 .logo-container {
   display: flex;
   align-items: center;
+  justify-content: center; /* 수평 중앙 정렬 */
+  flex-direction: column;
 }
 
 .logo {
@@ -67,6 +69,7 @@ button {
 .icon-container {
   display: flex;
   gap: 10px;
+  
 }
 
 .icon {
@@ -114,8 +117,8 @@ button {
 }
 
 .image-slider {
-  width: 600px; /* 슬라이드 영역의 크기 */
-  height: 50vh; /* 이미지 영역의 높이 */
+  width: 1900px; /* 슬라이드 영역의 크기 */
+  height: 75vh; /* 이미지 영역의 높이 */
   position: relative; /* 이미지들을 겹치게 만들기 위해 position을 설정 */
   overflow: hidden; /* 넘치는 이미지를 숨김 */
 }
@@ -131,36 +134,40 @@ button {
   object-fit: cover; /* 이미지 비율 유지하며 채우기 */
 }
 
-.slider-image:hover {
-  transform: scale(1.1); /* 마우스 호버 시 이미지 확대 */
-}
 
 .main-button {
-  padding: 15px 30px; /* 버튼 크기 증가 */
-  font-size: 28px; /* 텍스트 크기 조정 */
-  background-color: #42a5f5; /* 버튼 배경색 */
-  margin: 0 50px;
-  color: white; /* 텍스트 색상 */
-  border: none; /* 기본 테두리 제거 */
-  border-radius: 8px; /* 둥근 모서리 */
-  cursor: pointer; /* 클릭 가능한 커서 표시 */
-  transition: background-color 0.3s, transform 0.3s; /* 배경색과 크기 변환에 애니메이션 효과 */
+  padding: 15px 20px; /* 버튼 크기 */
+  font-size: 24px; /* 버튼 텍스트 크기 */
+  background-color: rgba(89, 172, 103, 0.8); /* 배경색, 약간 투명하게 설정 */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+.button-row {
+  position: absolute; /* 버튼을 이미지 위에 절대적으로 배치 */
+  top: 50%; /* 수직으로 중앙 정렬 */
+  left: 50%; /* 수평으로 중앙 정렬 */
+  transform: translate(-50%, -50%); /* 정확히 가운데 정렬 */
+  display: flex;
+  gap: 20px; /* 버튼 사이 간격 */
+  z-index: 1; /* 버튼이 이미지 위에 표시되도록 설정 */
 }
 
 .main-button:hover {
-  background-color: #0056b3; /* 호버 시 배경색 변경 */
-  transform: translateY(-5px); /* 마우스 오버 시 버튼이 살짝 위로 올라가는 효과 */
+  background-color: #d18a38;
+  transform: translateY(-5px);
 }
 
 .main-button:active {
-  background-color: #004085; /* 클릭 시 버튼 색상 변경 */
-  transform: translateY(2px); /* 클릭 시 버튼이 눌리는 효과 */
+  background-color: #004085;
+  transform: translateY(2px);
 }
 
 .button-row {
   display: flex;
   gap: 20px; /* 버튼 간격 설정 */
-  margin-top: 20px; /* 버튼과 이미지 사이의 여백 */
 }
 
 /* Header.css */

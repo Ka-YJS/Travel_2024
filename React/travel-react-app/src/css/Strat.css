@@ -2,7 +2,6 @@
 
 /* General Container */
 .container {
-  font-family: Arial, sans-serif;
   display: flex;
   flex-direction: column;  
   height: 65vh;
@@ -150,7 +149,16 @@ main {
   cursor: pointer;
   flex: 1;
 }
-
+.fullscreen-background {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 .buttons-container .button-check {
   background-color: #4caf50;
 }
@@ -200,7 +208,7 @@ main {
 }
 
 .submit-container .cancel {
-  background-color: #089fd1;
+  background-color: #d18a38;
   margin-top: 10px;
 }
 
@@ -208,13 +216,11 @@ main {
 .logo-box {
   width: 100%;
   height: auto;
-  max-width: 400px;
+  max-width: 200px;
   aspect-ratio: 1 / 1;
-  border: 1px solid #ddd;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
 }
 
@@ -242,4 +248,12 @@ main {
 
 .kakao_button button {
   background-color: #ffeb00; /* 카카오 색상 */
+}
+@font-face {
+  font-family: 'GowunDodum-Regular'; /* 폰트 이름 */
+  src: url('/public/font/GowunDodum-Regular.ttf') format('truetype');
+}
+
+body {
+  font-family: 'GowunDodum-Regular', sans-serif; /* 기본 폰트로 설정 */
 }

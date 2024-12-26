@@ -127,7 +127,7 @@ const Map = () => {
     return (
         <div className="map-container" >
             <div style={{zIndex:"2000"}}>
-               <TopIcon text="글쓰기" />  {/* 상단 아이콘 표시 */}
+               <TopIcon text="기록하기" />  {/* 상단 아이콘 표시 */}
             </div>
             <div className="map-sidebar">
                 <div className="map-search-container">

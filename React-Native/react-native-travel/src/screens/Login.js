@@ -7,7 +7,6 @@ import { validateEmail, validatePassword, removeWhitespace } from '../utils/comm
 import { UserContext } from '../contexts/UserContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ImageBackground, Modal, Text, TouchableOpacity } from 'react-native';
-import * as Google from 'expo-auth-session';
 
 const ModalBackground = styled.View`
   flex: 1;
@@ -114,31 +113,6 @@ const Login = ({ navigation }) => {
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [newPasswordError, setNewPasswordError] = useState('');
   const [confirmNewPasswordError, setConfirmNewPasswordError] = useState('');
-
-
-  //구글로그인
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    clientId: '970822306561-nml5hq58lgf7ve90ugj1dhq53s5gatbm.apps.googleusercontent.com', // Google에서 받은 OAuth 클라이언트 ID
-    redirectUri: Google.makeRedirectUri({
-      useProxy: true, // 개발 중에는 true로 설정해야 합니다
-    }),
-  });
-
-  const [userInfo, setUserInfo] = useState(null);
-
-  useEffect(() => {
-    if (response?.type === 'success') {
-      const { id_token } = response.params;
-      fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${id_token}`)
-        .then((res) => res.json())
-        .then((data) => setUserInfo(data)) // 사용자 정보 저장
-        .catch((err) => console.error(err));
-    }
-    console.log(userInfo)
-  }, [response]);
-
-
-
 
   // 로그인 아이디 핸들러
   const _handleLoginIdChange = loginId => {
@@ -419,11 +393,6 @@ const Login = ({ navigation }) => {
 
         <Button title="로그인" onPress={_handleLoginButtonPress} />
         <Button title="회원가입" onPress={() => navigation.navigate('Signup')} isFilled={false} />
-        <Button
-          title="구글 로그인"
-          onPress={() => promptAsync()} // 로그인 요청
-          disabled={!request}
-        />
 
         <Modal
           visible={isModalVisible}

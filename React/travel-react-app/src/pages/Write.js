@@ -6,6 +6,7 @@ import { UserContext } from "../context/UserContext";
 import { Delete } from "@mui/icons-material";
 import axios from "axios";
 import '../css/Map.css';  // Map.css 파일을 import
+import config from "../Apikey";
 
 const Write = () => {
     const {user} = useContext(UserContext)
@@ -77,7 +78,7 @@ const Write = () => {
                 console.log(key, value);
             }
             
-            const response = await axios.post(`http://192.168.3.24:9090/api/write/${user.id}`, formData, {
+            const response = await axios.post(`http://${config.IP_ADD}:9090/api/write/${user.id}`, formData, {
                 headers: { 
                     "Content-Type": "multipart/form-data" ,
                     'Authorization': `Bearer ${user.token}`

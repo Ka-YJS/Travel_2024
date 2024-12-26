@@ -157,7 +157,7 @@ public class UserService {
 	    if (response.getStatusCode() != HttpStatus.OK) {
 	        throw new Exception("Invalid ID token");
 	    }
-
+	    System.out.println("ssssssssssss"+response.getBody());
 	    Map<String, Object> tokenInfo = response.getBody();
 	    String email = (String) tokenInfo.get("email");
 	    String name = (String) tokenInfo.get("name");
