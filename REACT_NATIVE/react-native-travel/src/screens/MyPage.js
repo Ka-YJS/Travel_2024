@@ -331,7 +331,7 @@ const MyPage = () => {
           style={styles.listItem}
           onPress={() => navigation.navigate("MyPost")}
         >
-          <Text style={styles.listItemText}>My Post</Text>
+          <Text style={styles.listItemText}>내 기록 보기</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -435,7 +435,7 @@ const MyPage = () => {
           <Animated.View style={[styles.modalContainer, { transform: [{ translateY: slideAnim }] }]}>
             <Text style={styles.modalTitle}>계정 삭제</Text>
             {/* 계정 삭제 경고 문구 */}
-            <Text style={styles.confirmText}>계정을 삭제하려면 비밀번호를 입력하세요.</Text>
+            <Text style={styles.confirmText}>계정을 삭제하려면 {"\n"} 비밀번호를 입력하세요.</Text>
             <TextInput
               style={styles.nicknameInput}
               value={currentPassword}
@@ -448,7 +448,7 @@ const MyPage = () => {
                 <Text style={styles.cancelButton}>취소</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={handleDeleteAccount}>
-                <Text style={styles.saveButton}>삭제</Text>
+                <Text style={styles.deleteButton}>삭제</Text>
               </TouchableOpacity>
             </View>
           </Animated.View>
@@ -491,7 +491,7 @@ const styles = StyleSheet.create({
   // 프로필 편집 텍스트 스타일
   editProfileText: {
     fontSize: 14,
-    color: "#007BFF",
+    color: "#CFA636",
     fontFamily: 'GCB_Bold', // 추가
   },
 
@@ -616,25 +616,38 @@ const styles = StyleSheet.create({
   // 취소 버튼 스타일
   cancelButton: {
     fontSize: 16,
-    color: "#007BFF",
+    color: "#08D37A",
     paddingHorizontal: 20,
     paddingVertical: 10,
     textAlign: "center",
     borderRadius: 5,
     borderWidth: 1,
-    borderColor: "#007BFF",
+    borderColor: "#08D37A",
     marginRight: 20,
     fontFamily: 'GCB_Bold', // 추가
   },
-
-  // 저장/삭제 버튼 스타일
   saveButton: {
+    fontSize: 16,
+    color: "#fff",
+    backgroundColor: "#08D37A",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    textAlign: "center",
+    borderWidth: 1,
+    borderColor: "#08D37A",
+    borderRadius: 5,
+    fontFamily: 'GCB_Bold', // 추가
+  },
+  // 삭제 버튼 스타일
+  deleteButton: {
     fontSize: 16,
     color: "#fff",
     backgroundColor: "#FF5C5C",
     paddingHorizontal: 20,
     paddingVertical: 10,
     textAlign: "center",
+    borderWidth: 1,
+    borderColor: "#FF5C5C",
     borderRadius: 5,
     fontFamily: 'GCB_Bold', // 추가
   },

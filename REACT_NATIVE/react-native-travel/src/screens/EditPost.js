@@ -287,24 +287,24 @@ const EditPost = () => {
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.input}
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-                placeholder="장소 검색"
-              />
-              <TouchableOpacity style={styles.inputAddButton} onPress={handleSearch}>
-                <Text style={styles.addButtonText}>검색</Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
                 value={placeName}
                 onChangeText={setPlaceName}
                 placeholder="새 장소 추가"
               />
               <TouchableOpacity style={styles.inputAddButton} onPress={handleAddNewPlace}>
                 <Text style={styles.addButtonText}>추가</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                placeholder="장소 검색"
+              />
+              <TouchableOpacity style={styles.inputAddButton} onPress={handleSearch}>
+                <Text style={styles.addButtonText}>검색</Text>
               </TouchableOpacity>
             </View>
 
@@ -438,10 +438,11 @@ const EditPost = () => {
                 placeholder="내용을 입력하세요"
                 multiline
               />
-
-              <TouchableOpacity style={styles.saveButton} onPress={handleSavePost}>
-                <Text style={styles.addButtonText}>저장</Text>
-              </TouchableOpacity>
+              <View style={styles.saveButtonContainer}>
+                <TouchableOpacity style={styles.saveButton} onPress={handleSavePost}>
+                  <Text style={styles.addButtonText}>저장</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </>
         }
@@ -482,14 +483,15 @@ const styles = StyleSheet.create({
     maxWidth: "100%",
   },
   inputAddButton: {
-    backgroundColor: "#007BFF",
+    backgroundColor: "#08AA7A",
     padding: 15,
     borderRadius: 5,
   },
   addButton: {
-    backgroundColor: "#007BFF",
+    backgroundColor: "#08DD7A",
     padding: 10,
     borderRadius: 5,
+    marginLeft: 10,
   },
   addButtonText: {
     color: "#fff",
@@ -519,6 +521,7 @@ const styles = StyleSheet.create({
   },
   selectedText: {
     color: 'green',
+    fontFamily: 'GCB_Bold', // 추가
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -561,21 +564,22 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     padding: 10,
     borderRadius: 5,
-    height: "auto" ,
+    height: "auto",
     textAlignVertical: "auto",
     marginBottom: 10,
     width: '100%',
     marginTop: 20,
-    textAlign : "auto",
+    textAlign: "auto",
     fontFamily: 'GCB_Bold', // 추가
   },
   saveButtonContainer: {
     width: '100%',
     alignItems: 'center',
     marginTop: 10,
+    paddingBottom: 100,
   },
   saveButton: {
-    backgroundColor: "#007BFF",
+    backgroundColor: "#08AA7A",
     padding: 15,
     borderRadius: 5,
     width: '80%',

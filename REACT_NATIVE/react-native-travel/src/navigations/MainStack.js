@@ -36,7 +36,7 @@ const MainStack = () => {
                 name="MyPost"
                 component={MyPost}
                 options={{ 
-                    title: 'My Post',
+                    title: '내 기록 보기',
                     headerTitleAlign : "center",
                     headerTitleStyle: {
                         fontFamily: 'GCB_Bold',  // 폰트 설정
@@ -47,7 +47,7 @@ const MainStack = () => {
                 name="PostDetail" 
                 component={PostDetail} 
                 options={{ 
-                    title: "게시물 상세", headerTitleAlign : "center",
+                    title: "기록 상세", headerTitleAlign : "center",
                     headerTitleStyle: {
                         fontFamily: 'GCB_Bold',  // 폰트 설정
                     },
@@ -57,7 +57,7 @@ const MainStack = () => {
                 name="EditPost"
                 component={EditPost}
                 options={{
-                    title: "게시물 수정", headerTitleAlign : "center",
+                    title: "기록 수정", headerTitleAlign : "center",
                     headerTitleStyle: {
                         fontFamily: 'GCB_Bold',  // 폰트 설정
                     },

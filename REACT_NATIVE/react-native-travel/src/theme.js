@@ -7,6 +7,7 @@ const colors = {
     blue : '#3679fe',
     green_1 : '#08D37A',
     orange : '#CFA636',
+    orange_1 : '#F9DAB0',
     brown : 'brown',
 };
 
@@ -20,7 +21,7 @@ export const theme = {
     buttonBackground : colors.blue,
     buttonTitle : colors.white,
     buttonUnfilledTitle : colors.green_1,
-    logoBorder : colors.orange,
+    logoBorder : colors.orange_1,
     buttonBackground : colors.green_1,
     buttonTitle : colors.white,
     headerTintColor:colors.black,

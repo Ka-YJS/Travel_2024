@@ -80,7 +80,7 @@ const PostDetail = ({ route }) => {
   if (!post) {
     return (
       <View style={styles.container}>
-        <Text style={styles.errorText}>게시물을 찾을 수 없습니다.</Text>
+        <Text style={styles.errorText}>기록을 찾을 수 없습니다.</Text>
       </View>
     );
   }
@@ -127,7 +127,7 @@ const PostDetail = ({ route }) => {
 
         {/* 내용 섹션 */}
         <View style={styles.section}>
-          <Text style={styles.label}>게시물 내용</Text>
+          <Text style={styles.label}>기록 내용</Text>
           <Text style={styles.ContentText}>{post.postContent || "내용이 없습니다."}</Text>
         </View>
 
@@ -179,7 +179,7 @@ const PostDetail = ({ route }) => {
               onPress={() => {
                 Alert.alert(
                   "삭제 확인",
-                  "정말로 이 게시물을 삭제하시겠습니까?",
+                  "정말로 이 기록을 삭제하시겠습니까?",
                   [
                     { text: "취소", style: "cancel" },
                     {

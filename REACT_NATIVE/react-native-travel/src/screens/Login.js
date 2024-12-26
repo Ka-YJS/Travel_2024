@@ -103,7 +103,7 @@ const Login = ({ navigation }) => {
   const [findPasswordPhoneError, setFindPasswordPhoneError] = useState('');
   
   // 비밀번호 찾기 단계
-  const [findPasswordStage, setFindPasswordStage] = useState('initial'); // 'initial', 'emailRequested', 'emailVerified', 'newPasswordSet'
+  const [findPasswordStage, setFindPasswordStage] = useState('initial'); // 'initial', 'emailRequested', 'emailVerified'
   const [authCode, setAuthCode] = useState('');
   const [authCodeError, setAuthCodeError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -129,10 +129,10 @@ const Login = ({ navigation }) => {
   };
 
   const _handleLoginButtonPress = async () => {
-    // if (!validateEmail(loginId) || !loginPassword) {
-    //   setErrorMessage('아이디와 비밀번호를 확인하세요');
-    //   return;
-    // }
+    if (!validateEmail(loginId) || !loginPassword) {
+      setErrorMessage('아이디와 비밀번호를 확인하세요');
+      return;
+    }
 
     //로그인 백엔드에 보낼 객체
     const userProfile = {
@@ -344,7 +344,7 @@ const Login = ({ navigation }) => {
       
       if (response.data) {
         alert('비밀번호가 성공적으로 변경되었습니다.');
-        setFindPasswordStage('newPasswordSet');
+        setFindPasswordStage('initial');
         setIsModalVisible(false);
       } else {
         setNewPasswordError('비밀번호 변경에 실패했습니다.');

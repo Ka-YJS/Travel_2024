@@ -15,7 +15,7 @@ const deletePost = async (id) => {
   console.log(user)
   try {
     // axios를 사용하여 백엔드에 DELETE 요청을 보냄
-    const response = await axios.delete(`http://192.168.3.24:9090/api/postDelete/${id}`, { 
+    const response = await axios.delete(`http://192.168.3.25:9090/api/postDelete/${id}`, { 
       headers: { 
         'Authorization': `Bearer ${user.token}`
       }

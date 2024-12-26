@@ -24,10 +24,10 @@ const Post = () => {
             headers: {
               'Authorization': `Bearer ${user.token}`
             }
-
+            
           });
           setPostList(response.data.data); // Set the fetched posts to the postList state
-
+          console.log(response.data.data)
         } catch (error) {
           console.error("Error fetching posts:", error);
         }
@@ -169,11 +169,11 @@ const Post = () => {
   return (
     <View style={styles.container}>
 
-      <Text style={styles.header}>Post</Text>
+      <Text style={styles.header}>기록 일지</Text>
 
       <TextInput
         style={styles.searchInput}
-        placeholder="게시글 제목 검색"
+        placeholder="기록 제목 검색"
         value={searchQuery}
         onChangeText={setSearchQuery}
       />
@@ -207,7 +207,7 @@ const Post = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#FFFFFD",
     padding: 10,
   },
   header: {

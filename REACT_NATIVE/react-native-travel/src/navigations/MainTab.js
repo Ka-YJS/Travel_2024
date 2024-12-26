@@ -40,7 +40,7 @@ const MainScreenStack = () => {
                 name="MainScreen"
                 component={Main}
                 options={({ navigation }) => ({
-                    title: "Main",
+                    title: "",
                     headerRight: () => (
                         <MaterialIcons
                             name="person"
@@ -57,7 +57,7 @@ const MainScreenStack = () => {
                 name="MyPage"
                 component={MyPage}
                 options={{
-                    title: "My Page",
+                    title: "내 정보",
                 }}
             />
         </Stack.Navigator>
@@ -83,7 +83,8 @@ const MainTab = () => {
                 name="Map"
                 component={Map}
                 options={{
-                    tabBarIcon: ({ focused }) => TabBarIcon({ focused, name: "map" }),
+                    title:"Record",
+                    tabBarIcon: ({ focused }) => TabBarIcon({ focused, name: "edit" }),
                 }}
             />
             <Tab.Screen

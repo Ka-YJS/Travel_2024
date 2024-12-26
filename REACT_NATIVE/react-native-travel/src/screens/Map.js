@@ -193,7 +193,7 @@ const Map = () => {
       });
   
       // Send POST request
-      const response = await axios.post(`http://192.168.3.24:9090/api/write/${user.id}`, formData, {
+      const response = await axios.post(`http://192.168.3.25:9090/api/write/${user.id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           "Authorization": `Bearer ${user.token}`,
@@ -249,6 +249,7 @@ const Map = () => {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
+      <Text style={styles.header}>기록하기</Text>
       <FlatList
         ListHeaderComponent={
           <>
@@ -437,7 +438,15 @@ const Map = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFD",
+    paddingTop :10,
+  },
+  header: {
+    fontSize: 20,
+    textAlign: "center",
+    marginBottom: 20,
+    marginTop: 5,
+    fontFamily: 'GCB_Bold', // 추가
   },
   inputContainer: {
     flexDirection: 'row',
@@ -490,13 +499,6 @@ const styles = StyleSheet.create({
   removeButtonText: {
     color: "#fff",
     fontFamily: 'GCB_Bold', // 추가
-  },
-  listItemContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
   },
   listItem: {
     flexDirection: 'row',
