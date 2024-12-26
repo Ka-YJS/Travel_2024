@@ -2,6 +2,7 @@ import React from "react";
 import logo4 from '../image/logo4.png';
 import { Margin } from "@mui/icons-material";
 import zIndex from "@mui/material/styles/zIndex";
+import { BiBorderRadius } from "react-icons/bi";
 
 const Logo = () => {
   return (
@@ -30,9 +31,11 @@ const styles = {
     alignItems: "center",           // 로고를 세로 중앙 정렬
   },
   logoImage: {
-    width: "120px",                 // 로고 크기 조정
+    width: "100px",                 // 로고 크기 조정
     height: "auto",                 // 비율 유지
-    zIndex: 10 /* 높은 값으로 설정해 이미지를 제일 위로 */
+    borderRadius: "50px",
+    zIndex: 10, /* 높은 값으로 설정해 이미지를 제일 위로 */
+    margin:"10px"
   },
   topIconContainer: {
     display: "flex",

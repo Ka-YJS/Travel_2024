@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { SlHome } from "react-icons/sl";
-import { IoMapOutline } from "react-icons/io5";
+import { LuNotebook } from "react-icons/lu";
 import { MdNoteAlt } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext"; // UserContext import
@@ -9,17 +9,19 @@ import PersonalInfo from "../pages/PersonalInfo"; // PersonalInfo 컴포넌트 i
 import "../css/MyPage.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import defaultImage from '../image/defaultImage.png';
+import Logo from "../pages/Logo";
+import config from "../Apikey";
 
-const TopIcon = () => {
+const TopIcon = ({text}) => {
   const [isProfileDropdownVisible, setIsProfileDropdownVisible] = useState(false);
   const [isMyInfoVisible, setIsMyInfoVisible] = useState(false); // Collapse 상태 관리
   const { user } = useContext(UserContext); // userNickName 가져오기
   const navigate = useNavigate();
 
   const iconComponents = [
-    { id: "home", component: <SlHome size={30} />, route: "/main", label: "Home"},
-    { id: "map", component: <IoMapOutline size={30} />, route: "/map",label: "Map" },
-    { id: "post", component: <MdNoteAlt size={35} />, route: "/post",label: "Post" },
+    { id: "home", component: <SlHome size={23} />, route: "/main", label: "홈"},
+    { id: "map", component: <MdNoteAlt size={23} />, route: "/map",label: "기록하기" },
+    { id: "post", component: <LuNotebook  size={25} />, route: "/post",label: "기록일지" },
   ];
 
   //로그아웃 버튼
@@ -34,12 +36,39 @@ const TopIcon = () => {
   return (
     <header
       className="home-header"
-      style={{ display: "flex", justifyContent: "space-between", alignItems: "center"}}
+      style={{ 
+        display: "flex", 
+        justifyContent: "space-between", 
+        alignItems: "center",
+        height:"90px",
+        width: "100%"  // 전체 너비
+      }}
     >
+      <div>
+        <Logo/>
+      </div>
+      <div
+        style={{
+          fontSize: "50px", // 글자 크기 설정
+          fontWeight: "bold", // 두껍게
+          position: "absolute", // 절대 위치 설정
+          top: "50%", // 수직 가운데
+          left: "50%", // 수평 가운데
+          transform: "translate(-50%, -50%)", // 실제 가운데로 맞추기 위해 이동
+          color: "transparent", // 기본 색상을 투명으로 설정
+          backgroundImage: "linear-gradient(90deg, #d18a38,rgb(248, 185, 112))", // 그라데이션 색상
+          WebkitBackgroundClip: "text", // 텍스트에만 배경색 적용
+          backgroundClip: "text", // 텍스트에만 배경색 적용
+          textShadow: "2px 2px 5px rgba(0, 0, 0, 0.3)", // 텍스트 그림자
+          textAlign: "center", // 가운데 정렬
+        }}
+      >
+        {text}
+      </div>
       {/* 아이콘 영역 */}
       <div
         className="icon-container"
-        style={{ display: "flex", alignItems: "center", gap: "15px", position: "relative" }}
+        style={{  display: "flex", alignItems: "center", gap: "15px", position: "relative" }}
       >
         {iconComponents.map((icon) => (
           <div
@@ -50,13 +79,13 @@ const TopIcon = () => {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              position: "relative"
+              position: "relative",
             }}
             onClick={() => navigate(icon.route)}
           >
             {icon.component}
             {/* 텍스트 부분 */}
-            <span className="tooltip" style={{fontSize:"16px"}} >
+            <span className="tooltip" style={{ fontSize: "13px", whiteSpace: 'nowrap' }}>
               {icon.label}
             </span>
           </div>
@@ -82,7 +111,7 @@ const TopIcon = () => {
               borderRadius: "50%",
               cursor: "pointer"
             }}
-            src={user.userProfileImage?`http://localhost:9090${user.userProfileImage}`: defaultImage}
+            src={user.userProfileImage?`http://${config.IP_ADD}:9090${user.userProfileImage}`: defaultImage}
             alt="profile"
             onClick={() => {
               if(isProfileDropdownVisible){
@@ -105,7 +134,7 @@ const TopIcon = () => {
                 display: "inline-block", // 텍스트가 슬라이드될 수 있도록 인라인 블록 설정
                 animation: "slide 15s linear infinite", // 슬라이드 애니메이션
                 fontSize:"20px",
-                color:"#42a5f5"
+                color:"#d18a38"
               }}
               className="sliding-text"
             >
@@ -139,7 +168,7 @@ const TopIcon = () => {
               }}
               onClick={() =>setIsMyInfoVisible(!isMyInfoVisible)}
             >
-              My Info
+              내 정보
             </button>
             <Collapse in={isMyInfoVisible}>
               <div style={{ height: 'auto' }}>
@@ -155,9 +184,12 @@ const TopIcon = () => {
                 border: "none",
                 borderRadius: "5px",
               }}
-              onClick={() => navigate("/mypage/mypost")}
+              onClick={() => {
+                navigate(`/mypost/${user.id}`);
+                setIsProfileDropdownVisible(!isProfileDropdownVisible)
+              }}
             >
-              My post
+              내 기록보기
             </button>
             <button
               style={{
@@ -170,7 +202,7 @@ const TopIcon = () => {
               }}
               onClick={handleLogout}
             >
-              Logout
+              로그아웃
             </button>
           </div>
         )}

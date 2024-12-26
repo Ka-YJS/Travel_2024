@@ -2,9 +2,8 @@
 
 /* General Container */
 .container {
-  font-family: Arial, sans-serif;
   display: flex;
-  flex-direction: column;
+  flex-direction: column;  
   height: 65vh;
 }
 
@@ -15,6 +14,81 @@ main {
   align-items: center;
   padding: 20px;
   gap: 20px;
+}
+
+/* ID 찾기 및 Password 찾기 텍스트 컨테이너 */
+.find-texts {
+  text-align: left; /* 왼쪽 정렬 */
+  margin-bottom: 10px;
+}
+
+/* 클릭 가능한 텍스트 스타일 */
+.find-text {
+  color: #007bff; /* 파란색 텍스트 */
+  font-size: 14px;
+  cursor: pointer; /* 클릭 가능하도록 커서 변경 */
+  text-decoration: none; /* 밑줄 제거 */
+}
+
+/* 텍스트 클릭 시 효과 */
+.find-text:hover {
+  text-decoration: underline; /* 마우스 오버 시 밑줄 표시 */
+}
+
+/* 텍스트 구분자 */
+.divider {
+  margin: 0 5px;
+  color: #aaa; /* 구분자 색상 */
+}
+
+/* 팝업 배경 */
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+}
+
+.popup-content h4 {
+  margin-top: 0;
+  text-align: center;
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.popup-buttons button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  width: 100px;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.popup-buttons button:hover {
+  background-color: #0056b3;
+}
+
+/* 닫기 버튼 */
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 /* Form Styles */
@@ -75,7 +149,16 @@ main {
   cursor: pointer;
   flex: 1;
 }
-
+.fullscreen-background {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 .buttons-container .button-check {
   background-color: #4caf50;
 }
@@ -125,7 +208,7 @@ main {
 }
 
 .submit-container .cancel {
-  background-color: #089fd1;
+  background-color: #d18a38;
   margin-top: 10px;
 }
 
@@ -133,13 +216,11 @@ main {
 .logo-box {
   width: 100%;
   height: auto;
-  max-width: 400px;
+  max-width: 200px;
   aspect-ratio: 1 / 1;
-  border: 1px solid #ddd;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
 }
 
@@ -167,4 +248,12 @@ main {
 
 .kakao_button button {
   background-color: #ffeb00; /* 카카오 색상 */
+}
+@font-face {
+  font-family: 'GowunDodum-Regular'; /* 폰트 이름 */
+  src: url('/public/font/GowunDodum-Regular.ttf') format('truetype');
+}
+
+body {
+  font-family: 'GowunDodum-Regular', sans-serif; /* 기본 폰트로 설정 */
 }
