@@ -7,7 +7,7 @@ import { getAnalytics } from "firebase/analytics";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyCmeCg8u7tn1MeGZ1T4YWb-UODXkwxfw2c",
+  apiKey: "",
   authDomain: "react-native-travel-e18d1.firebaseapp.com",
   projectId: "react-native-travel-e18d1",
   storageBucket: "react-native-travel-e18d1.firebasestorage.app",
