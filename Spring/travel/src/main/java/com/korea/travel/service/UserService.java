@@ -3,7 +3,6 @@ package com.korea.travel.service;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -16,9 +15,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.korea.travel.dto.UserDTO;
-import com.korea.travel.model.PostEntity;
 import com.korea.travel.model.UserEntity;
-import com.korea.travel.persistence.PostRepository;
 import com.korea.travel.persistence.UserRepository;
 import com.korea.travel.security.TokenProvider;
 
@@ -31,8 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class UserService {
 	
-	private final UserRepository repository;	
-	private final PostRepository postRepository;
+	private final UserRepository repository;
 	
 	private final PasswordEncoder passwordEncoder;
 	
@@ -174,7 +170,7 @@ public class UserService {
 
 	    return userDTO;
 	}
-		
+	
 	
 	//userPassword 수정하기
 	public boolean userPasswordEdit (Long id,UserDTO dto) {
@@ -305,10 +301,10 @@ public class UserService {
     
     //프로필사진 삭제
     public boolean userProfileImageDelete (Long id) {
-
+    	
     	UserEntity userEntity = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
+        
         //기존 프로필 사진 삭제 처리
         String existingUserProfileImage = userEntity.getUserProfileImage();
         //기존 프로필 파일이 없거나 null이면 true
@@ -331,7 +327,6 @@ public class UserService {
         }
         
     }
-
     
     
     //로그아웃
@@ -362,55 +357,7 @@ public class UserService {
     	Optional<UserEntity> user = repository.findById(id);
     	//유저존재&&비밀번호 맞으면 유저삭제후 true
     	if(user.isPresent() && passwordEncoder.matches(dto.getUserPassword(),user.get().getUserPassword())) {
-			
-    		UserEntity entity = user.get();
-			
-			//프로필 사진 삭제
-	        String existingUserProfileImage = entity.getUserProfileImage();
-	        //프로필 파일이 없거나 null이면 true
-	        if (existingUserProfileImage != null && !existingUserProfileImage.isEmpty()) {
-	        	//저장된 file 경로로 수정
-	        	String existingFilePath = System.getProperty("user.dir")+existingUserProfileImage;
-	            File existingFile = new File(existingFilePath);	//객체 생성
-	            if (existingFile.exists()) {	//해당 파일이있으면 true
-	                if (existingFile.delete()) {
-	                    System.out.println("기존 프로필이미지가 삭제되었습니다: " + existingFilePath);
-	                } else {
-	                    System.err.println("기존 프로필이미지 삭제 실패: " + existingFilePath);
-	                }
-	            }	            
-	        }else {
-	        	throw new IllegalArgumentException("프로필 사진이 없습니다.");
-	        }
-	        
-			//회원이 작성한 모든 게시물 조회
-	        List<PostEntity> userPosts = postRepository.findByUserEntity(entity); // 게시물 리포지토리에 메서드 추가 필요
-	        
-	        //게시물 이미지 삭제
-	        for (PostEntity post : userPosts) {
-	            List<String> imageUrls = post.getImageUrls(); // 게시물에 연결된 이미지 리스트 가져오기
-	            
-	            if (imageUrls != null && !imageUrls.isEmpty()) {
-	                for (String imageUrl : imageUrls) {
-	                    // 저장된 파일 경로 생성
-	                    String filePath = System.getProperty("user.dir") + imageUrl;
-	                    File file = new File(filePath);
-	                    
-	                    if (file.exists()) {
-	                        if (file.delete()) {
-	                            System.out.println("이미지가 삭제되었습니다: " + filePath);
-	                        } else {
-	                            System.err.println("이미지 삭제 실패: " + filePath);
-	                        }
-	                    } else {
-	                        System.err.println("이미지가 존재하지 않습니다: " + filePath);
-	                    }
-	                }
-	            } else {
-	                System.out.println("삭제할 이미지가 없습니다. 게시물 ID: " + post.getPostId());
-	            }
-	        }			
-			
+			UserEntity entity = user.get();
     		repository.delete(entity);
     		return true;    		
     	}else {

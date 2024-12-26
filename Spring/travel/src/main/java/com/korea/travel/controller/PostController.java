@@ -103,6 +103,7 @@ public class PostController {
         // 파일 저장 로직 호출
         if (files != null && !files.isEmpty()) {
         	List<String> imageUrls = postService.saveFiles(files);
+            imageUrls = postService.saveFiles(files);
             postDTO.setImageUrls(imageUrls);
         }
 
