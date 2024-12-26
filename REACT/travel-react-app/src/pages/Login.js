@@ -4,6 +4,7 @@ import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin,GoogleOAuthProvider } from '@react-oauth/google'; // 구글 로그인 라이브러리 import
 import "../css/Strat.css";
+import TopIcon from "../TopIcon/TopIcon";
 import logo4 from '../image/logo4.png';
 import {call} from "../api/ApiService";
 import backgroundImage from "../image/back3.png"
@@ -249,10 +250,13 @@ const Login = () => {
 
 
   return (
-<div
+    <div>
+      <TopIcon />
+  <div
   className="fullscreen-background"
   style={{ backgroundImage: `url(${backgroundImage})` }}
->
+  >
+    <div className="overlay-text">시골쥐의 어디가쥐</div>
       <div className="container">
         <main>
           <form className="form" onSubmit={handleLogin}>
@@ -325,12 +329,10 @@ const Login = () => {
             </div>
           </form>
           
-          <div >
-            <img src={logo4} alt="Logo" className="logo-box" />
-          </div>
         </main>
       </div>
     </div>
+  </div>
   );
 };
 

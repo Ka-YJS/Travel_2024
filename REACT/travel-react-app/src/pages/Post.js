@@ -10,6 +10,7 @@ import { ListContext } from "../context/ListContext";
 import { UserContext } from "../context/UserContext";
 import logo from "../image/logo4.png";
 import config from "../Apikey";
+import backgroundImage from "../image/flowers.png";
 
 const Post = () => {
     const navigate = useNavigate();
@@ -121,7 +122,7 @@ const Post = () => {
     };
 
     return (
-        <div>
+        <div style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: "cover", backgroundPosition: "center" }} >
             <TopIcon text="기록일지" />
             <div className="post">
                 <table>
@@ -134,7 +135,7 @@ const Post = () => {
                                 justifyContent: "center", // 중앙 정렬
                                 gap: "20px", // 아이템들 간의 간격
                                 margin: "0 auto",
-                                maxWidth: "1000px", // 최대 너비 설정
+                                maxWidth: "1100px", // 최대 너비 설정
                             }}
                         >
                             {currentPosts.length > 0 ? (

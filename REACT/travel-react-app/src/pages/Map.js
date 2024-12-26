@@ -8,6 +8,8 @@ import { ListContext } from "../context/ListContext";  // 리스트 관리 컨�
 import { Button } from "@mui/material";  // 버튼 컴포넌트
 import { CopyListContext } from "../context/CopyListContext";  // 복사 리스트 관리 (사용되지 않는 듯)
 import "../css/Map.css";  // 스타일 파일
+import backgroundImage from "../image/flowers.png";
+
 
 // 컴포넌트 외부에서 libraries 배열을 정의 (Google Maps의 places 라이브러리 사용)
 const libraries = ["places"];
@@ -125,10 +127,11 @@ const Map = () => {
     };
 
     return (
-        <div className="map-container" >
-            <div style={{zIndex:"2000"}}>
+    <div style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: "cover", backgroundPosition: "center" }} >
+        <div style={{zIndex:"2000"}}>
                <TopIcon text="기록하기" />  {/* 상단 아이콘 표시 */}
             </div>
+        <div className="map-container">
             <div className="map-sidebar">
                 <div className="map-search-container">
                     <Autocomplete onLoad={handleSearchBoxLoad} onPlaceChanged={handlePlaceChanged}>
@@ -218,6 +221,7 @@ const Map = () => {
             <div className="map-content">
                 <Write />  {/* 작성 컴포넌트 */}
             </div>
+        </div>
         </div>
     );
 };

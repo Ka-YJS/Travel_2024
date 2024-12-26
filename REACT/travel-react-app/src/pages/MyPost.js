@@ -134,7 +134,7 @@ const MyPost = () => {
                                 justifyContent: "center", // 중앙 정렬
                                 gap: "20px", // 아이템들 간의 간격
                                 margin: "0 auto",
-                                maxWidth: "1000px", // 최대 너비 설정
+                                maxWidth: "1100px", // 최대 너비 설정
                             }}
                         >
                             {currentPosts.length > 0 ? (
