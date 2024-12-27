@@ -8,8 +8,9 @@ import axios from "axios";
 import { PlaceContext } from "../context/PlaceContext";
 import { ListContext } from "../context/ListContext";
 import { UserContext } from "../context/UserContext";
-import logo from "../image/logo4.png";
+import imageno from "../image/imageno.PNG";
 import config from "../Apikey";
+import backgroundImage from "../image/flowers.png";
 
 const Post = () => {
     const navigate = useNavigate();
@@ -121,7 +122,8 @@ const Post = () => {
     };
 
     return (
-        <div>
+        <div style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: "cover", backgroundPosition: "center"
+ }} >
             <TopIcon text="기록일지" />
             <div className="post">
                 <table>
@@ -131,10 +133,11 @@ const Post = () => {
                             style={{
                                 display: "flex",
                                 flexWrap: "wrap", // 아이템들이 화면에 맞게 줄 바꿈
-                                justifyContent: "center", // 중앙 정렬
-                                gap: "20px", // 아이템들 간의 간격
+                                justifyContent: "left", // 중앙 정렬
+                                gap: "39px", // 아이템들 간의 간격
                                 margin: "0 auto",
                                 maxWidth: "1100px", // 최대 너비 설정
+                                
                             }}
                         >
                             {currentPosts.length > 0 ? (
@@ -152,7 +155,7 @@ const Post = () => {
                                             src={
                                                 post.imageUrls && post.imageUrls.length > 0
                                                     ? `http://${config.IP_ADD}:9090${post.imageUrls[0]}`
-                                                    : logo
+                                                    : imageno
                                             }
                                             alt="썸네일"
                                             style={{
@@ -228,13 +231,15 @@ const Post = () => {
                         display: "flex",
                         justifyContent: "flex-end",
                         marginTop: "20px",
-                        gap: "20px", // 버튼 간 간격
+                        gap: "20px",
+                         // 버튼 간 간격
                     }}
                 >
                     <Button
                         variant="contained"
                         onClick={() => navigate(`/mypost/${user.id}`)}
-                        sx={{ width: "10%", backgroundColor: "#4caf50" }}
+                        sx={{ width: "10%", backgroundColor: "#4caf50", fontFamily: "'GowunDodum-Regular', sans-serif"
+                         }}
                     >
                         나의 기록
                     </Button>
@@ -243,7 +248,8 @@ const Post = () => {
                         onClick={toWritePage}
                         sx={{
                             width: "10%",
-                            backgroundColor: "#4caf50"
+                            backgroundColor: "#4caf50",
+                            fontFamily: "'GowunDodum-Regular', sans-serif"
                         }}
                     >
                         기록하기

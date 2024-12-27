@@ -1,7 +1,11 @@
 /* 공통 스타일 */
+@font-face {
+  font-family: 'GowunDodum-Regular'; /* 폰트 이름 */
+  src: url('/public/font/GowunDodum-Regular.ttf') format('truetype');
+}
+
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: 'GowunDodum-Regular', sans-serif; /* 기본 폰트로 설정 */
 }
 
 .App {

@@ -21,6 +21,7 @@ public class EmailController {
     // 인증번호 전송
     @GetMapping("/auth")
     public EmailAuthResponseDto sendAuthCode(@RequestParam String address) {
+    	System.out.println(address);
         return emailService.sendEmail(address);
     }
 

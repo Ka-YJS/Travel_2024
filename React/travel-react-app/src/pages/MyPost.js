@@ -5,8 +5,9 @@ import TopIcon from "../TopIcon/TopIcon";
 import "../css/Post.css";
 import axios from "axios";
 import { UserContext } from "../context/UserContext";
-import logo from "../image/logo4.png";
+import imageno from "../image/imageno.PNG";
 import config from "../Apikey";
+import backgroundImage from "../image/flowers.png";
 
 const MyPost = () => {
     const navigate = useNavigate();
@@ -121,7 +122,7 @@ const MyPost = () => {
     };
 
     return (
-        <div>
+        <div style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: "cover", backgroundPosition: "center" }} >
             <TopIcon text="내 기록 보기"/>
             <div className="post">
                 <table>
@@ -152,7 +153,7 @@ const MyPost = () => {
                                             src={
                                                 post.imageUrls && post.imageUrls.length > 0
                                                     ? `http://${config.IP_ADD}:9090${post.imageUrls[0]}`
-                                                    : logo
+                                                    : imageno
                                             }
                                             alt="썸네일"
                                             style={{
@@ -234,14 +235,16 @@ const MyPost = () => {
                     <Button
                         variant="contained"
                         onClick={()=>navigate("/post")}
-                        sx={{ width: "10%" ,backgroundColor: "#4caf50" }}
+                        sx={{ width: "10%" ,backgroundColor: "#4caf50",fontFamily: "'GowunDodum-Regular', sans-serif"
+                         }}
                     >
                         기록일지
                     </Button>
                     <Button
                         variant="contained"
                         onClick={toWritePage}
-                        sx={{ width: "10%" ,backgroundColor: "#4caf50"}}
+                        sx={{ width: "10%" ,backgroundColor: "#4caf50",fontFamily: "'GowunDodum-Regular', sans-serif"
+                        }}
                     >
                         기록하기
                     </Button>

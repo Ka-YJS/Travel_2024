@@ -1,18 +1,18 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext,useEffect } from "react";
 import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import {call} from "../api/ApiService"
 import axios from "axios";
 import "../css/Strat.css";
-import logo2 from '../image/logo2.JPG'
+import TopIcon from "../TopIcon/TopIcon";
 import config from "../Apikey";
 import backgroundImage from "../image/back3.png"
 
 function Signup() {
   //user정보 useContext
-  const { user,googleUser } = useContext(UserContext);
+  const { user,googleUser,setGoogleUser } = useContext(UserContext);
   //userId 저장 useState
-  const [userId, setUserId] = useState(googleUser.userId);
+  const [userId, setUserId] = useState("");
   //id중복체크 useState
   const [isIdChecked, setIsIdChecked] = useState(false);
   //userPassword 저장 useState
@@ -22,9 +22,9 @@ function Signup() {
   //passwordError 저장 useState
   const [passwordError, setPasswordError] = useState("");
   //userName 저장 useState
-  const [userName, setUserName] = useState(googleUser.userName);
+  const [userName, setUserName] = useState("");
   //userNickName 저장 useState
-  const [userNickName, setUserNickName] = useState(googleUser.userName);
+  const [userNickName, setUserNickName] = useState("");
   //userPhoneNumber 저장 useState
   const [userPhoneNumber, setUserPhoneNumber] = useState("");
   //emailError 상태 저장 useState
@@ -39,28 +39,42 @@ function Signup() {
   const [isAuthCodeSent, setIsAuthCodeSent] = useState(false);
   //loading 상태 저장 useState
   const [isLoading, setIsLoading] = useState(false);
+  const [phoneNumberError,setPhoneNumberError] = useState("");
 
   const navigate = useNavigate();
 
+  useEffect(()=>{
+    if(googleUser && (!Array.isArray(googleUser) || googleUser.length > 0)){
+      setUserId(googleUser.userId)
+      setUserName(googleUser.userName)
+      setUserNickName(googleUser.userName)
+    }
+  },[googleUser])
+
+  useEffect(()=>{
+    if(googleUser.userId !==userId){
+      setIsEmailVerified(false)
+    }else{
+      setIsEmailVerified(true)
+    }
+  },[userId,googleUser.userId])
+
   //비밀번호 정규식
   const validatePassword = (password) => {
-    // const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
-    // return passwordRegex.test(password);
-    return password
+    const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
+    return passwordRegex.test(password);
   };
 
   //이메일 정규식
   const validateEmail = (email) => {
-    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    // return emailRegex.test(email);
-    return email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   };
 
   //전화번호 정규식
   const validataeUserPhoneNumber = (userPhoneNumber) =>{
-    // const userPhoneNumberRegex = /^01\d{9}$/;
-    // return userPhoneNumberRegex.test(userPhoneNumber);
-    return userPhoneNumber
+    const userPhoneNumberRegex = /^01\d{9}$/;
+    return userPhoneNumberRegex.test(userPhoneNumber);
   }
 
   //회원가입 버튼
@@ -68,15 +82,15 @@ function Signup() {
     event.preventDefault();
 
     // 이메일 형식 검증
-    // if (!validateEmail(userId)) {
-    //   alert("이메일 형식이 올바르지 않습니다.");
-    //   return;
-    // }
+    if (!validateEmail(userId)) {
+      alert("이메일 형식이 올바르지 않습니다.");
+      return;
+    }
     // 이메일 인증 확인
-    // if (!isEmailVerified) {
-    //   alert("이메일 인증을 완료해주세요.");
-    //   return;
-    // }
+    if (!isEmailVerified) {
+      alert("이메일 인증을 완료해주세요.");
+      return;
+    }
 
     // 비밀번호 형식 검증
     if (!validatePassword(userPassword)) {
@@ -217,13 +231,35 @@ function Signup() {
     } else {
       setPasswordError("");
     }
+    if(!password){
+      setPasswordError("");
+    }
+  };
+
+  //전화번호 입력및 정규식확인
+  const handleUserPhoneNumber = (e) => {
+    const phoneNumber = e.target.value;
+    setUserPhoneNumber(phoneNumber);
+
+    if (!validataeUserPhoneNumber(phoneNumber)) {
+      setPhoneNumberError("전화번호는 - 들어가지않은 11자리 숫자로 이루어져야 됩니다..");
+    } else {
+      setPhoneNumberError("");
+    }
+    if(!phoneNumber){
+      setPhoneNumberError("");
+    }
   };
 
   return (
+    <div>
+      <TopIcon />
     <div
   className="fullscreen-background"
   style={{ backgroundImage: `url(${backgroundImage})` }}
 > 
+    <div className="overlay-text">
+      시골쥐의 어디가쥐</div>
       <div 
         className="container"
         style={{height:"100vh"}}
@@ -253,17 +289,17 @@ function Signup() {
                 className="button-check"
                 onClick={handleUserIdCheck}
               />
-              {/* <input
+              <input
                 type="button"
                 value={isLoading ? "발송 중..." : "인증번호 발송"}
                 className="button-verify"
                 onClick={handleEmailVerification}
                 disabled={isLoading || !userId || emailError || isEmailVerified}
-              /> */}
+              />
             </div>
 
             {/* 인증 코드 입력 필드 */}
-            {/* {isAuthCodeSent && (
+            {isAuthCodeSent && (
               <div className="form-group">
                 <label htmlFor="authCode">인증 코드</label>
                 <input
@@ -282,7 +318,7 @@ function Signup() {
                   />
                 </div>
               </div>
-            )} */}
+            )}
 
             {/* 이름 입력 필드 */}
             <div className="form-group">
@@ -315,9 +351,10 @@ function Signup() {
                 id="user"
                 name="userPhoneNumber"
                 value={userPhoneNumber}
-                onChange={(e) => setUserPhoneNumber(e.target.value)}
+                onChange={handleUserPhoneNumber}
                 placeholder=" - 빼고 숫자만 입력하세요"
               />
+              {phoneNumberError && <span className="error-message">{phoneNumberError}</span>}
             </div>
 
             {/* 비밀번호 입력 필드 */}
@@ -354,22 +391,19 @@ function Signup() {
                 type="button"
                 value="취소"
                 className="cancel"
-                onClick={() => navigate("/login")}
+                onClick={() => {
+                  navigate("/login")
+                  setGoogleUser({});
+                }}
               />
             </div>
           </form>
 
           {/* 큰 로고 */}
-          <div >
-            <img 
-                  src={logo2} 
-                  alt="Logo"
-                  className="logo-box" 
-                />
-          </div>
         </main>
       </div>
      </div> 
+     </div>
   );
 }
 

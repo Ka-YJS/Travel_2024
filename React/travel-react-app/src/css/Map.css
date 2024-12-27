@@ -20,7 +20,7 @@
   }
 
 body {
-    margin: 0;
+    margin-bottom: 500;
     padding: 0;
     background-color: var(--background-color);
 }
@@ -28,26 +28,34 @@ body {
 .map-container {
     display: flex;
     flex-direction: row;
-    width: 100vw;
+    width: 80vw;
     height: 120vh;
     overflow: hidden;
     margin-top: 140px;
+    margin-left: 0vw; /* map만 오른쪽으로 이동 */
+    margin-right: 5vw;
+    gap: 30px;  /* 영역 사이의 간격을 줄임 */
+    background-color: transparent;
+    justify-self: center;
 }
 
 .map-sidebar {
-    flex: 0.7;
+    flex: 0.9;
     display: flex;
     flex-direction: column;
     padding: 20px;
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.6);
     border-right: 1px solid var(--border-color);
     box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.1);
-    max-height: 100%;
+    max-height: fit-content;
     overflow-y: auto;
+    max-width: 40vw;
+    
 }
 
 .map-search-container {
     margin-bottom: 15px;
+    
 }
 
 .map-search-input {
@@ -57,6 +65,7 @@ body {
     border: 1px solid var(--border-color);
     border-radius: 5px;
     box-sizing: border-box;
+    
 }
 
 
@@ -66,6 +75,7 @@ body {
     border: 1px solid var(--border-color);
     border-radius: 5px;
     margin-top: 10px;
+    
 }
 
 .place-info-button {
@@ -83,15 +93,16 @@ body {
     background-color: darkgreen;
 }
 
-
 .map-list-container {
     flex: 1;
     margin-top: 20px;
-    max-height: 20vh;
+    min-height: 30vh;
+    max-height: 50vh;
     overflow-y: auto;
     padding: 10px;
     border: 1px solid var(--border-color);
     border-radius: 5px;
+    background-color: #fff;
 }
 
 .map-list-title {
@@ -128,9 +139,12 @@ body {
 }
 
 .map-content {
-    flex: 1;
+    flex: 1.1;
     padding: 20px;
-    background-color: var(--background-color);
+    background-color: rgba(255, 255, 255, 0.6);
+    height: fit-content;
+    max-width: 60vw;
+
 }
 
 
@@ -140,13 +154,14 @@ body {
     margin-top: 10px;
     border-radius: 10px;
     overflow: hidden;
+    
 }
 
 
 .write {
     display: flex;
     flex-direction: column;
-    width: 80%; /* 너비를 줄여서 공간 활용 */
+    width: 100%; /* 너비를 줄여서 공간 활용 */
     gap: 30px; /* 요소 간의 간격을 최소화 */
     flex-grow: 1; /* 남은 공간을 차지하도록 설정 */
     max-height: 100%; /* 부모 컨테이너를 넘지 않도록 설정 */
@@ -156,22 +171,33 @@ body {
 }
 
 .write input,
-.write textarea,
-.write .write-buttons {
+.write textarea{
     margin-top: 3px;
     margin-bottom: 3px;
     font-family: 'GowunDodum-Regular', sans-serif;
 }
 
+.write .write-buttons {
+    margin-top: 3px;
+    margin-bottom: 3px;
+    font-family: 'GowunDodum-Regular', sans-serif;
+    width: 30vw;
+    flex-direction: ro;
+    align-self: center;
+    ;
+}
+
 .write-buttons button {
     font-family: 'GowunDodum-Regular', sans-serif;
     flex: 1;
+    flex-direction: row;
     margin: 0 3px;
     padding: 10px;
     font-size: 30px;
     border-radius: 5px;
-    width: 30%;
+    width: 48.5%;
     height: 50px;
+    
 }
 
 .write-buttons button:first-child {
@@ -197,23 +223,25 @@ body {
 /* 이미지 업로드 */
 .image-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* 150px씩 크기 지정 */
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); /* 150px씩 크기 지정 */
     gap: 10px; /* 이미지 사이의 간격 */
     margin-top: 10px;
+    
 }
 
 .image-grid img {
-    width: 150px;
-    height: 150px;
+    width: 130px;
+    height: 130px;
     object-fit: cover; /* 이미지 비율 유지하면서 잘림 */
     border-radius: 5px;
     border: 1px solid var(--border-color);
+    
 }
 
 .image-grid div {
     position: relative; /* 휴지통 아이콘을 고정하기 위해 부모 div에 상대 위치를 설정 */
-    max-width: 150px; /* 부모 div의 크기를 이미지 크기와 동일하게 설정 */
-    max-height: 150px; /* 부모 div의 크기를 이미지 크기와 동일하게 설정 */
+    max-width: 130px; /* 부모 div의 크기를 이미지 크기와 동일하게 설정 */
+    max-height: 130px; /* 부모 div의 크기를 이미지 크기와 동일하게 설정 */
 }
 
 .image-grid svg {
@@ -227,16 +255,17 @@ body {
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
     width: 27px; /* 아이콘 크기를 이미지에 맞게 조정 */
     height: 27px; /* 아이콘 크기를 이미지에 맞게 조정 */
+    
 }
 
 .image-grid svg:hover {
     background-color: var(--hover-color);
+    
 }
 
 /* 이미지 업로드 스타일 */
 .photo_style {
     position: relative;
-    
 }
 
 .input-file-label {

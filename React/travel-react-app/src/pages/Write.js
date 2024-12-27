@@ -120,6 +120,7 @@ const Write = () => {
                     value={postTitle}
                     onChange={(e) => {setPostTitle(e.target.value)}}
                     placeholder="제목을 입력하세요."
+                    
                 />
             </div>
 

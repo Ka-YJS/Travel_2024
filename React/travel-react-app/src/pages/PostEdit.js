@@ -4,7 +4,6 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { UserContext } from "../context/UserContext";
 import { Delete } from "@mui/icons-material";
-import TopIcon from "../TopIcon/TopIcon";
 import { CopyListContext } from "../context/CopyListContext";
 import { CopyPlaceListContext } from "../context/CopyPlaceListContext";
 import config from "../Apikey";
@@ -160,7 +159,6 @@ const PostEdit = () => {
     };
 
     return (
-        
         <div className="write">
             {/* 제목 입력 */}
             <div>

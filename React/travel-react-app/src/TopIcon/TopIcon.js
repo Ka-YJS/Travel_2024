@@ -41,7 +41,8 @@ const TopIcon = ({text}) => {
         justifyContent: "space-between", 
         alignItems: "center",
         height:"90px",
-        width: "100%"  // 전체 너비
+        width: "100%",  
+
       }}
     >
       <div>
@@ -61,6 +62,7 @@ const TopIcon = ({text}) => {
           backgroundClip: "text", // 텍스트에만 배경색 적용
           textShadow: "2px 2px 5px rgba(0, 0, 0, 0.3)", // 텍스트 그림자
           textAlign: "center", // 가운데 정렬
+          
         }}
       >
         {text}
@@ -80,12 +82,13 @@ const TopIcon = ({text}) => {
               flexDirection: "column",
               alignItems: "center",
               position: "relative",
+              
             }}
             onClick={() => navigate(icon.route)}
           >
             {icon.component}
             {/* 텍스트 부분 */}
-            <span className="tooltip" style={{ fontSize: "13px", whiteSpace: 'nowrap' }}>
+            <span className="tooltip" style={{ fontSize: "13px", whiteSpace: 'nowrap' , }}>
               {icon.label}
             </span>
           </div>
@@ -127,6 +130,7 @@ const TopIcon = ({text}) => {
               overflow: "hidden", // 넘치는 텍스트 숨기기
               whiteSpace: "nowrap", // 텍스트를 한 줄로 유지
               position: "relative", // 내부 요소에 대한 위치 기준
+              
             }}
           >
             <p
@@ -208,6 +212,7 @@ const TopIcon = ({text}) => {
         )}
       </div>
     </header>
+
   );
 };
 

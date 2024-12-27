@@ -39,12 +39,18 @@ const PersonalInfo = () => {
     setIsOpen(false);
   }
 
+  //비밀번호 정규식
+  const validatePassword = (password) => {
+    const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
+    return passwordRegex.test(password);
+  };
+
   //닉네임변경 버튼
   const handleChangeNickname = async () => {
 
     try {
       //기존닉네임 새닉네임 같은지 비교하는 if문
-      if(user.userNickName != userNickName){
+      if(user.userNickName !== userNickName){
         const userInfo = {
           userNickName: userNickName
         }
@@ -78,6 +84,11 @@ const PersonalInfo = () => {
       //새로운 비밀번호확인 if문
       if (newPassword === newPasswordConfirm) {
         
+        if (!validatePassword(newPassword)) {
+          alert('비밀번호는 8자 이상이며, 특수문자를 포함해야 합니다.');
+          return;
+        }
+
         const userInfo = {
           userPassword: userPassword,
           newPassword: newPassword

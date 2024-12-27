@@ -103,7 +103,7 @@ public class UserController {
     //Id찾기
     @PostMapping("/userFindId")
     public ResponseEntity<?> userFindId(@RequestBody UserDTO dto){
-       
+    	
        UserDTO user = service.userFindId(dto);
        
        if(user != null) {
@@ -120,6 +120,7 @@ public class UserController {
     // 비밀번호 찾기 (사용자 정보 확인)
     @PostMapping("/userFindPassword")
     public ResponseEntity<?> findPassword(@RequestBody UserDTO dto) {
+    	System.out.println(dto);
         UserDTO foundUser = service.userFindPassword(dto);
         
         if (foundUser != null) {
@@ -132,7 +133,7 @@ public class UserController {
         }
     }
 
-    // 비밀번호 초기화
+    //비밀번호 초기화
     @PostMapping("/userResetPassword")
     public ResponseEntity<?> resetPassword(@RequestBody UserDTO dto) {
         boolean isReset = service.userResetPassword(dto);

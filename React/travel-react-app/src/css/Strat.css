@@ -175,7 +175,7 @@ main {
 .auth-code-button {
   margin-top: 10px;
   text-align: center;
-  margin-left: 18px;
+  margin-bottom: 10px;
 }
 
 .auth-code-button input {
@@ -256,4 +256,16 @@ main {
 
 body {
   font-family: 'GowunDodum-Regular', sans-serif; /* 기본 폰트로 설정 */
+}
+.overlay-text {
+  position: absolute;
+  top: 8%;
+  left: 12%;
+  transform: translate(-50%, -50%);
+  font-size: 22px;
+  color: #d18a38;
+  font-weight: bold;
+  text-align: center;
+  z-index: 1;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.8);
 }

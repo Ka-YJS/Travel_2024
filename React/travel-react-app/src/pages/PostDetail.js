@@ -8,7 +8,7 @@ import config from "../Apikey";
 
 const PostDetail = () => {
     const { user } = useContext(UserContext); // 사용자 정보
-    const { id } = useParams(); // 게시글 ID
+    const { id } = useParams(); // 게시글 IDa
     const [previousPath, setPreviousPath] = useState(null);
     const [post, setPost] = useState({});
     const [imageUrls, setImageUrls] = useState([]);
@@ -48,28 +48,27 @@ const PostDetail = () => {
             console.error("Error fetching like status:", error);
         }
     };
-    const likeaa = () =>{
-        console.log("asaaaaaaaaaaaaa")
-    }
 
     // 좋아요 버튼 클릭
     const likeButtonClick = async () => {
         try {
-            console.log("asaaaaaaaaaaaaa")
+            console.log("isLiked"+isLiked)
             const url = `http://${config.IP_ADD}:9090/api/likes/${id}`;
-            const method = isLiked ? "delete" : "post"; // 좋아요 여부에 따라 POST or DELETE
-
-            // 서버 요청
+            const method = isLiked ? "delete" : "post"; // Toggle between POST and DELETE
+    
+            // Make the API request to toggle like status
             const response = await axios({
                 method,
                 url,
                 headers: { Authorization: `Bearer ${user.token}` },
             });
-
-            // 서버에서 반환된 데이터로 좋아요 상태 및 개수 업데이트
-            const { isLiked: updatedIsLiked, likeCount: updatedLikeCount } = response.data;
-            setIsLiked(updatedIsLiked);
-            setLikeCount(updatedLikeCount); // 클릭 시 개수 변경
+    
+            setIsLiked(!isLiked);
+            if(isLiked){
+                setLikeCount(count=>count-1)
+            }else{
+                setLikeCount(count=>count+1)
+            }
         } catch (error) {
             console.error("Error updating like:", error);
             alert("좋아요 처리 중 문제가 발생했습니다.");
@@ -84,11 +83,11 @@ const PostDetail = () => {
     useEffect(() => {
         getPostDetail();
         getLikeStatus(); // 좋아요 상태 가져오기
-    }, [id]);
+    }, []);
 
     if (!post) {
         return (
-            <div style={{ textAlign: "center", padding: "20px" }}>
+            <div style={{ textAlign: "center", padding: "20px", }}>
                 <h2>잘못된 경로입니다.</h2>
                 <Button variant="contained" color="primary" onClick={() => navigate("/Post")}>
                     게시글 목록으로 이동
@@ -139,14 +138,15 @@ const PostDetail = () => {
 
     return (
         <div>
-            <TopIcon text="게시글 보기" />
+            <TopIcon text=" 게시글 보기" />
             <div style={{ justifyItems: "center" }}>
                 <div
                     style={{
                         position: "relative",
-                        marginTop: "120px",
+                        marginTop: "150px",
                         zIndex: "-1",
                         minWidth: "90%",
+                        
                     }}
                 >
                     {/* 제목 */}
@@ -184,7 +184,7 @@ const PostDetail = () => {
                     />
                     {/* 내용 */}
                     <TextField
-                        style={{ marginBottom: "20px" }} // 여백 추가
+                        style={{ marginBottom: "20px"}} // 여백 추가
                         InputProps={{
                             readOnly: true,
                         }}
@@ -202,6 +202,7 @@ const PostDetail = () => {
                             gridTemplateColumns: "repeat(5, 1fr)",
                             gap: "10px",
                             marginTop: "20px",
+                            
                         }}
                     >
                         {imageUrls.map((image, index) => (
@@ -217,6 +218,7 @@ const PostDetail = () => {
                                     borderRadius: "5px",
                                     overflow: "hidden",
                                     backgroundColor: "#f9f9f9",
+                                   
                                 }}
                             >
                                 <img
@@ -227,64 +229,36 @@ const PostDetail = () => {
                                         width: "20vw",
                                         padding: 0,
                                         margin: 0,
+                                        
                                     }}
                                 />
                             </div>
                         ))}
                     </div>
-                    {/* 좋아요 버튼 */}
-                    <div style={{ marginTop: "20px", display: "flex", alignItems: "center" }}>
-                        <Button
-                            onClick={likeaa}
-                            style={{backgroundColor:"red"}}
-                        >
-                            aaaaaaaa
-                        </Button>
-                        <Button
-                            onClick={likeButtonClick}
-                            style={{
-                                minWidth: "auto",
-                                padding: "0px",
-                                margin: "0px",
-                                background: "none",
-                                // border: "none", // 테두리 제거
-                                outline: "none", // 외부 테두리 제거
-                                // cursor: "pointer", // 클릭 커서 스타일
-                            }}
-                        >
-                            {isLiked ? "❤️" : "🤍"} {/* 좋아요 상태에 따라 하트 색상 변경 */}
-                        </Button>
-                        <span style={{ fontSize: "16px" }}>
-                            {likeCount} {likeCount === 1}
-                        </span>
-                    </div>
+                    
                 </div>
                 {/* 좋아요 버튼 */}
                 <div style={{ marginTop: "20px", display: "flex", alignItems: "center" }}>
                         <Button
-                            onClick={likeaa}
-                            style={{backgroundColor:"red"}}
-                        >
-                            aaaaaaaa
-                        </Button>
-                        <Button
                             onClick={likeButtonClick}
                             style={{
                                 minWidth: "auto",
                                 padding: "0px",
                                 margin: "0px",
                                 background: "none",
-                                // border: "none", // 테두리 제거
+                                border: "none", // 테두리 제거
                                 outline: "none", // 외부 테두리 제거
-                                // cursor: "pointer", // 클릭 커서 스타일
+                                cursor: "pointer", // 클릭 커서 스타일
                             }}
                         >
-                            {isLiked ? "❤️" : "🤍"} {/* 좋아요 상태에 따라 하트 색상 변경 */}
-                        </Button>
-                        <span style={{ fontSize: "16px" }}>
-                            {likeCount} {likeCount === 1}
-                        </span>
-                    </div>
+                <span style={{ fontSize: "25px" }}> {/* Increase font size here */}
+                    {isLiked ? "❤️" : "🤍"} {/* 좋아요 상태에 따라 하트 색상 변경 */}
+                </span>
+                </Button>
+                <span style={{ fontSize: "25px" }}>
+                    {likeCount}
+                </span>
+                </div>
 
                 {/* 버튼 영역 */}
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -292,7 +266,9 @@ const PostDetail = () => {
                         variant="contained"
                         color="primary"
                         onClick={listButtonClick}
-                        style={{ width: "10%" }}
+                        style={{ width: "10%" ,backgroundColor :"#45a347",fontFamily: "'GowunDodum-Regular', sans-serif"
+                        }}
+ 
                     >
                         목록
                     </Button>
@@ -302,7 +278,7 @@ const PostDetail = () => {
                                 variant="outlined"
                                 color="error"
                                 onClick={toPostEdit}
-                                style={{ width: "10%" }}
+                                style={{ width: "10%",fontFamily: "'GowunDodum-Regular', sans-serif"}}
                             >
                                 수정
                             </Button>
@@ -310,7 +286,7 @@ const PostDetail = () => {
                                 variant="outlined"
                                 color="error"
                                 onClick={handleDelete}
-                                style={{ width: "10%" }}
+                                style={{ width: "10%",fontFamily: "'GowunDodum-Regular', sans-serif" }}
                             >
                                 삭제
                             </Button>

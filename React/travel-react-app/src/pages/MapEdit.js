@@ -8,6 +8,7 @@ import { Button } from "@mui/material";
 import "../css/Map.css";
 import { CopyListContext } from "../context/CopyListContext";
 import { CopyPlaceListContext } from "../context/CopyPlaceListContext";
+import backgroundImage from "../image/flowers.png";
 
 // 컴포넌트 외부에서 libraries 배열을 정의
 const libraries = ["places"];
@@ -109,10 +110,11 @@ const MapEdit = () => {
     };
 
     return (
+        <div style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: "cover", backgroundPosition: "center" }} >
+        <div style={{zIndex:"2000"}}>
+        <TopIcon text="수정하기"/>
+    </div>
         <div className="map-container">
-            <div style={{zIndex:"2000"}}>
-                <TopIcon text="글쓰기"/>
-            </div>
             <div className="map-sidebar">
                 <div className="map-search-container">
                     <Autocomplete onLoad={handleSearchBoxLoad} onPlaceChanged={handlePlaceChanged}>
@@ -203,6 +205,7 @@ const MapEdit = () => {
                 <PostEdit />
             </div>
         </div>
+    </div>
     );
 };
 

@@ -74,19 +74,19 @@ public class UserService {
 	
 	
 	//Id찾기
-   public UserDTO userFindId(UserDTO dto) {
+	public UserDTO userFindId(UserDTO dto) {
       
-      UserEntity user = repository.findByUserName(dto.getUserName());
-      if(user != null && user.getUserPhoneNumber().equals(dto.getUserPhoneNumber())) {
-         return UserDTO.builder()
+		UserEntity user = repository.findByUserNameAndUserPhoneNumber(dto.getUserName(),dto.getUserPhoneNumber());
+		if(user != null) {
+			return UserDTO.builder()
                .userId(user.getUserId())
                .build();
-      }else {
-          throw new IllegalStateException("User not found");
-      }
-   }
+		}else {
+			throw new IllegalStateException("User not found");
+		}
+	}
    
-   // 비밀번호 찾기 (사용자 정보 확인)
+	// 비밀번호 찾기 (사용자 정보 확인)
     public UserDTO userFindPassword(UserDTO dto) {
         // 아이디, 이름, 전화번호로 사용자 조회
         UserEntity user = repository.findByUserIdAndUserNameAndUserPhoneNumber(
@@ -100,9 +100,10 @@ public class UserService {
                 .userId(user.getUserId())
                 .userName(user.getUserName())
                 .build();
+        }else {
+        	return null;
         }
         
-        return null;
     }
 
     // 비밀번호 초기화
@@ -151,9 +152,10 @@ public class UserService {
 	//구글 로그인정보가져오기
 	public UserDTO verifyAndGetUserInfo(String credential) throws Exception {
 	    String tokenInfoUrl = "https://oauth2.googleapis.com/tokeninfo?id_token=" + credential;
+	    System.out.println("ssssssssssss"+tokenInfoUrl);
 	    RestTemplate restTemplate = new RestTemplate();
 	    ResponseEntity<Map> response = restTemplate.getForEntity(tokenInfoUrl, Map.class);
-
+	    System.out.println(response);
 	    if (response.getStatusCode() != HttpStatus.OK) {
 	        throw new Exception("Invalid ID token");
 	    }
