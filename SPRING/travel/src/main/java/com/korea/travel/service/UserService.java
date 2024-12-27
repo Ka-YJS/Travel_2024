@@ -3,13 +3,15 @@ package com.korea.travel.service;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.korea.travel.dto.UserDTO;
@@ -33,14 +35,6 @@ public class UserService {
 	private final TokenProvider tokenProvider;
 	
 	
-	//모든유저 조회
-	public List<UserDTO> getAllUsersId() {
-		
-		List<UserEntity> allUsersId = repository.findAll();
-		
-		return allUsersId.stream().map(UserDTO::new).collect(Collectors.toList());
-		
-	}
 	
 	
 	//userId가 있는지 중복체크
@@ -63,6 +57,7 @@ public class UserService {
 				.userId(dto.getUserId())
 				.userName(dto.getUserName())
 				.userNickName(dto.getUserNickName())
+				.userPhoneNumber(dto.getUserPhoneNumber())
 				.userPassword(passwordEncoder.encode(dto.getUserPassword()))
 				.userCreatedAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
 				.build();
@@ -76,6 +71,55 @@ public class UserService {
 		
 		
 	}
+	
+	
+	//Id찾기
+   public UserDTO userFindId(UserDTO dto) {
+      
+      UserEntity user = repository.findByUserName(dto.getUserName());
+      if(user != null && user.getUserPhoneNumber().equals(dto.getUserPhoneNumber())) {
+         return UserDTO.builder()
+               .userId(user.getUserId())
+               .build();
+      }else {
+          throw new IllegalStateException("User not found");
+      }
+   }
+   
+   // 비밀번호 찾기 (사용자 정보 확인)
+    public UserDTO userFindPassword(UserDTO dto) {
+        // 아이디, 이름, 전화번호로 사용자 조회
+        UserEntity user = repository.findByUserIdAndUserNameAndUserPhoneNumber(
+            dto.getUserId(), 
+            dto.getUserName(), 
+            dto.getUserPhoneNumber()
+        );
+        
+        if (user != null) {
+            return UserDTO.builder()
+                .userId(user.getUserId())
+                .userName(user.getUserName())
+                .build();
+        }
+        
+        return null;
+    }
+
+    // 비밀번호 초기화
+    @Transactional
+    public boolean userResetPassword(UserDTO dto) {
+        // 아이디로 사용자 조회
+        UserEntity user = repository.findByUserId(dto.getUserId());
+        
+        if (user != null) {
+            // 새 비밀번호 암호화하여 저장
+            user.setUserPassword(passwordEncoder.encode(dto.getUserPassword()));
+            repository.save(user);
+            return true;
+        }
+        
+        return false;
+    }
 	
 	
 	//로그인(로그인할때 토큰생성)
@@ -101,6 +145,30 @@ public class UserService {
 			return null;
 		}
 		
+	}
+	
+	
+	//구글 로그인정보가져오기
+	public UserDTO verifyAndGetUserInfo(String credential) throws Exception {
+	    String tokenInfoUrl = "https://oauth2.googleapis.com/tokeninfo?id_token=" + credential;
+	    RestTemplate restTemplate = new RestTemplate();
+	    ResponseEntity<Map> response = restTemplate.getForEntity(tokenInfoUrl, Map.class);
+
+	    if (response.getStatusCode() != HttpStatus.OK) {
+	        throw new Exception("Invalid ID token");
+	    }
+	    System.out.println("ssssssssssss"+response.getBody());
+	    Map<String, Object> tokenInfo = response.getBody();
+	    String email = (String) tokenInfo.get("email");
+	    String name = (String) tokenInfo.get("name");
+
+	    // Google 정보를 UserDTO에 매핑
+	    UserDTO userDTO = UserDTO.builder()
+	        .userId(email)                // 이메일을 UserId로 설정
+	        .userName(name)               // 이름 설정
+	        .build();
+
+	    return userDTO;
 	}
 	
 	
