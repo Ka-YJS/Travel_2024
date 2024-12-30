@@ -82,7 +82,6 @@ public class UserController {
     public ResponseEntity<?> handleGoogleCallback(@RequestBody Map<String, String> payload) {
         try {
             String credential = payload.get("credential");
-            System.out.println("aaa0"+credential);
             if (credential == null || credential.isEmpty()) {
                 return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Credential is missing or empty"));
             }

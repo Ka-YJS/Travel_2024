@@ -86,7 +86,7 @@ public class UserService {
 		}
 	}
    
-	// 비밀번호 찾기 (사용자 정보 확인)
+	//비밀번호 찾기 (사용자 정보 확인)
     public UserDTO userFindPassword(UserDTO dto) {
         // 아이디, 이름, 전화번호로 사용자 조회
         UserEntity user = repository.findByUserIdAndUserNameAndUserPhoneNumber(
@@ -106,7 +106,7 @@ public class UserService {
         
     }
 
-    // 비밀번호 초기화
+    //비밀번호 초기화
     @Transactional
     public boolean userResetPassword(UserDTO dto) {
         // 아이디로 사용자 조회
@@ -138,7 +138,6 @@ public class UserService {
 				.userId(user.getUserId())
 				.userName(user.getUserName())
 				.userNickName(user.getUserNickName())
-				.userPassword(user.getUserPassword())
 				.userProfileImage(user.getUserProfileImage())
 				.token(token)
 				.build();
