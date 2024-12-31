@@ -24,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class UserService {
 	
@@ -266,6 +265,7 @@ public class UserService {
             if (!parentDir.exists()) {	//부모 디렉토리가 없으면 true
             	parentDir.mkdirs();		// 디렉토리 생성
             }
+            System.out.println("aaaaaa"+filePath);
             
             
             try {
@@ -284,7 +284,7 @@ public class UserService {
             //UserEntity에 프로필 사진 경로 업데이트
             userEntity.setUserProfileImage(fileUrl);
             repository.save(userEntity);  // UserEntity 업데이트 저장
-            
+            System.out.println("sssssssssssss"+fileUrl);
             //업데이트된 UserEntity를 UserDTO로 변환하여 반환
             return UserDTO.builder().
             		userProfileImage(userEntity.getUserProfileImage())

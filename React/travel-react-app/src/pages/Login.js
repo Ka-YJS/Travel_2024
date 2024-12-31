@@ -9,6 +9,7 @@ import {call} from "../api/ApiService";
 import backgroundImage from "../image/back3.png"
 import config from "../Apikey";
 import axios from "axios";
+import Logo from "./Logo";
 
 const Login = () => {
   const { user,setUser,setGoogleUser } = useContext(UserContext); // `user` 배열로부터 사용자 정보를 가져옴
@@ -389,12 +390,14 @@ const Login = () => {
 
   return (
     <div>
-      <TopIcon />
     <div
     className="fullscreen-background"
     style={{ backgroundImage: `url(${backgroundImage})` }}
     >
-      <div className="overlay-text">시골쥐의 어디가쥐</div>
+      <TopIcon/>
+        <div className="overlay-text">
+          시골쥐의 어디가쥐
+        </div>
       <div className="container">
         <main>
           {!isFindUserId && !isFindPassword && !isNewPassword && (<form className="form" onSubmit={handleLogin}>

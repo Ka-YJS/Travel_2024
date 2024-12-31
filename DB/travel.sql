@@ -47,7 +47,7 @@ CREATE TABLE post_images (
 );
 
 CREATE TABLE likes (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    like_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT,
     post_id BIGINT,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,

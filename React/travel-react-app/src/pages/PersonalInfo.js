@@ -148,6 +148,7 @@ const PersonalInfo = () => {
           //성공적으로 업로드되면 사용자 정보 업데이트
           setUser(prev=>({...prev,userProfileImage:response.data.userProfileImage}));
         }
+        console.log(`http://${config.IP_ADD}:9090${user.userProfileImage}`)
 
       } catch (err) {
         console.error('파일 업로드 실패:', err);

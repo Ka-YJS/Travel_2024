@@ -22,8 +22,8 @@ const Logo = () => {
 const styles = {
   header: {
     display: "flex",
-    justifyContent: "space-between", // 로고와 TopIcon을 양쪽으로 정렬
-    alignItems: "center",           // 세로 중앙 정렬
+    // justifyContent: "space-between", // 로고와 TopIcon을 양쪽으로 정렬
+    // alignItems: "center",           // 세로 중앙 정렬
     padding: "10px 20px",           // 헤더 안쪽 여백
   },
   logoContainer: {
