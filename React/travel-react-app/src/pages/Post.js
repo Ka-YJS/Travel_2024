@@ -5,8 +5,6 @@ import { Button } from "@mui/material";
 import TopIcon from "../TopIcon/TopIcon";
 import "../css/Post.css";
 import axios from "axios";
-import { PlaceContext } from "../context/PlaceContext";
-import { ListContext } from "../context/ListContext";
 import { UserContext } from "../context/UserContext";
 import imageno from "../image/imageno.PNG";
 import config from "../Apikey";

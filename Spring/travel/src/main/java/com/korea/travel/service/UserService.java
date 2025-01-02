@@ -150,14 +150,12 @@ public class UserService {
 	//구글 로그인정보가져오기
 	public UserDTO verifyAndGetUserInfo(String credential) throws Exception {
 	    String tokenInfoUrl = "https://oauth2.googleapis.com/tokeninfo?id_token=" + credential;
-	    System.out.println("ssssssssssss"+tokenInfoUrl);
 	    RestTemplate restTemplate = new RestTemplate();
 	    ResponseEntity<Map> response = restTemplate.getForEntity(tokenInfoUrl, Map.class);
 	    System.out.println(response);
 	    if (response.getStatusCode() != HttpStatus.OK) {
 	        throw new Exception("Invalid ID token");
 	    }
-	    System.out.println("ssssssssssss"+response.getBody());
 	    Map<String, Object> tokenInfo = response.getBody();
 	    String email = (String) tokenInfo.get("email");
 	    String name = (String) tokenInfo.get("name");
