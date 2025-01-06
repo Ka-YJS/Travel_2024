@@ -5,6 +5,8 @@ import { Button } from "@mui/material";
 import TopIcon from "../TopIcon/TopIcon";
 import "../css/Post.css";
 import axios from "axios";
+import { PlaceContext } from "../context/PlaceContext";
+import { ListContext } from "../context/ListContext";
 import { UserContext } from "../context/UserContext";
 import imageno from "../image/imageno.PNG";
 import config from "../Apikey";
@@ -22,8 +24,9 @@ const Post = () => {
     // 서버에서 게시물 가져오기
     const getPostList = async () => {
         try {
-            const response = await axios.get(`http://${config.IP_ADD}:9090/api/posts`, {
+            const response = await axios.get(`https://${config.IP_ADD}/travel/posts`, {
                 headers: {
+                    "Content-Type": "multipart/form-data",
                     Authorization: `Bearer ${user.token}`,
                 },
             });
@@ -33,9 +36,13 @@ const Post = () => {
 
             // 좋아요 상태 한번에 가져오기
             const likedStatusPromises = fetchedPosts.map((post) =>
-                axios.get(`http://${config.IP_ADD}:9090/api/likes/${post.postId}/isLiked`, {
-                    headers: { Authorization: `Bearer ${user.token}` },
-                })
+                axios.get(`https://${config.IP_ADD}/travel/likes/${post.postId}/isLiked`, {
+                    headers: { 
+                    Authorization: `Bearer ${user.token}` ,
+                    Accept: '*/*'
+                },
+                    withCredentials: true
+            })
             );
 
             // 모든 API 호출 완료 후, 상태 설정
@@ -82,6 +89,8 @@ const Post = () => {
 
     // 글쓰기 페이지 이동
     const toWritePage = () => {
+        // setList([])
+        // setPlaceList([])
         navigate("/map");
     };
 
@@ -89,7 +98,7 @@ const Post = () => {
     const likeButtonClick = async (postId) => {
         try {
             const isLiked = likedPosts[postId];
-            const url = `http://${config.IP_ADD}:9090/api/likes/${postId}`;
+            const url = `https://${config.IP_ADD}/travel/likes/${postId}`;
             const method = isLiked ? "delete" : "post";
 
             await axios({ method, url, headers: { Authorization: `Bearer ${user.token}` } });
@@ -152,7 +161,7 @@ const Post = () => {
                                             onClick={() => handlePostClick(post.postId)}
                                             src={
                                                 post.imageUrls && post.imageUrls.length > 0
-                                                    ? `http://${config.IP_ADD}:9090${post.imageUrls[0]}`
+                                                    ? `https://${config.IP_ADD}${post.imageUrls[0]}`
                                                     : imageno
                                             }
                                             alt="썸네일"

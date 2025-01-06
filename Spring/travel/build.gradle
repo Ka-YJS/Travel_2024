@@ -17,6 +17,9 @@ configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
+	all {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
 }
 
 repositories {
@@ -37,9 +40,8 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     
     // Database
-    runtimeOnly 'com.h2database:h2'
-    implementation 'mysql:mysql-connector-java:8.0.33'
-    
+	runtimeOnly 'mysql:mysql-connector-java:8.0.33'
+	
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     

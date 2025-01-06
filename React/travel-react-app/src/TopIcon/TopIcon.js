@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { SlHome } from "react-icons/sl";
 import { LuNotebook } from "react-icons/lu";
 import { MdNoteAlt } from "react-icons/md";
@@ -18,12 +18,19 @@ const TopIcon = ({text}) => {
   const { user } = useContext(UserContext); // userNickName 가져오기
   const navigate = useNavigate();
 
+useEffect(() => {
+
+  console.log("프로필 경로" + user.userProfileImage)
+
+},[])
+
   const iconComponents = [
     { id: "home", component: <SlHome size={23} />, route: "/main", label: "홈"},
     { id: "map", component: <MdNoteAlt size={23} />, route: "/map",label: "기록하기" },
     { id: "post", component: <LuNotebook  size={25} />, route: "/post",label: "기록일지" },
   ];
 
+  
   //로그아웃 버튼
   const handleLogout = () => {
     localStorage.clear();
@@ -114,8 +121,16 @@ const TopIcon = ({text}) => {
               borderRadius: "50%",
               cursor: "pointer"
             }}
-            src={user.userProfileImage?`http://${config.IP_ADD}:9090${user.userProfileImage}`: defaultImage}
-            alt="profile"
+            src={
+              user?.userProfileImage 
+                ? `https://${config.IP_ADD}${user.userProfileImage}`
+                : defaultImage  
+            } 
+            onError={(e) => {
+              e.target.src = defaultImage;
+              e.target.onerror = null; // 무한 루프 방지
+            }}
+            alt={`${user?.username || '사용자'} 프로필`}
             onClick={() => {
               if(isProfileDropdownVisible){
                 setIsMyInfoVisible(false)

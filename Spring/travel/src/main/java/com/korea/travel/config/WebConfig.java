@@ -11,7 +11,7 @@ public class WebConfig implements WebMvcConfigurer {
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")	//모든 경로에 대해 CORS 설정
-				.allowedOrigins("http://localhost:3000")	//허용할 출처
+				.allowedOrigins("https://countryrat.site","https://www.countryrat.site")	//허용할 출처
 				.allowedMethods("GET", "POST", "PATCH", "DELETE", "PUT", "OPTIONS")	//허용할 HTTP 메서드
 				.allowedHeaders("*")		//모든 헤더 허용
 				.allowCredentials(true);	//쿠키나 인증 정보를 포함한 요청 허용
@@ -23,6 +23,10 @@ public class WebConfig implements WebMvcConfigurer {
         		// /uploads/** 경로에 대한 요청 처리
         registry.addResourceHandler("/uploads/**")
         		//실제 파일 위치 설정
-                .addResourceLocations("file:" + System.getProperty("user.dir") + "/uploads/");
+        .addResourceLocations("file:" + System.getProperty("user.dir") + "/uploads/");
+        
+        // 프로필 사진 경로
+        registry.addResourceHandler("/uploads/profilePictures/**")
+        .addResourceLocations("file:" + System.getProperty("user.dir") + "/uploads/profilePictures/");
     }
 }

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserService {
 	
@@ -32,6 +34,7 @@ public class UserService {
 	private final PasswordEncoder passwordEncoder;
 	
 	private final TokenProvider tokenProvider;
+	
 	
 	
 	
@@ -85,7 +88,7 @@ public class UserService {
 		}
 	}
    
-	//비밀번호 찾기 (사용자 정보 확인)
+	// 비밀번호 찾기 (사용자 정보 확인)
     public UserDTO userFindPassword(UserDTO dto) {
         // 아이디, 이름, 전화번호로 사용자 조회
         UserEntity user = repository.findByUserIdAndUserNameAndUserPhoneNumber(
@@ -105,7 +108,7 @@ public class UserService {
         
     }
 
-    //비밀번호 초기화
+    // 비밀번호 초기화
     @Transactional
     public boolean userResetPassword(UserDTO dto) {
         // 아이디로 사용자 조회
@@ -137,6 +140,7 @@ public class UserService {
 				.userId(user.getUserId())
 				.userName(user.getUserName())
 				.userNickName(user.getUserNickName())
+				.userPassword(user.getUserPassword())
 				.userProfileImage(user.getUserProfileImage())
 				.token(token)
 				.build();
@@ -150,12 +154,14 @@ public class UserService {
 	//구글 로그인정보가져오기
 	public UserDTO verifyAndGetUserInfo(String credential) throws Exception {
 	    String tokenInfoUrl = "https://oauth2.googleapis.com/tokeninfo?id_token=" + credential;
+	    System.out.println("ssssssssssss"+tokenInfoUrl);
 	    RestTemplate restTemplate = new RestTemplate();
 	    ResponseEntity<Map> response = restTemplate.getForEntity(tokenInfoUrl, Map.class);
 	    System.out.println(response);
 	    if (response.getStatusCode() != HttpStatus.OK) {
 	        throw new Exception("Invalid ID token");
 	    }
+	    System.out.println("ssssssssssss"+response.getBody());
 	    Map<String, Object> tokenInfo = response.getBody();
 	    String email = (String) tokenInfo.get("email");
 	    String name = (String) tokenInfo.get("name");
@@ -227,8 +233,7 @@ public class UserService {
     	
     }
     
-    
-    //프로필사진 수정
+  //프로필사진 수정
     public UserDTO userProfileImageEdit(Long id, MultipartFile file) {
     	
         try {
@@ -241,7 +246,7 @@ public class UserService {
             //기존 프로필 파일이 없거나 null이면 true
             if (existingUserProfileImage != null && !existingUserProfileImage.isEmpty()) {
             	//저장된 file 경로로 수정
-                String existingFilePath = System.getProperty("user.dir")+existingUserProfileImage;
+                String existingFilePath = "/home/ubuntu/app"+existingUserProfileImage;
                 File existingFile = new File(existingFilePath);	//객체 생성
                 if (existingFile.exists()) {	//해당 파일이있으면 true
                     if (existingFile.delete()) {
@@ -253,7 +258,7 @@ public class UserService {
             }
             
             //파일경로 지정
-            String uploadDir = System.getProperty("user.dir") + "/uploads/profilePictures/";
+            String uploadDir = "/home/ubuntu/app/uploads/profilePictures/";
             String fileName = file.getOriginalFilename().replaceAll("[\\s\\(\\)]", "_");
             //filePath - file 저장할 경로
             String filePath = uploadDir + id + "_" + fileName;
@@ -263,7 +268,6 @@ public class UserService {
             if (!parentDir.exists()) {	//부모 디렉토리가 없으면 true
             	parentDir.mkdirs();		// 디렉토리 생성
             }
-            System.out.println("aaaaaa"+filePath);
             
             
             try {
@@ -276,13 +280,13 @@ public class UserService {
             }
             
             //filePath는 파일저장 경로지 불러올때는 fileUrl로 불러와야한다.
-            //fileUrl - file불러올 경로 db에 저장
+            //fileUrl - file 불러올 경로 db 에 저장
             String fileUrl = "/uploads/profilePictures/" + id + "_" + fileName;
             
             //UserEntity에 프로필 사진 경로 업데이트
             userEntity.setUserProfileImage(fileUrl);
             repository.save(userEntity);  // UserEntity 업데이트 저장
-            System.out.println("sssssssssssss"+fileUrl);
+            
             //업데이트된 UserEntity를 UserDTO로 변환하여 반환
             return UserDTO.builder().
             		userProfileImage(userEntity.getUserProfileImage())

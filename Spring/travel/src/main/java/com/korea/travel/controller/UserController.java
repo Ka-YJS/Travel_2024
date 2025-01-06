@@ -82,6 +82,7 @@ public class UserController {
     public ResponseEntity<?> handleGoogleCallback(@RequestBody Map<String, String> payload) {
         try {
             String credential = payload.get("credential");
+            System.out.println("aaa0"+credential);
             if (credential == null || credential.isEmpty()) {
                 return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Credential is missing or empty"));
             }
@@ -186,21 +187,32 @@ public class UserController {
     //프로필사진 수정
     @PatchMapping("/userProfileImageEdit/{id}")
     public ResponseEntity<?> userProfileImageEdit(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
-    	
-    	System.out.println("file: " +file);
-        try {
-            // 서비스 호출하여 프로필 사진을 수정하고 결과를 반환
-            UserDTO updatedUserDTO = service.userProfileImageEdit(id, file);
-            System.out.println("updateDTO : " +updatedUserDTO);
-            return ResponseEntity.ok().body(updatedUserDTO);  // 성공적으로 수정된 UserDTO 반환
+        // 업로드된 파일의 정보 출력 (디버깅용)
+        System.out.println("Received file: " + file.getOriginalFilename() + ", size: " + file.getSize());
 
+        try {
+            // 서비스 호출하여 프로필 사진 수정
+            UserDTO updatedUserDTO = service.userProfileImageEdit(id, file);
+
+            // 수정된 DTO 정보 출력 (디버깅용)
+            System.out.println("수정완료: " + updatedUserDTO);
+
+            // 성공적으로 수정된 UserDTO 반환
+            return ResponseEntity.ok().body(updatedUserDTO);
+
+        } catch (IllegalArgumentException e) {
+            // 잘못된 사용자 ID 또는 업로드 문제 처리
+            System.err.println("Invalid request: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                 .body("Invalid request: " + e.getMessage());
         } catch (RuntimeException e) {
-            // 예외 처리: 사용자 정보가 없거나, 파일 업로드 중 에러가 발생한 경우
+            // 파일 업로드 또는 저장 과정에서의 문제 처리
+            System.err.println("Server error: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                  .body("Error occurred during profile update: " + e.getMessage());
         }
-        
     }
+
     
 
     //프로필사진 삭제

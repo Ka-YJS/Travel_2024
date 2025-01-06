@@ -1,5 +1,6 @@
 package com.korea.travel.model;
 
+import org.apache.catalina.User;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -24,7 +25,7 @@ public class LikeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long like_id; // 고유 id
+    private Long id; // 고유 id
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id") // user_id 외래키

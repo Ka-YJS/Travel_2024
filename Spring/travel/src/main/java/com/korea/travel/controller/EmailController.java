@@ -13,20 +13,20 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/email")
+@RequestMapping("/travel")
 public class EmailController {
 
     private final EmailService emailService;
 
     // 인증번호 전송
-    @GetMapping("/auth")
+    @GetMapping("/email/auth")
     public EmailAuthResponseDto sendAuthCode(@RequestParam String address) {
     	System.out.println(address);
         return emailService.sendEmail(address);
     }
 
     // 인증번호 검증
-    @PostMapping("/auth")
+    @PostMapping("/email/auth")
     public EmailAuthResponseDto checkAuthCode(@RequestParam String address, @RequestParam String authCode) {
         return emailService.validateAuthCode(address, authCode);
     }

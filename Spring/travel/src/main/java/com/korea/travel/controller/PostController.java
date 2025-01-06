@@ -37,8 +37,8 @@ import com.korea.travel.service.PostService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:3000") // React 앱이 동작하는 주소
+@RequestMapping("/travel")
+@CrossOrigin(origins = "https://countryrat.site") // React 앱이 동작하는 주소
 @RequiredArgsConstructor
 public class PostController {
 

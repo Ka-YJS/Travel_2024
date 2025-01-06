@@ -94,7 +94,7 @@ const Map = () => {
         if (searchBox !== null) {
             const place = searchBox.getPlace();  // 검색된 장소 정보 가져오기
             console.log("place : "+ place);
-            console.log(JSON.stringify(place, null, 2));
+            // console.log(JSON.stringify(place, null, 2));
 
             if (place.geometry) {
                 const { location } = place.geometry;

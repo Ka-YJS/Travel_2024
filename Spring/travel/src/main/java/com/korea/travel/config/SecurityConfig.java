@@ -36,8 +36,7 @@ public class SecurityConfig {
           			"/travel/userFindPassword",
           			"/travel/userResetPassword",
           			"/travel/oauth2/google/callback",
-          			"/api/email/**", 
-          			"/uploads/**"
+          			"/travel/email/**"
           			).permitAll() //경로는 인증 없이 허용
           	.anyRequest().authenticated()  // 그 외 요청은 인증 필요
         	.and()
@@ -50,6 +49,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+    
     
     //비밀번호를 BCrypt 해시 알고리즘으로 암호화
     @Bean

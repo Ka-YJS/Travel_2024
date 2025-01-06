@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.korea.travel.dto.PostDTO;
@@ -65,6 +66,7 @@ public class PostService {
     
 
     // 게시글 한 건 조회
+    @Transactional(readOnly = true)// 데이터 읽기 전용 트랜잭션
     public PostDTO getPostById(Long id) {
         Optional<PostEntity> board = postRepository.findById(id);
         if(board.isPresent()) {
@@ -76,7 +78,7 @@ public class PostService {
     }
 
     
-    // 게시글 생성
+ // 게시글 생성
     public PostDTO createPost(PostDTO postDTO) {
         PostEntity savedEntity = postRepository.save(convertToEntity(postDTO));
         return convertToDTO(savedEntity);
@@ -86,8 +88,8 @@ public class PostService {
         List<String> fileUrls = new ArrayList<>();
         for (MultipartFile file : files) {
             try {
-                String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-                Path filePath = Paths.get("uploads/" + fileName);
+                String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename().replaceAll("[^a-zA-Z0-9._-]", "_");
+                Path filePath = Paths.get("/home/ubuntu/app/uploads/" + fileName);
                 Files.write(filePath, file.getBytes());
                 fileUrls.add("/uploads/" + fileName); // 파일 접근 URL
             } catch (IOException e) {

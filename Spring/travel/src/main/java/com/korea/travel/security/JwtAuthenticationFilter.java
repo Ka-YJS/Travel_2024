@@ -24,7 +24,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		
+	    
 		String requestURI = request.getRequestURI();
 
 	    if (requestURI.equals("/travel/userIdCheck") ||
@@ -34,8 +34,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	    		requestURI.equals("/travel/userFindPassword")|| 
 	    		requestURI.equals("/travel/userResetPassword")|| 
 	    		requestURI.equals("/travel/oauth2/google/callback")||
-	    		requestURI.startsWith("/api/email")|| 
-	    		requestURI.startsWith("/uploads")) {
+	    		requestURI.startsWith("/travel/email")
+	    		) {
 	        filterChain.doFilter(request, response);
 	        return; // 이 경로들은 필터를 넘기고 종료
 	    }

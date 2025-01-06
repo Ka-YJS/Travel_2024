@@ -77,12 +77,14 @@ const Write = () => {
             for (let [key, value] of formData.entries()) {
                 console.log(key, value);
             }
-            
-            const response = await axios.post(`http://${config.IP_ADD}:9090/api/write/${user.id}`, formData, {
+            console.log(user.token);
+            const response = await axios.post(`https://${config.IP_ADD}/travel/write/${user.id}`, formData, {
                 headers: { 
                     "Content-Type": "multipart/form-data" ,
-                    'Authorization': `Bearer ${user.token}`
-                },
+                    Authorization: `Bearer ${user.token}`,
+                    Accept: '*/*'
+            },
+                withCredentials: true
             });
 
             console.log("Response:", response);

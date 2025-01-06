@@ -40,12 +40,12 @@ public class PostEntity {
     @Column(nullable = false)
     private String userNickname;
     
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "post_places", joinColumns = @JoinColumn(name = "post_id"))
     @Column(name = "place_list")
     private List<String> placeList;
     
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "post_images", joinColumns = @JoinColumn(name = "post_id"))
     @Column(name = "image_urls")
     private List<String> imageUrls;

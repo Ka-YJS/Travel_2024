@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 
 
 @RestController
-@RequestMapping("/api/likes")
+@RequestMapping("/travel")
 @RequiredArgsConstructor
 public class LikeController {
 
@@ -27,7 +27,7 @@ public class LikeController {
     private final UserRepository  userRepository;
 
  // 좋아요 추가
-    @PostMapping("/{postId}")
+    @PostMapping("/likes/{postId}")
     public ResponseEntity<LikeDTO> addLike(@PathVariable("postId") Long postId) {
         Long userId = getCurrentUserId();  // 현재 사용자 ID를 추출
         LikeDTO likeDTO = likeService.addLike(userId, postId);
@@ -35,7 +35,7 @@ public class LikeController {
     }
 
     // 좋아요 삭제
-    @DeleteMapping("/{postId}")
+    @DeleteMapping("/likes/{postId}")
     public ResponseEntity<LikeDTO> removeLike(@PathVariable("postId") Long postId) {
         Long userId = getCurrentUserId();  // 현재 사용자 ID를 추출
         LikeDTO likeDTO = likeService.removeLike(userId, postId);
@@ -43,7 +43,7 @@ public class LikeController {
     }
 
     // 사용자가 해당 게시물에 좋아요를 눌렀는지 확인
-    @GetMapping("/{postId}/isLiked")
+    @GetMapping("/likes/{postId}/isLiked")
     public ResponseEntity<Boolean> isLiked(@PathVariable Long postId) {
     	
     	System.out.println("postId:" + postId);

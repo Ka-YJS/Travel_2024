@@ -28,8 +28,13 @@ const PostEdit = () => {
     useEffect(() => {
         const fetchPostDetails = async () => {
             try {
-                const response = await axios.get(`http://${config.IP_ADD}:9090/api/posts/postDetail/${id}`, {
-                    headers: { 'Authorization': `Bearer ${user.token}` }
+                const response = await axios.get(`https://${config.IP_ADD}/travel/posts/postDetail/${id}`, {
+                    headers: { 
+                        "Content-Type": "multipart/form-data",
+                        'Authorization': `Bearer ${user.token}`, 
+                        'Accept': '*/*'
+                    },
+                        withCredentials: true
                 });
                 
                 const postData = response.data.data[0];
@@ -128,11 +133,13 @@ const PostEdit = () => {
         }
 
         try {
-            const response = await axios.put(`http://${config.IP_ADD}:9090/api/posts/postEdit/${id}`, formData, {
+            const response = await axios.put(`https://${config.IP_ADD}/travel/posts/postEdit/${id}`, formData, {
                 headers: { 
                     "Content-Type": "multipart/form-data",
-                    'Authorization': `Bearer ${user.token}`
+                    'Authorization': `Bearer ${user.token}`,
+                    'Accept': '*/*'
                 },
+                    withCredentials: true
             });
 
             alert("글이 수정되었습니다!");
@@ -227,7 +234,7 @@ const PostEdit = () => {
                     {existingImageUrls.map((url, index) => (
                         <div key={`existing-${index}`}>
                             <img 
-                                src={`http://${config.IP_ADD}:9090${url}`} 
+                                src={`https://${config.IP_ADD}${url}`} 
                                 alt={`existing-${index}`}
                             />
                             <Delete onClick={() => handleDeleteImage(index,true)} />
