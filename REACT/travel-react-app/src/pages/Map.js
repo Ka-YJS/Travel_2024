@@ -1,233 +1,216 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { GoogleMap, Marker, InfoWindow, Autocomplete, useJsApiLoader } from "@react-google-maps/api";
-import Write from "./Write";
-import TopIcon from "../TopIcon/TopIcon";
-import config from "../Apikey";
-import { PlaceContext } from "../context/PlaceContext";
-import { Button } from "@mui/material";
-import { isWriteContext } from "../context/isWriteContext";
-import PostEdit from "./PostEdit";
+import Write from "./Write";  // 작성 컴포넌트
+import TopIcon from "../TopIcon/TopIcon";  // 상단 아이콘
+import config from "../Apikey";  // API 키 설정
+import { PlaceContext } from "../context/PlaceContext";  // 장소 목록을 관리하는 컨텍스트
+import { ListContext } from "../context/ListContext";  // 리스트 관리 컨텍스트
+import { Button } from "@mui/material";  // 버튼 컴포넌트
+import { CopyListContext } from "../context/CopyListContext";  // 복사 리스트 관리 (사용되지 않는 듯)
+import "../css/Map.css";  // 스타일 파일
+import backgroundImage from "../image/flowers.png";
 
+
+// 컴포넌트 외부에서 libraries 배열을 정의 (Google Maps의 places 라이브러리 사용)
+const libraries = ["places"];
 
 const Map = () => {
+    // Context로부터 장소 목록과 리스트 상태를 가져옴
     const { placeList, setPlaceList } = useContext(PlaceContext);
-    const {isWrite, setIsWrite} = useContext(isWriteContext);
+    const { list, setList } = useContext(ListContext);
 
-    const [map, setMap] = useState(null);
-    const [center, setCenter] = useState({ lat: 37.5665, lng: 126.9780 }); // 서울 중심 좌표
-    const [markerPosition, setMarkerPosition] = useState(null); // 마커 위치
-    const [placeName, setPlaceName] = useState(""); // 현재 검색된 장소 이름
-    const [searchBox, setSearchBox] = useState(null);
-    const [selectedMarker, setSelectedMarker] = useState(null); // 선택된 마커
-    const [photoUrl, setPhotoUrl] = useState(null); // 장소 사진 URL
-    const [list, setList] = useState([]);
+    // 상태 변수 정의
+    const [map, setMap] = useState(null);  // 지도 객체
+    const [center, setCenter] = useState({ lat: 37.5665, lng: 126.9780 });  // 지도 중심 좌표 (서울)
+    const [markerPosition, setMarkerPosition] = useState(null);  // 마커의 위치
+    const [placeName, setPlaceName] = useState("");  // 검색된 장소 이름
+    const [placeDescription, setPlaceDescription] = useState("");  // 장소 설명
+    const [searchBox, setSearchBox] = useState(null);  // Autocomplete 검색 박스
+    const [selectedMarker, setSelectedMarker] = useState({ position: { lat: 37.5665, lng: 126.9780 } });  // 선택된 마커
 
-    // Google Maps API 로드
+    // Google Maps API 로드 상태
     const { isLoaded, loadError } = useJsApiLoader({
-        googleMapsApiKey: config.MAP_API_KEY,
-        libraries: ["places"], // 사용하려는 라이브러리 추가
+        googleMapsApiKey: config.MAP_API_KEY,  // Google API 키
+        libraries: libraries,  // 사용할 라이브러리
+        language:"ko",  // 언어 설정 (한국어)
     });
+    
+    // 화면 로딩 중 TopIcon의 높이를 계산하여 상단에 여백을 두기 위한 상태 변수
+    const [topIconHeight, setTopIconHeight] = useState(0);
 
+    useEffect(() => {
+        setList([])
+        setPlaceList([])
+    },[])
+
+    useEffect(() => {
+        const topIconElement = document.querySelector('.home-header');
+        if (topIconElement) {
+            setTopIconHeight(topIconElement.offsetHeight);  // 상단 아이콘의 높이를 가져와 상태에 설정
+        }
+    }, []);  // 컴포넌트가 처음 렌더링될 때 한 번 실행
+
+    // 지도와 관련된 Google Maps API가 로드되지 않으면 '로딩 중' 메시지 출력
     if (!isLoaded) {
         return <div>Loading...</div>;
     }
 
+    // Google Maps API 로드 중 오류가 발생한 경우 오류 메시지 출력
     if (loadError) {
         return <div>Google Maps API 로드 중 오류가 발생했습니다.</div>;
     }
 
-    // 지도 클릭 이벤트
-    const handleMapClick = async (event) => {
-        const lat = event.latLng.lat();
-        const lng = event.latLng.lng();
-        setMarkerPosition({ lat, lng });
-        setPlaceName("선택된 위치"); // 클릭한 경우 장소 이름을 기본값으로 설정
-        setPhotoUrl(null); // 지도 클릭 시 사진 초기화
-        setSelectedMarker({ position: { lat, lng } });
+    
+    // // 지도를 클릭했을 때 마커 위치와 관련 정보를 설정
+    // const handleMapClick = async (event) => {
+    //     const lat = event.latLng.lat();  // 클릭된 위치의 위도
+    //     const lng = event.latLng.lng();  // 클릭된 위치의 경도
+    //     setMarkerPosition({ lat, lng });  // 마커의 위치 업데이트
+    //     setPlaceName("선택된 위치");  // 기본 장소 이름
+    //     setPlaceDescription("");  // 설명 초기화
+    //     setSelectedMarker({ position: { lat, lng } });  // 선택된 마커 설정
+    // };
+
+    // 지도에서 마커를 클릭했을 때 InfoWindow를 다시 표시할 수 있도록 설정
+    const handleMarkerClick = (position) => {
+        setSelectedMarker({
+            position,  // 클릭한 마커 위치
+        });
     };
 
-    // 검색창 설정
+     // InfoWindow를 닫을 때 selectedMarker를 null로 설정
+     const handleInfoWindowClose = () => {
+        setSelectedMarker(null);  // InfoWindow 닫을 때 selectedMarker를 null로 설정
+    };
+
+
+    // Autocomplete 검색 박스를 로드했을 때의 콜백
     const handleSearchBoxLoad = (autocomplete) => {
-        setSearchBox(autocomplete);
+        setSearchBox(autocomplete);  // Autocomplete 객체를 상태에 저장
     };
 
-    // 검색 이벤트
+    // 검색한 장소가 변경되었을 때 호출되는 함수
     const handlePlaceChanged = async () => {
         if (searchBox !== null) {
-            const place = searchBox.getPlace();
+            const place = searchBox.getPlace();  // 검색된 장소 정보 가져오기
+            console.log("place : "+ place);
+            console.log(JSON.stringify(place, null, 2));
+
             if (place.geometry) {
                 const { location } = place.geometry;
-                setCenter({ lat: location.lat(), lng: location.lng() });
-                setMarkerPosition({ lat: location.lat(), lng: location.lng() });
-                setPlaceName(place.name || "알 수 없는 장소"); // 장소 이름 설정
-                if (place.photos && place.photos.length > 0) {
-                    const photoReference = place.photos[0].photo_reference;
-                    const photoUrl = getPhotoUrl(photoReference);
-                    setPhotoUrl(photoUrl);
-                } else {
-                    setPhotoUrl(null); // 사진이 없는 경우 처리
-                }
-                setSelectedMarker({ position: { lat: location.lat(), lng: location.lng() } });
+                setCenter({ lat: location.lat(), lng: location.lng() });  // 지도 중심 위치 업데이트
+                setMarkerPosition({ lat: location.lat(), lng: location.lng() });  // 마커 위치 업데이트
+                setPlaceName(place.name || "알 수 없는 장소");  // 장소 이름 설정
+
+                // 장소에 대한 설명을 가져옴 (예: 주소, 운영 시간 등)
+                setPlaceDescription(place.formatted_address || "주소 정보 없음");  // 주소 설정
+                // 필요한 경우 여기에 추가적인 장소 정보를 설정할 수 있음
+                // 예: setPlaceDescription(place.opening_hours, place.website 등)
+
+                setSelectedMarker({ position: { lat: location.lat(), lng: location.lng() } });  // 마커 업데이트
             }
         }
     };
 
-    // Place Photo API를 통해 사진 URL 가져오기
-    const getPhotoUrl = (photoReference) => {
-        return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${config.MAP_API_KEY}`;
-    };
-
-    // To-Do List에 장소 추가
-    const handleAddToTodoList = () => {
+    // 장소 목록에 선택된 장소를 추가하는 함수
+    const handleAddToPlaceList = () => {
         if (placeName) {
-            setPlaceList((prevList) => [...prevList, placeName]);
-            console.log(placeList)
-            setPlaceName(""); // 입력 필드 초기화
+            setPlaceList((prevList) => [...prevList, placeName]);  // 장소 목록에 추가
+            setPlaceName("");  // 장소 이름 초기화
         }
     };
 
-    // To-Do List에서 항목 삭제
+    // 장소 목록에서 특정 장소를 삭제하는 함수
     const handleDeleteFromTodoList = (index) => {
-        setPlaceList((prevList) => prevList.filter((_, i) => i !== index));
-        setList((prevList) => prevList.filter((_, i) => i !== index));
+        setPlaceList((prevList) => prevList.filter((_, i) => i !== index));  // 장소 목록에서 삭제
+        setList((prevList) => prevList.filter((_, i) => i !== index));  // 리스트에서 삭제
     };
 
     return (
-        <div style={{ display: "flex", width: "100vw", minHeight: "100vh", flexDirection: "row" }}>
-            {/* 지도 영역 */}
-            <TopIcon />
-            <div
-                style={{
-                    flex: 1,
-                    minHeight: "111vh",
-                    borderRight: "1px solid #ddd",
-                    display: "flex",
-                    flexDirection: "column",
-                }}
-            >
-                <div style={{ flex: 1, padding: "10px", backgroundColor: "#fff", zIndex: 1000 }}>
+    <div style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: "cover", backgroundPosition: "center" }} >
+        <div style={{zIndex:"2000"}}>
+               <TopIcon text="기록하기" />  {/* 상단 아이콘 표시 */}
+            </div>
+        <div className="map-container">
+            <div className="map-sidebar">
+                <div className="map-search-container">
                     <Autocomplete onLoad={handleSearchBoxLoad} onPlaceChanged={handlePlaceChanged}>
                         <input
                             type="text"
-                            placeholder="장소 또는 주소 검색"
-                            style={{
-                                width: "100%",
-                                height: "40px",
-                                padding: "10px",
-                                marginBottom: "10px",
-                                boxSizing: "border-box",
-                                borderRadius: "5px",
-                                border: "1px solid #ddd",
-                            }}
+                            placeholder="장소 또는 주소 검색 후 엔터"
+                            className="map-search-input"
                         />
                     </Autocomplete>
                     {placeName && (
-                        <div
-                            style={{
-                                padding: "10px",
-                                border: "1px solid #ddd",
-                                borderRadius: "5px",
-                                marginBottom: "10px",
-                            }}
-                        >
+                        <div className="place-info-container">
                             <strong>장소 이름:</strong> {placeName}
                             <button
-                                onClick={handleAddToTodoList}
-                                style={{
-                                    marginLeft: "10px",
-                                    padding: "5px 10px",
-                                    backgroundColor: "#007bff",
-                                    color: "#fff",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    cursor: "pointer",
-                                }}
+                                onClick={handleAddToPlaceList}
+                                className="place-info-button"
                             >
-                                추가
+                                추가  {/* 장소 추가 버튼 */}
                             </button>
                         </div>
                     )}
                 </div>
-                <GoogleMap
-                    mapContainerStyle={{
-                        width: "100%",
-                        height: "100%",
-                    }}
-                    center={center}
-                    zoom={14}
-                    onClick={handleMapClick}
-                    onLoad={(map) => setMap(map)}
-                >
-                    {markerPosition && (
-                        <Marker
-                            position={markerPosition}
-                            onClick={() =>
-                                setSelectedMarker({
-                                    position: markerPosition,
-                                })
-                            }
-                        />
-                    )}
 
-                    {/* InfoWindow 표시 */}
-                    {selectedMarker && (
-                        <InfoWindow
-                            position={selectedMarker.position}
-                            onCloseClick={() => setSelectedMarker(null)} // 닫기 버튼 클릭 시 InfoWindow 닫기
-                        >
-                            <div>
-                                <h3>{placeName}</h3>
-                                {photoUrl ? (
-                                    <img
-                                        src={photoUrl}
-                                        alt="장소 사진"
-                                        style={{ width: "100%", borderRadius: "5px" }}
-                                    />
-                                ) : (
-                                    <p>사진이 없습니다.</p>
-                                )}
-                            </div>
-                        </InfoWindow>
-                    )}
-                </GoogleMap>
-
-                {/* 여행지 리스트 */}
-                <div style={{ flex: 1, maxHeight: "50vh", marginTop: "20px" }}>
-                    <h3
-                        style={{
-                            display: "flex",
-                            flexDirection: "row",
+                {/* GoogleMap을 map-search-container 아래에 배치 */}
+                <div className="google-map-container">
+                    <GoogleMap
+                        mapContainerStyle={{
+                            width: "100%",
+                            height: "100%",  // 지도 높이 설정
                         }}
+                        center={center}  // 지도 중심 좌표
+                        zoom={14}  // 기본 줌 레벨
+                        // onClick={handleMapClick}  // 지도 클릭 시 콜백
+                        onLoad={(map) => setMap(map)}  // 지도 로드 시 콜백
                     >
+                        {markerPosition && (
+                            <Marker
+                                position={markerPosition}  // 마커 위치 설정
+                                onClick={() => handleMarkerClick(markerPosition)}
+                            />
+                        )}
+
+                        {selectedMarker && placeName && (
+                            <InfoWindow
+                                position={{
+                                    lat: selectedMarker.position.lat + 0.0027,
+                                    lng: selectedMarker.position.lng,
+                                }}
+                                onCloseClick={handleInfoWindowClose}
+                            >
+                                <div style={{ position: 'relative', fontSize: "12px", lineHeight: "1.5", textAlign: "center", padding: "5px" }}>
+                                    <h3 style={{ fontSize: "14px", margin: "5px 0", color: "#333" }}>{placeName}</h3>
+                                    <p style={{ fontSize: "12px", margin: "5px 0", color: "#666" }}>{placeDescription}</p>
+                                </div>
+                            </InfoWindow>
+                        )}
+                    </GoogleMap>
+                </div>
+
+                <div className="map-list-container">
+                    <h3 className="map-list-title">
                         여행지 List
-                        <Button onClick={() => setList([...placeList])}>추가하기</Button>
+                        <Button
+                            onClick={() => {
+                                setList(placeList);  // 장소 목록을 리스트에 추가
+                                console.log("list: " + list, "placeList: " + placeList);  // 목록 확인용 로그
+                            }}
+                        >
+                            추가하기  {/* 추가하기 버튼 */}
+                        </Button>
                     </h3>
                     <ul>
                         {placeList.map((item, index) => (
-                            <li
-                                title="-"
-                                key={index}
-                                style={{
-                                    marginBottom: "10px",
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    alignItems: "center",
-                                
-                                }}
-                            >
-                                {item}
+                            <li className="map-list-item" key={index}>
+                                {item}  {/* 리스트의 각 여행지 */}
                                 <button
-                                    onClick={() => handleDeleteFromTodoList(index)}
-                                    style={{
-                                        padding: "5px 10px",
-                                        backgroundColor: "red",
-                                        color: "#fff",
-                                        border: "none",
-                                        borderRadius: "5px",
-                                        cursor: "pointer",
-                                    }}
+                                    onClick={() => handleDeleteFromTodoList(index)}  // 삭제 버튼 클릭 시
+                                    className="map-list-item-button"
                                 >
-                                    삭제
+                                    삭제  {/* 삭제 버튼 */}
                                 </button>
                             </li>
                         ))}
@@ -235,11 +218,10 @@ const Map = () => {
                 </div>
             </div>
 
-            {/* 글쓰기 + To-Do List 영역 */}
-            <div style={{ flex: 1, padding: "20px", backgroundColor: "#f9f9f9" }}>
-                {isWrite ? <Write List={list} /> : <PostEdit/>}
-                
+            <div className="map-content">
+                <Write />  {/* 작성 컴포넌트 */}
             </div>
+        </div>
         </div>
     );
 };
